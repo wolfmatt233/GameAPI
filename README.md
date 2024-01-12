@@ -1,4 +1,4 @@
-# Capstone Project: Game API Web Application
+# Capstone Project: Game API Web Application (IN PROGRESS)
 
 ### Author: Matthew Wolf, IUPUI, Spring 2024
 
