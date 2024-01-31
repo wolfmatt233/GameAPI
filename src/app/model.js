@@ -7,39 +7,27 @@
 import { auth, db, apiKey } from "./credentials";
 import { onAuthStateChanged } from "firebase/auth";
 import { loginModal, signUpModal, logOut } from "./user/login-out";
+import {
+  loggedInButtons,
+  showUserInfo,
+  showUserItems,
+} from "./user/display-user-info";
+
+//----SIGN IN/OUT UPDATES----\\
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    console.log("signed in");
-
-    $(".nav-container").empty().append(`
-      <a href="#browse" class="nav-link">Browse</a>
-      <a id="nav-user" href="#user" class="nav-link">
-        <span>${user.displayName}</span>
-        <i class="fa-solid fa-user"></i>
-      </a>
-      <button id="logout-btn">
-        Log Out
-        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-      </button>
-    `);
-
+    loggedInButtons(user);
     $("#logout-btn").on("click", () => logOut());
   } else {
-    console.log("signed out");
-
-    $(".nav-container").empty().append(`
-      <a href="#browse" class="nav-link">Browse</a>
-      <button id="login-btn">Log In</button>
-      <button class="signup-btn">Create Account</button>
-    `);
-
+    loggedInButtons(user);
     loginModal();
     signUpModal();
   }
 });
 
-//page routing
+//----PAGE ROUTING----\\
+
 export function changeRoute() {
   let hashTag = window.location.hash;
   let pageID = hashTag.replace("#", "");
@@ -47,6 +35,11 @@ export function changeRoute() {
   function getPage(pageID) {
     $.get(`pages/${pageID}.html`, (data) => {
       $("#app").html(data);
+    }).then(() => {
+      if (pageID == "user-personal") {
+        userListener();
+        routeUser("info");
+      }
     });
   }
 
@@ -59,49 +52,44 @@ export function changeRoute() {
       getPage(pageID);
       signUpModal();
       break;
-    case "browse":
+    case "user-personal":
       getPage(pageID);
-      break;
-    case "detail":
-      getPage(pageID);
-      break;
-    case "search":
-      getPage(pageID);
-      break;
-    case "user":
-      getPage(pageID);
-      userListener();
-      routeUser("info");
       break;
   }
 }
 
-// USER \\
+//----USER ROUTES----\\
 
-//user route listeners
 function userListener() {
   $("#user-info").on("click", () => routeUser("info"));
-  $("#user-browse").on("click", () => routeUser("favorites"));
+  $("#user-favs").on("click", () => routeUser("favorites"));
   $("#user-played").on("click", () => routeUser("played"));
   $("#user-toplay").on("click", () => routeUser("toplay"));
   $("#user-lists").on("click", () => routeUser("lists"));
   $("#user-reviews").on("click", () => routeUser("reviews"));
 }
 
-//route within user page
 function routeUser(page) {
+  function getUserPage(page, showInfo) {
+    $.get(`pages/user/user-${page}.html`, (data) => {
+      $("#user-content").html(data);
+    }).then(() => {
+      showInfo();
+    });
+  }
+
   switch (page) {
     case "info":
-      $("#user-content").html("userInfo");
+      getUserPage(page, showUserInfo(auth.currentUser, db, apiKey));
       break;
-    case "browse":
-      $("#user-content").html("Browse your favorites");
+    case "favorites":
+      getUserPage("items", showUserItems(auth.currentUser, db, apiKey, "Favorites"));
       break;
     case "played":
-      $("#user-content").html("Your PLayed games");
+      getUserPage("items", showUserItems(auth.currentUser, db, apiKey, "Played Games"));
       break;
     case "toplay":
-      $("#user-content").html("To-play list");
+      getUserPage("items", showUserItems(auth.currentUser, db, apiKey, "To Play"));
       break;
     case "lists":
       $("#user-content").html("Your Lists");
