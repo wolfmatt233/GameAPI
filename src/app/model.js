@@ -4,7 +4,7 @@
   purpose: central hub for page routing and auth state recognition, other functionality will be imported from relevant files for organization
 */
 
-import { auth, db, apiKey } from "./credentials";
+import { auth } from "./credentials";
 import { onAuthStateChanged } from "firebase/auth";
 import { loginModal, signUpModal, logOut } from "./user/login-out";
 import {
@@ -12,6 +12,7 @@ import {
   showUserInfo,
   showUserItems,
   deletePrompt,
+  changePasswordPrompt,
 } from "./user/display-user-info";
 
 //----SIGN IN/OUT UPDATES----\\
@@ -69,6 +70,7 @@ function userListener() {
   $("#user-lists").on("click", () => routeUser("lists"));
   $("#user-reviews").on("click", () => routeUser("reviews"));
   $("#user-delete").on("click", () => routeUser("delete"));
+  $("#user-password").on("click", () => routeUser("password"));
 }
 
 function routeUser(page) {
@@ -82,25 +84,16 @@ function routeUser(page) {
 
   switch (page) {
     case "info":
-      getUserPage(page, showUserInfo(auth.currentUser, db, apiKey));
+      getUserPage(page, showUserInfo(auth.currentUser));
       break;
     case "favorites":
-      getUserPage(
-        "items",
-        showUserItems(auth.currentUser, db, apiKey, "Favorites")
-      );
+      getUserPage("items", showUserItems(auth.currentUser, "Favorites"));
       break;
     case "played":
-      getUserPage(
-        "items",
-        showUserItems(auth.currentUser, db, apiKey, "Played Games")
-      );
+      getUserPage("items", showUserItems(auth.currentUser, "Played Games"));
       break;
     case "toplay":
-      getUserPage(
-        "items",
-        showUserItems(auth.currentUser, db, apiKey, "To Play")
-      );
+      getUserPage("items", showUserItems(auth.currentUser, "To Play"));
       break;
     case "lists":
       $("#user-content").html("Your Lists");
@@ -109,8 +102,10 @@ function routeUser(page) {
       $("#user-content").html("Your Reviews");
       break;
     case "delete":
-      console.log("deleted?");
-      deletePrompt(auth.currentUser)
+      deletePrompt(auth.currentUser);
+      break;
+    case "password":
+      changePasswordPrompt(auth.currentUser);
       break;
   }
 }

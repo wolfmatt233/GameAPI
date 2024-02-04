@@ -36,7 +36,6 @@ export function loginModal() {
 //Modal popup for sign up, calls "signUp()" on confirmation
 export function signUpModal() {
   $(".signup-btn").on("click", () => {
-    console.log("clicked sign up")
     Swal.fire({
       title: "Sign Up",
       background: "#555a68",

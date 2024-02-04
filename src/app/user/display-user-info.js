@@ -1,6 +1,13 @@
-import { updateProfile, deleteUser } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  updateProfile,
+  deleteUser,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  updatePassword,
+} from "firebase/auth";
+import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import Swal from "sweetalert2";
+import { auth, db, apiKey } from "../credentials";
 
 export function loggedInButtons(user) {
   if (user !== null) {
@@ -24,13 +31,13 @@ export function loggedInButtons(user) {
   }
 }
 
-function editInfoListener(user, userDoc, db) {
+function editInfoListener(user, userDoc) {
   $("#edit-info-btn").on("click", () => {
     Swal.fire({
       title: "Edit Your Profile",
       background: "#555a68",
       color: `#e9e3e3`,
-      confirmButtonText: "Sign In",
+      confirmButtonText: "Confirm",
       confirmButtonColor: "#04724D",
       html: `
           <input type="text" id="uName" class="swal2-input" placeholder="Username" value="${user.displayName}">
@@ -58,7 +65,7 @@ function editInfoListener(user, userDoc, db) {
       title: "Edit Your Profile Picture",
       background: "#555a68",
       color: `#e9e3e3`,
-      confirmButtonText: "Sign In",
+      confirmButtonText: "Confirm",
       confirmButtonColor: "#04724D",
       html: `
           <input type="text" id="photoURL" class="swal2-input" placeholder="Photo URL" value="${photoUrl}">
@@ -71,7 +78,7 @@ function editInfoListener(user, userDoc, db) {
   });
 }
 
-async function updateInfo(uName, uBio, db, user) {
+async function updateInfo(uName, uBio, user) {
   try {
     await updateDoc(doc(db, "GameDB", user.uid), {
       bio: uBio,
@@ -104,7 +111,7 @@ async function updatePicture(url, user) {
   }
 }
 
-export async function showUserInfo(user, db, apiKey) {
+export async function showUserInfo(user) {
   try {
     let userDoc = await getDoc(doc(db, "GameDB", user.uid));
     userDoc = userDoc.data();
@@ -161,7 +168,7 @@ export async function showUserInfo(user, db, apiKey) {
   }
 }
 
-export async function showUserItems(user, db, apiKey, title) {
+export async function showUserItems(user, title) {
   try {
     let accessArray = [];
     let userDoc = await getDoc(doc(db, "GameDB", user.uid));
@@ -211,21 +218,98 @@ export function deletePrompt(user) {
     cancelButtonColor: "#04724D",
     preConfirm: () => {
       Swal.fire({
-        title: "This change is permanent. Are you sure?",
+        title: "Sign In Again To Confirm",
         background: "#555a68",
         color: `#e9e3e3`,
-        showCancelButton: true,
-        confirmButtonText: "Delete",
+        confirmButtonText: "Delete account",
         confirmButtonColor: "#e15554",
+        showCancelButton: true,
         cancelButtonText: "Cancel",
         cancelButtonColor: "#04724D",
+        html: `
+            <input type="text" id="emailLogin" class="swal2-input" placeholder="Email">
+            <input type="password" id="passwordLogin" class="swal2-input" placeholder="Password">
+          `,
         preConfirm: () => {
-          deleteUser(user).then(() => {
-            console.log("success"); //toast message here
-            // location.hash = "home"
-          });
+          let email = $("#emailLogin").val();
+          let password = $("#passwordLogin").val();
+
+          if (!email || !password) {
+            Swal.showValidationMessage(`Ensure fields are completed`);
+          } else {
+            let credential = EmailAuthProvider.credential(email, password);
+            let uid = user.uid;
+
+            reauthenticateWithCredential(user, credential).then(() => {
+              deleteUser(user).then(async () => {
+                console.log("success user"); //toast message here
+                try {
+                  await deleteDoc(doc(db, "GameDB", uid)).then(() => {
+                    console.log("success db");
+                  });
+                } catch (error) {
+                  console.log(error.message);
+                }
+                location.hash = "home";
+              });
+            });
+          }
         },
       });
+    },
+  });
+}
+
+export function changePasswordPrompt(user) {
+  Swal.fire({
+    title: "Change Your Password",
+    background: "#555a68",
+    color: `#e9e3e3`,
+    showCancelButton: true,
+    confirmButtonText: "Confirm",
+    confirmButtonColor: "#04724D",
+    cancelButtonText: "Cancel",
+    cancelButtonColor: "#e15554",
+    html: `
+        <input type="password" id="newPassword" class="swal2-input" placeholder="Password">
+      `,
+    preConfirm: () => {
+      let newPassword = $("#newPassword").val();
+
+      if (!newPassword) {
+        Swal.showValidationMessage(`Ensure fields are completed`);
+      } else {
+        Swal.fire({
+          title: "Sign In With Old Password",
+          background: "#555a68",
+          color: `#e9e3e3`,
+          confirmButtonText: "Delete account",
+          confirmButtonColor: "#e15554",
+          showCancelButton: true,
+          cancelButtonText: "Cancel",
+          cancelButtonColor: "#04724D",
+          html: `
+              <input type="text" id="emailLogin" class="swal2-input" placeholder="Email">
+              <input type="password" id="passwordLogin" class="swal2-input" placeholder="Password">
+            `,
+          preConfirm: () => {
+            let email = $("#emailLogin").val();
+            let password = $("#passwordLogin").val();
+
+            if (!email || !password) {
+              Swal.showValidationMessage(`Ensure fields are completed`);
+            } else {
+              let credential = EmailAuthProvider.credential(email, password);
+
+              reauthenticateWithCredential(user, credential).then(() => {
+                updatePassword(user, newPassword).then(() => {
+                  console.log("success user password"); //toast message here
+                });
+              });
+            }
+          },
+        });
+      }
     },
   });
 }
