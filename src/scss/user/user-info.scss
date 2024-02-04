@@ -1,91 +1,142 @@
-#user-title {
-  margin-bottom: 20px;
-}
-
-#user-pic-name {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  height: 120px;
-
-  img {
-    width: 100px;
-    height: 100px;
-    margin-right: 20px;
-    border-radius: 50%;
-    background-color: #484c58;
+#user-content {
+  #user-title {
+    margin-bottom: 20px;
   }
 
-  h1 {
-    font-size: 2.5em;
-  }
-
-  p {
-    font-size: 0.9em;
-    margin-top: 7px;
-    color: #d6d2d2;
-  }
-}
-
-hr {
-  color: $primaryColor;
-}
-
-#top-five {
-  h1 {
-    text-align: center;
-    margin: 20px 0;
-  }
-
-  .grid-row {
+  #user-pic-name {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
-    margin-bottom: 35px;
+    margin-bottom: 15px;
+    height: 120px;
+    position: relative;
 
-    .user-grid-item {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      text-decoration: none;
-      border-radius: 6px;
-      box-shadow: 0 2px 10px 0px $primaryColor;
-      width: 18%;
-      height: 100px;
+    #user-img-container {
       position: relative;
 
-      &:hover .item-details {
-        opacity: 1;
-      }
-
       img {
-        width: 100%;
-        height: 100%;
+        width: 100px;
+        height: 100px;
+        margin-right: 20px;
+        border-radius: 50%;
+        background-color: #484c58;
         object-fit: cover;
       }
 
-      .item-details {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
+      #user-img-hover {
         position: absolute;
-        top: 100%;
-        transform: translate(0, -100%);
-        background: rgb(46, 48, 56, 0.6);
+        cursor: pointer;
+        top: 48%;
+        left: 42%;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         opacity: 0;
-        transition: opacity 0.3s ease-in;
+        height: 100px;
+        width: 100px;
+        background: rgb(46, 48, 56, 0.6);
 
-        .details-title {
-          margin-bottom: 7px;
+        i {
+          margin-left: 5px;
+          font-size: 12px;
         }
 
-        .details-year {
-          color: #bbb9b9;
-          font-size: 1vw;
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    h1 {
+      font-size: 2.5em;
+    }
+
+    p {
+      font-size: 0.9em;
+      margin-top: 7px;
+      color: #d6d2d2;
+    }
+
+    #edit-info-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: $primaryColor;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      padding: 5px;
+      color: #bbb9b9;
+      align-items: center;
+
+      i {
+        margin-left: 5px;
+        font-size: 11px;
+      }
+    }
+  }
+
+  hr {
+    color: $secondaryColor;
+  }
+
+  #top-five {
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .grid-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      margin-bottom: 35px;
+
+      .user-grid-item {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        text-decoration: none;
+        border-radius: 6px;
+        box-shadow: 0 2px 10px 0px $primaryColor;
+        width: 18%;
+        height: 100px;
+        position: relative;
+
+        &:hover .item-details {
+          opacity: 1;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .item-details {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          height: 100%;
+          width: 100%;
+          overflow: hidden;
+          position: absolute;
+          top: 100%;
+          transform: translate(0, -100%);
+          background: rgb(46, 48, 56, 0.6);
+          opacity: 0;
+          transition: opacity 0.3s ease-in;
+
+          .details-title {
+            margin-bottom: 7px;
+          }
+
+          .details-year {
+            color: #bbb9b9;
+            font-size: 1vw;
+          }
         }
       }
     }

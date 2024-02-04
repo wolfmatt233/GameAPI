@@ -11,6 +11,7 @@ import {
   loggedInButtons,
   showUserInfo,
   showUserItems,
+  deletePrompt,
 } from "./user/display-user-info";
 
 //----SIGN IN/OUT UPDATES----\\
@@ -67,6 +68,7 @@ function userListener() {
   $("#user-toplay").on("click", () => routeUser("toplay"));
   $("#user-lists").on("click", () => routeUser("lists"));
   $("#user-reviews").on("click", () => routeUser("reviews"));
+  $("#user-delete").on("click", () => routeUser("delete"));
 }
 
 function routeUser(page) {
@@ -83,19 +85,32 @@ function routeUser(page) {
       getUserPage(page, showUserInfo(auth.currentUser, db, apiKey));
       break;
     case "favorites":
-      getUserPage("items", showUserItems(auth.currentUser, db, apiKey, "Favorites"));
+      getUserPage(
+        "items",
+        showUserItems(auth.currentUser, db, apiKey, "Favorites")
+      );
       break;
     case "played":
-      getUserPage("items", showUserItems(auth.currentUser, db, apiKey, "Played Games"));
+      getUserPage(
+        "items",
+        showUserItems(auth.currentUser, db, apiKey, "Played Games")
+      );
       break;
     case "toplay":
-      getUserPage("items", showUserItems(auth.currentUser, db, apiKey, "To Play"));
+      getUserPage(
+        "items",
+        showUserItems(auth.currentUser, db, apiKey, "To Play")
+      );
       break;
     case "lists":
       $("#user-content").html("Your Lists");
       break;
     case "reviews":
       $("#user-content").html("Your Reviews");
+      break;
+    case "delete":
+      console.log("deleted?");
+      deletePrompt(auth.currentUser)
       break;
   }
 }
