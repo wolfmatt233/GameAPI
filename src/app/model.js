@@ -14,6 +14,7 @@ import {
   deletePrompt,
   changePasswordPrompt,
 } from "./user/display-user-info";
+import { apiList } from "./api/browse";
 
 //----SIGN IN/OUT UPDATES----\\
 
@@ -33,6 +34,8 @@ onAuthStateChanged(auth, (user) => {
 export function changeRoute() {
   let hashTag = window.location.hash;
   let pageID = hashTag.replace("#", "");
+  let browsePage = pageID.split("_")[1];
+  pageID = pageID.split("_")[0];
 
   function getPage(pageID) {
     $.get(`pages/${pageID}.html`, (data) => {
@@ -41,6 +44,8 @@ export function changeRoute() {
       if (pageID == "user-personal") {
         userListener();
         routeUser("info");
+      } else if (pageID == "browse") {
+        apiList("", browsePage);
       }
     });
   }
@@ -57,6 +62,8 @@ export function changeRoute() {
     case "user-personal":
       getPage(pageID);
       break;
+    case "browse":
+      getPage(pageID);
   }
 }
 

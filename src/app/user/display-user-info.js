@@ -12,7 +12,7 @@ import { auth, db, apiKey } from "../credentials";
 export function loggedInButtons(user) {
   if (user !== null) {
     $(".nav-container").empty().append(`
-    <a href="#browse" class="nav-link">Browse</a>
+    <a href="#browse_1" class="nav-link">Browse</a>
     <a id="nav-user" href="#user-personal" class="nav-link">
       <span>${user.displayName}</span>
       <i class="fa-solid fa-user"></i>
@@ -24,7 +24,7 @@ export function loggedInButtons(user) {
   `);
   } else {
     $(".nav-container").empty().append(`
-      <a href="#browse" class="nav-link">Browse</a>
+      <a href="#browse_1" class="nav-link">Browse</a>
       <button id="login-btn">Log In</button>
       <button class="signup-btn">Create Account</button>
     `);

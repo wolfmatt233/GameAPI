@@ -297,14 +297,36 @@ footer {
   font-size: 1vw;
 }
 
+#browse #browse-footer {
+  margin: 20px auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+#browse #browse-footer a {
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 10px;
+}
+#browse #browse-footer a:hover {
+  background-color: #2f3139;
+}
+#browse #browse-footer #next i {
+  margin-left: 7px;
+}
+#browse #browse-footer #previous i {
+  margin-right: 7px;
+}
+
 #browse-grid {
   display: flex;
   flex-wrap: wrap;
 }
 #browse-grid .grid-item {
   display: flex;
-  flex: 0 0 20%;
-  margin: 2% 5% 0 0;
+  flex: 0 0 19%;
+  margin: 2% 3% 0 3%;
   flex-direction: column;
   overflow: hidden;
   text-decoration: none;
