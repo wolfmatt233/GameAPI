@@ -14,6 +14,8 @@ body {
 }
 
 #app {
+  max-width: 1500px;
+  margin: 0 auto;
   min-height: calc(100vh - 150px);
   background-color: #555a68;
   border-radius: 10px;
@@ -22,6 +24,8 @@ body {
 
 nav {
   height: 100px;
+  max-width: 1500px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -99,6 +103,7 @@ nav .nav-container #nav-user i {
 
 footer {
   height: 50px;
+  max-width: 1500px;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -366,6 +371,119 @@ footer {
 #browse-grid .grid-item .item-details .details-year {
   color: #bbb9b9;
   font-size: 1vw;
+}
+
+#detailView .banner-container {
+  position: relative;
+}
+#detailView .banner-container img {
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+  background-position: top;
+  object-position: 0 12%;
+  filter: brightness(50%);
+}
+#detailView .banner-container p {
+  font-size: 2em;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#detailView .detail-content {
+  padding: 10px 10% 0 10%;
+  display: flex;
+  background-color: #484c58;
+  margin-top: -5px;
+  min-height: calc(100vh - 350px);
+}
+#detailView .detail-content .detail-left {
+  background-color: #40434e;
+  width: 20%;
+  margin-top: 27px;
+  padding-bottom: 23px;
+}
+#detailView .detail-content .detail-left .tags {
+  margin-top: 7px;
+}
+#detailView .detail-content .detail-left .tags #tags,
+#detailView .detail-content .detail-left .tags #stores,
+#detailView .detail-content .detail-left .tags #genres {
+  padding: 0 10px;
+}
+#detailView .detail-content .detail-left .tags span {
+  color: #bbb9b9;
+}
+#detailView .detail-content .detail-left .tags p {
+  margin-left: 10px;
+  line-height: 25px;
+}
+#detailView .detail-content .detail-left .tags h4 {
+  font-weight: 100;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #555a68;
+  padding-bottom: 6px;
+  padding-left: 5px;
+}
+#detailView .detail-content .detail-left #stores a {
+  color: #247ba0;
+}
+#detailView .detail-content .detail-left img {
+  width: 50px;
+  margin-top: 10px;
+  margin-left: 5px;
+}
+#detailView .detail-content .detail-right {
+  width: 80%;
+}
+#detailView .detail-content .detail-right .detail-bar {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: #40434e;
+  padding: 7px;
+  margin-top: -10px;
+}
+#detailView .detail-content .detail-right .detail-bar i {
+  margin-left: 10px;
+}
+#detailView .detail-content .detail-right .detail-article {
+  padding: 30px;
+  background-color: #555a68;
+}
+#detailView .detail-content .detail-right .detail-article img {
+  height: 150px;
+  width: 100%;
+  object-fit: cover;
+  object-position: 0 50%;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+#detailView .detail-content .detail-right .detail-article #dev-pub {
+  display: flex;
+}
+#detailView .detail-content .detail-right .detail-article #dev-pub div {
+  margin-right: 20px;
+}
+#detailView .detail-content .detail-right .detail-article #dev-pub div li {
+  margin-left: 25px;
+}
+#detailView .detail-content .detail-right .detail-article #dev-pub,
+#detailView .detail-content .detail-right .detail-article #desc {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-top: 1px solid #bbb9b9;
+  border-bottom: 1px solid #bbb9b9;
+}
+#detailView .detail-content .detail-right .detail-article h3 {
+  margin-bottom: 7px;
+}
+#detailView .detail-content .detail-right .detail-article p {
+  margin-left: 10px;
+  text-indent: 20px;
+  line-height: 30px;
 }
 
 /*# sourceMappingURL=styles.css.map */

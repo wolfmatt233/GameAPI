@@ -1,5 +1,6 @@
 import { apiKey } from "../credentials";
 
+//shows all games from browse
 export function apiList(page) {
   let url = `https://api.rawg.io/api/games?key=${apiKey}&page=${page}`;
 
@@ -40,6 +41,7 @@ export function apiList(page) {
   });
 }
 
+//shows search results, needs filter options
 export function searchApi(searchQuery, page) {
   let url = `https://api.rawg.io/api/games?key=${apiKey}&page=${page}&search=${searchQuery}`;
   let filterArray = [];
@@ -84,13 +86,14 @@ export function searchApi(searchQuery, page) {
   });
 }
 
+//shows specific game details
 export function viewDetails(gameID) {
   let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
 
   $.getJSON(url, (data) => {
     let rating = data.esrb_rating.slug;
     let date = data.released;
-    let metascore = data.metascore;
+    let metascore = data.metacritic;
 
     if (rating == null) {
       rating = "pending";
@@ -100,18 +103,56 @@ export function viewDetails(gameID) {
       metascore = "N/A";
     }
 
-    $(".banner-container img").attr("href", `${data.background_image}`);
+    $(".banner-container img").attr("src", `${data.background_image}`);
     $(".banner-container p").html(`${data.name}`);
 
-    //left-hand bar
-    $(".detail-left #genres").empty().append(``);
-    $(".detail-left #tags").empty().append(``);
-    $(".detail-left #stores").empty().append(``);
-    $(".detail-left img").attr("href", `esrb_${rating}.png`);
+    //Left side bar
 
-    //right side top bar
-    $(".detail-bar h4").html(date);
-    $(".detail-bar h3").html(`Metascore: ${metascore}`);
-    $(".detail-bar div i").html();
+    //genres
+    data.genres.forEach((genre, idx) => {
+      idx != 0 ? $("#genres").append(` | `) : idx;
+      $("#genres").append(`<span>${genre.name}</span>`);
+    });
+
+    //tags
+    data.tags.forEach((tag, idx) => {
+      idx != 0 ? $("#tags").append(` | `) : idx;
+      $("#tags").append(`<span>${tag.name}</span>`);
+    });
+
+    //storefronts
+    data.stores.forEach((store, idx) => {
+      idx != 0 ? $("#stores").append(` | `) : idx;
+      $("#stores").append(
+        `<a href="http://${store.store.domain}">${store.store.name}</a>`
+      );
+    });
+
+    $(".detail-left img").attr("src", `./assets/esrb_${rating}.png`);
+
+    //Right side top bar
+    $(".detail-bar h4").html(`Released: ${date}`);
+    $(".detail-bar h3").html(
+      `Metascore: ${metascore}`
+    );
+    data.parent_platforms.forEach((platform) => {
+      platform = platform.platform.slug;
+      platform == "pc" ? (platform = "windows") : platform;
+      platform == "mac" ? (platform = "apple") : platform;
+      $(".detail-bar div").append(`<i class="fa-brands fa-${platform}"></i>`);
+    });
+
+    //Right side info and gallery
+    data.developers.forEach((dev) => {
+      $("#devs").append(`<li>${dev.name}</li>`);
+    });
+
+    data.publishers.forEach((pub) => {
+      $("#pubs").append(`<li>${pub.name}</li>`);
+    });
+
+    $("#banner-2").attr("src", data.background_image_additional)
+
+    $("#desc").append(data.description);
   });
 }

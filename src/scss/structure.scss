@@ -12,6 +12,8 @@ body {
   background-color: #40434e;
 }
 #app {
+  max-width: 1500px;
+  margin: 0 auto;
   min-height: calc(100vh - 150px);
   background-color: $secondaryColor;
   border-radius: 10px;
