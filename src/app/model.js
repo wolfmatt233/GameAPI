@@ -14,7 +14,7 @@ import {
   deletePrompt,
   changePasswordPrompt,
 } from "./user/display-user-info";
-import { apiList } from "./api/browse";
+import { apiList, searchApi, viewDetails } from "./api/browse";
 
 //----SIGN IN/OUT UPDATES----\\
 
@@ -33,20 +33,17 @@ onAuthStateChanged(auth, (user) => {
 
 export function changeRoute() {
   let hashTag = window.location.hash;
-  let pageID = hashTag.replace("#", "");
-  let browsePage = pageID.split("_")[1];
-  pageID = pageID.split("_")[0];
+  let pageID = hashTag.replace("#", "").split("?")[0];
+  let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+  let pagination = queryParams.get("page");
+  let gameID = queryParams.get("game");
+  let searchQuery = $("#searchBar").val();
 
-  function getPage(pageID) {
+  function getPage(pageID, activateFunc) {
     $.get(`pages/${pageID}.html`, (data) => {
       $("#app").html(data);
     }).then(() => {
-      if (pageID == "user-personal") {
-        userListener();
-        routeUser("info");
-      } else if (pageID == "browse") {
-        apiList("", browsePage);
-      }
+      activateFunc();
     });
   }
 
@@ -60,10 +57,19 @@ export function changeRoute() {
       signUpModal();
       break;
     case "user-personal":
-      getPage(pageID);
+      getPage(pageID, () => {
+        userListener();
+        routeUser("info");
+      });
       break;
     case "browse":
-      getPage(pageID);
+      getPage(pageID, apiList(pagination));
+      break;
+    case "search":
+      getPage("browse", searchApi(searchQuery, pagination));
+      break;
+    case "detail":
+      getPage(pageID, viewDetails(gameID));
   }
 }
 
