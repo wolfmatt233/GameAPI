@@ -406,22 +406,26 @@ footer {
   padding-top: 30px;
   padding-bottom: 23px;
 }
-#detailView .detail-content .detail-left .tags {
+#detailView .detail-content .detail-left .tags, #detailView .detail-content .detail-left button, #detailView .detail-content .detail-left img {
   margin-top: 7px;
 }
 #detailView .detail-content .detail-left .tags #tags,
 #detailView .detail-content .detail-left .tags #stores,
-#detailView .detail-content .detail-left .tags #genres {
+#detailView .detail-content .detail-left .tags #genres, #detailView .detail-content .detail-left button #tags,
+#detailView .detail-content .detail-left button #stores,
+#detailView .detail-content .detail-left button #genres, #detailView .detail-content .detail-left img #tags,
+#detailView .detail-content .detail-left img #stores,
+#detailView .detail-content .detail-left img #genres {
   padding: 0 10px;
 }
-#detailView .detail-content .detail-left .tags span {
+#detailView .detail-content .detail-left .tags span, #detailView .detail-content .detail-left button span, #detailView .detail-content .detail-left img span {
   color: #bbb9b9;
 }
-#detailView .detail-content .detail-left .tags p {
+#detailView .detail-content .detail-left .tags p, #detailView .detail-content .detail-left button p, #detailView .detail-content .detail-left img p {
   margin-left: 10px;
   line-height: 25px;
 }
-#detailView .detail-content .detail-left .tags h4 {
+#detailView .detail-content .detail-left .tags h4, #detailView .detail-content .detail-left button h4, #detailView .detail-content .detail-left img h4 {
   font-weight: 100;
   margin-bottom: 5px;
   border-bottom: 1px solid #555a68;
@@ -433,8 +437,29 @@ footer {
 }
 #detailView .detail-content .detail-left img {
   width: 50px;
-  margin-top: 10px;
+  display: flex;
+}
+#detailView .detail-content .detail-left button {
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  padding: 8px;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  letter-spacing: 0.1em;
+}
+#detailView .detail-content .detail-left button i {
   margin-left: 5px;
+}
+#detailView .detail-content .detail-left button:hover {
+  background-color: rgb(46, 127, 46);
+}
+#detailView .detail-content .detail-left .addedBtn {
+  background-color: rgb(46, 127, 46);
+}
+#detailView .detail-content .detail-left .addedBtn:hover {
+  background-color: #e15554;
 }
 #detailView .detail-content .detail-right {
   width: 80%;

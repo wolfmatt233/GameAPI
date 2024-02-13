@@ -14,7 +14,8 @@ import {
   deletePrompt,
   changePasswordPrompt,
 } from "./user/display-user-info";
-import { apiList, searchApi, viewDetails } from "./api/browse";
+import { apiList, searchApi } from "./api/browse";
+import { viewDetails } from "./api/detail";
 
 //----SIGN IN/OUT UPDATES----\\
 
