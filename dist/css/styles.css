@@ -153,7 +153,7 @@ footer {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 150px);
-  background-color: #484C58;
+  background-color: #484c58;
 }
 #user #sidebar button {
   padding: 10px;
@@ -302,8 +302,11 @@ footer {
   font-size: 1vw;
 }
 
+#browse {
+  background-image: linear-gradient(to top left, black, transparent);
+}
 #browse #browse-footer {
-  margin: 20px auto;
+  margin: 20px auto 0 auto;
   width: 100%;
   display: flex;
   align-items: center;
@@ -383,6 +386,7 @@ footer {
   background-position: top;
   object-position: 0 12%;
   filter: brightness(50%);
+  margin-bottom: -5px;
 }
 #detailView .banner-container p {
   font-size: 2em;
@@ -392,16 +396,14 @@ footer {
   transform: translate(-50%, -50%);
 }
 #detailView .detail-content {
-  padding: 10px 10% 0 10%;
+  padding: 0 5%;
+  padding-top: 10px;
   display: flex;
-  background-color: #484c58;
-  margin-top: -5px;
-  min-height: calc(100vh - 350px);
+  background-image: linear-gradient(to top left, black, transparent);
 }
 #detailView .detail-content .detail-left {
-  background-color: #40434e;
   width: 20%;
-  margin-top: 27px;
+  padding-top: 30px;
   padding-bottom: 23px;
 }
 #detailView .detail-content .detail-left .tags {
@@ -438,28 +440,24 @@ footer {
   width: 80%;
 }
 #detailView .detail-content .detail-right .detail-bar {
-  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  background-color: #40434e;
   padding: 7px;
-  margin-top: -10px;
 }
 #detailView .detail-content .detail-right .detail-bar i {
   margin-left: 10px;
 }
 #detailView .detail-content .detail-right .detail-article {
   padding: 30px;
-  background-color: #555a68;
 }
 #detailView .detail-content .detail-right .detail-article img {
-  height: 150px;
+  height: 300px;
   width: 100%;
   object-fit: cover;
   object-position: 0 50%;
-  margin: 10px 0;
-  border-radius: 5px;
+  margin: 20px 0;
+  border-radius: 10px;
 }
 #detailView .detail-content .detail-right .detail-article #dev-pub {
   display: flex;
@@ -470,12 +468,9 @@ footer {
 #detailView .detail-content .detail-right .detail-article #dev-pub div li {
   margin-left: 25px;
 }
-#detailView .detail-content .detail-right .detail-article #dev-pub,
-#detailView .detail-content .detail-right .detail-article #desc {
-  margin-bottom: 15px;
-  padding: 10px;
-  border-top: 1px solid #bbb9b9;
-  border-bottom: 1px solid #bbb9b9;
+#detailView .detail-content .detail-right .detail-article #desc li {
+  margin-left: 35px;
+  line-height: 30px;
 }
 #detailView .detail-content .detail-right .detail-article h3 {
   margin-bottom: 7px;

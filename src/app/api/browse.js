@@ -132,9 +132,7 @@ export function viewDetails(gameID) {
 
     //Right side top bar
     $(".detail-bar h4").html(`Released: ${date}`);
-    $(".detail-bar h3").html(
-      `Metascore: ${metascore}`
-    );
+    $(".detail-bar h3").html(`Metascore: ${metascore}`);
     data.parent_platforms.forEach((platform) => {
       platform = platform.platform.slug;
       platform == "pc" ? (platform = "windows") : platform;
