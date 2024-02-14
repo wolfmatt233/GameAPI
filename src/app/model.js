@@ -20,15 +20,32 @@ import { viewDetails } from "./api/detail";
 //----SIGN IN/OUT UPDATES----\\
 
 onAuthStateChanged(auth, (user) => {
+  homePage();
   if (user) {
+    location.hash = "home";
     loggedInButtons(user);
     $("#logout-btn").on("click", () => logOut());
   } else {
+    location.hash = "home";
     loggedInButtons(user);
     loginModal();
     signUpModal();
   }
 });
+
+//----HOME PAGE----\\
+
+function homePage() {
+  if (auth.currentUser != null) {
+    $(".header-container button")
+      .prop("onclick", null)
+      .off("click")
+      .html(`Welcome ${auth.currentUser.displayName}!`);
+  } else {
+    $(".header-container button").html("Create an account today!")
+    signUpModal();
+  }
+}
 
 //----PAGE ROUTING----\\
 
@@ -54,8 +71,7 @@ export function changeRoute() {
       signUpModal();
       break;
     case "home":
-      getPage(pageID);
-      signUpModal();
+      getPage(pageID, homePage);
       break;
     case "user-personal":
       getPage(pageID, () => {
