@@ -1,7 +1,8 @@
 import { auth, db, apiKey } from "../credentials";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-//shows specific game details
+//----SHOW DETAIL PAGE----\\
+
 export function viewDetails(gameID) {
   let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
 
@@ -76,79 +77,8 @@ export function viewDetails(gameID) {
   });
 }
 
-function checkFavBtn(favCheck) {
-  if (favCheck == 1) {
-    $("#addToFavorites")
-      .attr("id", "addedToFavorites")
-      .attr("class", "addedBtn")
-      .html(`Favorited <i class="fa-solid fa-check"></i>`);
-    $("#addedToFavorites").on({
-      mouseenter: function () {
-        $("#addedToFavorites").html(`Remove <i class="fa-solid fa-minus"></i>`);
-      },
-      mouseleave: function () {
-        $("#addedToFavorites").html(
-          `Favorited <i class="fa-solid fa-check"></i>`
-        );
-      },
-    });
-  } else {
-    $("#addedToFavorites")
-      .attr("id", "addToFavorites")
-      .attr("class", "")
-      .html(`Add to Favorites <i class="fa-solid fa-plus"></i>`);
-  }
-}
+//----BUTTONS & CHECKS----\\
 
-function checkPlayedBtn(playCheck) {
-  if (playCheck == 1) {
-    $("#addToPlayed")
-      .attr("id", "addedToPlayed")
-      .attr("class", "addedBtn")
-      .html(`Played <i class="fa-solid fa-check"></i>`);
-    $("#addedToPlayed").on({
-      mouseenter: function () {
-        $("#addedToPlayed").html(`Remove <i class="fa-solid fa-minus"></i>`);
-      },
-      mouseleave: function () {
-        $("#addedToPlayed").html(`Played <i class="fa-solid fa-check"></i>`);
-      },
-    });
-  } else {
-    $("#addedToPlayed")
-      .attr("id", "addToPlayed")
-      .attr("class", "")
-      .html(`Add to "Played" <i class="fa-solid fa-plus"></i>`);
-  }
-}
-
-function checkToPlayBtn(wantCheck) {
-  if (wantCheck == 1) {
-    $("#addToWantToPlay")
-      .attr("id", "addedToWantToPlay")
-      .attr("class", "addedBtn")
-      .html(`To Play <i class="fa-solid fa-check"></i>`);
-    $("#addedToWantToPlay").on({
-      mouseenter: function () {
-        $("#addedToWantToPlay").html(
-          `Remove <i class="fa-solid fa-minus"></i>`
-        );
-      },
-      mouseleave: function () {
-        $("#addedToWantToPlay").html(
-          `To Play <i class="fa-solid fa-check"></i>`
-        );
-      },
-    });
-  } else {
-    $("#addedToWantToPlay")
-      .attr("id", "addToWantToPlay")
-      .attr("class", "")
-      .html(`Add to "To Play" <i class="fa-solid fa-plus"></i>`);
-  }
-}
-
-// add and remove functions for favorites, played, and to play
 async function addUserButtons(gameID) {
   $(".detail-left").append(`
     <button id="addToFavorites">Add to "Favorites" <i class="fa-solid fa-plus"></i></button>
@@ -184,25 +114,105 @@ async function addUserButtons(gameID) {
       }
     });
 
-    checkFavBtn(favCheck);
-    checkPlayedBtn(playCheck);
-    checkToPlayBtn(wantCheck);
+    checkFavBtn(favCheck, gameID);
+    checkPlayedBtn(playCheck, gameID);
+    checkToPlayBtn(wantCheck, gameID);
   } catch (e) {
     console.log(e.message);
   }
-
-  //favorites add and remove
-  $("#addToFavorites").on("click", () => addToFavorites(gameID));
-  $("#addedToFavorites").on("click", () => removeFromFavorites(gameID));
-
-  //played add and remove
-  $("#addToPlayed").on("click", () => addToPlayed(gameID));
-  $("#addedToPlayed").on("click", () => removeFromPlayed(gameID));
-
-  //to play add and remove
-  $("#addToWantToPlay").on("click", () => addToWantToPlay(gameID));
-  $("#addedToWantToPlay").on("click", () => removeFromWantToPlay(gameID));
 }
+
+function checkFavBtn(check, gameID) {
+  if (check == 1) {
+    //you have added the game to "Favorites"
+    $("#addToFavorites")
+      .attr("id", "addedToFavorites")
+      .attr("class", "addedBtn")
+      .html(`Favorited <i class="fa-solid fa-check"></i>`);
+    $("#addedToFavorites").on({
+      mouseenter: function () {
+        $("#addedToFavorites").html(`Remove <i class="fa-solid fa-minus"></i>`);
+      },
+      mouseleave: function () {
+        $("#addedToFavorites").html(
+          `Favorited <i class="fa-solid fa-check"></i>`
+        );
+      },
+    });
+    $("#addedToFavorites").prop("onclick", null).off("click");
+    $("#addedToFavorites").on("click", () => removeFromFavorites(gameID));
+  } else {
+    //game NOT added to "Favorites"
+    $("#addedToFavorites")
+      .attr("id", "addToFavorites")
+      .attr("class", "")
+      .html(`Add to Favorites <i class="fa-solid fa-plus"></i>`);
+    $("#addToFavorites").prop("onclick", null).off("click");
+    $("#addToFavorites").on("click", () => addToFavorites(gameID));
+  }
+}
+
+function checkPlayedBtn(check, gameID) {
+  if (check == 1) {
+    //you have added the game to "played"
+    $("#addToPlayed")
+      .attr("id", "addedToPlayed")
+      .attr("class", "addedBtn")
+      .html(`Played <i class="fa-solid fa-check"></i>`);
+    $("#addedToPlayed").on({
+      mouseenter: function () {
+        $("#addedToPlayed").html(`Remove <i class="fa-solid fa-minus"></i>`);
+      },
+      mouseleave: function () {
+        $("#addedToPlayed").html(`Played <i class="fa-solid fa-check"></i>`);
+      },
+    });
+    $("#addedToPlayed").prop("onclick", null).off("click");
+    $("#addedToPlayed").on("click", () => removeFromPlayed(gameID));
+  } else {
+    //game NOT added to "played"
+    $("#addedToPlayed")
+      .attr("id", "addToPlayed")
+      .attr("class", "")
+      .html(`Add to "Played" <i class="fa-solid fa-plus"></i>`);
+    $("#addToPlayed").prop("onclick", null).off("click");
+    $("#addToPlayed").on("click", () => addToPlayed(gameID));
+  }
+}
+
+function checkToPlayBtn(check, gameID) {
+  if (check == 1) {
+    //you have added the game to "To play"
+    $("#addToWantToPlay")
+      .attr("id", "addedToWantToPlay")
+      .attr("class", "addedBtn")
+      .html(`To Play <i class="fa-solid fa-check"></i>`);
+    $("#addedToWantToPlay").on({
+      mouseenter: function () {
+        $("#addedToWantToPlay").html(
+          `Remove <i class="fa-solid fa-minus"></i>`
+        );
+      },
+      mouseleave: function () {
+        $("#addedToWantToPlay").html(
+          `To Play <i class="fa-solid fa-check"></i>`
+        );
+      },
+    });
+    $("#addedToWantToPlay").prop("onclick", null).off("click");
+    $("#addedToWantToPlay").on("click", () => removeFromWantToPlay(gameID));
+  } else {
+    //game NOT added to "To play"
+    $("#addedToWantToPlay")
+      .attr("id", "addToWantToPlay")
+      .attr("class", "")
+      .html(`Add to "To Play" <i class="fa-solid fa-plus"></i>`);
+    $("#addToWantToPlay").prop("onclick", null).off("click");
+    $("#addToWantToPlay").on("click", () => addToWantToPlay(gameID));
+  }
+}
+
+//----ADD & REMOVE FUNCTIONS----\\
 
 async function addToFavorites(gameID) {
   try {
@@ -213,7 +223,7 @@ async function addToFavorites(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       favorites: favArray,
-    }).then(() => checkFavBtn(1));
+    }).then(() => checkFavBtn(1, gameID));
   } catch (e) {
     //toast message here
     console.log(e.message);
@@ -233,7 +243,7 @@ async function removeFromFavorites(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       favorites: favArray,
-    }).then(() => checkFavBtn(0));
+    }).then(() => checkFavBtn(0, gameID));
   } catch (e) {
     //toast message here
     console.log(e.message);
@@ -249,7 +259,7 @@ async function addToPlayed(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       played: playedArray,
-    }).then(() => checkPlayedBtn(1));
+    }).then(() => checkPlayedBtn(1, gameID));
   } catch (e) {
     //toast message here
     console.log(e.message);
@@ -269,7 +279,7 @@ async function removeFromPlayed(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       played: playedArray,
-    }).then(() => checkPlayedBtn(0));
+    }).then(() => checkPlayedBtn(0, gameID));
   } catch (e) {
     console.log(e.message);
   }
@@ -284,7 +294,7 @@ async function addToWantToPlay(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       toplay: wantArray,
-    }).then(() => checkToPlayBtn(1));
+    }).then(() => checkToPlayBtn(1, gameID));
   } catch (e) {
     //toast message here
     console.log(e.message);
@@ -304,7 +314,7 @@ async function removeFromWantToPlay(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       toplay: wantArray,
-    }).then(() => checkToPlayBtn(0));
+    }).then(() => checkToPlayBtn(0, gameID));
   } catch (e) {
     //toast message here
     console.log(e.message);
