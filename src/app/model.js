@@ -22,11 +22,11 @@ import { viewDetails } from "./api/detail";
 onAuthStateChanged(auth, (user) => {
   homePage();
   if (user) {
-    location.hash = "home";
+    // location.hash = "home";
     loggedInButtons(user);
     $("#logout-btn").on("click", () => logOut());
   } else {
-    location.hash = "home";
+    // location.hash = "home";
     loggedInButtons(user);
     loginModal();
     signUpModal();

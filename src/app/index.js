@@ -8,7 +8,7 @@ import { changeRoute } from "./model";
 
 function initURLListener() {
   $(window).on("hashchange", changeRoute);
-  location.hash = "home"
+  // location.hash = "home"
   changeRoute();
 }
 

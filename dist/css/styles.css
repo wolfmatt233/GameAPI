@@ -39,11 +39,20 @@ nav .nav-link:hover {
   border-bottom: 1px solid #e9e3e3;
 }
 nav .nav-title {
-  font-size: 22px;
-  padding: 0;
+  display: flex;
+  justify-content: center;
+  font-size: 20px;
+  border-radius: 4px;
+  padding: 5px 10px;
 }
 nav .nav-title i {
-  color: #247ba0;
+  align-self: center;
+  margin-right: 5px;
+  color: #e15554;
+}
+nav .nav-title span {
+  letter-spacing: 1.2px;
+  text-align: center;
 }
 nav .nav-title:hover {
   border: none;
@@ -307,6 +316,7 @@ footer {
 }
 #browse #browse-footer {
   margin: 20px auto 0 auto;
+  padding-bottom: 20px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -406,26 +416,36 @@ footer {
   padding-top: 30px;
   padding-bottom: 23px;
 }
-#detailView .detail-content .detail-left .tags, #detailView .detail-content .detail-left button, #detailView .detail-content .detail-left img {
+#detailView .detail-content .detail-left .tags,
+#detailView .detail-content .detail-left button,
+#detailView .detail-content .detail-left img {
   margin-top: 7px;
 }
 #detailView .detail-content .detail-left .tags #tags,
 #detailView .detail-content .detail-left .tags #stores,
-#detailView .detail-content .detail-left .tags #genres, #detailView .detail-content .detail-left button #tags,
+#detailView .detail-content .detail-left .tags #genres,
+#detailView .detail-content .detail-left button #tags,
 #detailView .detail-content .detail-left button #stores,
-#detailView .detail-content .detail-left button #genres, #detailView .detail-content .detail-left img #tags,
+#detailView .detail-content .detail-left button #genres,
+#detailView .detail-content .detail-left img #tags,
 #detailView .detail-content .detail-left img #stores,
 #detailView .detail-content .detail-left img #genres {
   padding: 0 10px;
 }
-#detailView .detail-content .detail-left .tags span, #detailView .detail-content .detail-left button span, #detailView .detail-content .detail-left img span {
+#detailView .detail-content .detail-left .tags span,
+#detailView .detail-content .detail-left button span,
+#detailView .detail-content .detail-left img span {
   color: #bbb9b9;
 }
-#detailView .detail-content .detail-left .tags p, #detailView .detail-content .detail-left button p, #detailView .detail-content .detail-left img p {
+#detailView .detail-content .detail-left .tags p,
+#detailView .detail-content .detail-left button p,
+#detailView .detail-content .detail-left img p {
   margin-left: 10px;
   line-height: 25px;
 }
-#detailView .detail-content .detail-left .tags h4, #detailView .detail-content .detail-left button h4, #detailView .detail-content .detail-left img h4 {
+#detailView .detail-content .detail-left .tags h4,
+#detailView .detail-content .detail-left button h4,
+#detailView .detail-content .detail-left img h4 {
   font-weight: 100;
   margin-bottom: 5px;
   border-bottom: 1px solid #555a68;
@@ -453,13 +473,19 @@ footer {
   margin-left: 5px;
 }
 #detailView .detail-content .detail-left button:hover {
-  background-color: rgb(46, 127, 46);
+  background-color: #2e7f2e;
 }
 #detailView .detail-content .detail-left .addedBtn {
   background-color: rgb(46, 127, 46);
 }
 #detailView .detail-content .detail-left .addedBtn:hover {
   background-color: #e15554;
+}
+#detailView .detail-content .detail-left .addedBtn-review {
+  background-color: rgb(46, 127, 46);
+}
+#detailView .detail-content .detail-left .addedBtn-review:hover {
+  filter: brightness(90%);
 }
 #detailView .detail-content .detail-right {
   width: 80%;
@@ -504,6 +530,40 @@ footer {
   margin-left: 10px;
   text-indent: 20px;
   line-height: 30px;
+}
+
+#reviewText,
+#starScore {
+  min-width: 80%;
+  max-width: 80%;
+  border: 1px solid #fff;
+  border-radius: 5px;
+}
+
+#starScore2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 50%;
+  margin: 0 auto;
+}
+#starScore2 .star {
+  height: 40px;
+  width: 40px;
+  background-color: #fff;
+  display: flex;
+  cursor: pointer;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+#starScore2 .star .st-l {
+  width: 50%;
+  height: 40px;
+  background-color: "#000";
+}
+#starScore2 .star .st-r {
+  width: 50%;
+  height: 40px;
+  background-color: transparent;
 }
 
 /*# sourceMappingURL=styles.css.map */

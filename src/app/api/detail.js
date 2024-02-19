@@ -1,5 +1,6 @@
 import { auth, db, apiKey } from "../credentials";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import Swal from "sweetalert2";
 
 //----SHOW DETAIL PAGE----\\
 
@@ -84,6 +85,7 @@ async function addUserButtons(gameID) {
     <button id="addToFavorites">Add to "Favorites" <i class="fa-solid fa-plus"></i></button>
     <button id="addToPlayed">Add to "Played" <i class="fa-solid fa-plus"></i></button>
     <button id="addToWantToPlay">Add to "To Play" <i class="fa-solid fa-plus"></i></button>
+    <button id="addReview">Add a Review <i class="fa-solid fa-plus"></i></button>
   `);
 
   try {
@@ -92,6 +94,7 @@ async function addUserButtons(gameID) {
     let favCheck = 0;
     let playCheck = 0;
     let wantCheck = 0;
+    let reviewCheck = 0;
 
     userDoc.favorites.forEach((game) => {
       //if game is already added, change the favorite button accordingly
@@ -114,9 +117,17 @@ async function addUserButtons(gameID) {
       }
     });
 
+    userDoc.reviews.forEach((game) => {
+      //if game is already added, change the favorite button accordingly
+      if (gameID == game.gameId) {
+        reviewCheck++;
+      }
+    });
+
     checkFavBtn(favCheck, gameID);
     checkPlayedBtn(playCheck, gameID);
     checkToPlayBtn(wantCheck, gameID);
+    checkReviewBtn(reviewCheck, gameID);
   } catch (e) {
     console.log(e.message);
   }
@@ -209,6 +220,26 @@ function checkToPlayBtn(check, gameID) {
       .html(`Add to "To Play" <i class="fa-solid fa-plus"></i>`);
     $("#addToWantToPlay").prop("onclick", null).off("click");
     $("#addToWantToPlay").on("click", () => addToWantToPlay(gameID));
+  }
+}
+
+function checkReviewBtn(check, gameID) {
+  if (check == 1) {
+    //you have added a review
+    $("#addReview")
+      .attr("id", "addedReview")
+      .attr("class", "addedBtn-review")
+      .html(`View Your Review <i class="fa-solid fa-check"></i>`);
+    $("#addedToWantToPlay").prop("onclick", null).off("click");
+    $("#addedReview").on("click", () => viewReview(gameID));
+  } else {
+    //game NOT added to "To play"
+    $("#addedReview")
+      .attr("id", "addReview")
+      .attr("class", "")
+      .html(`Add Review <i class="fa-solid fa-plus"></i>`);
+    $("#addedToWantToPlay").prop("onclick", null).off("click");
+    $("#addReview").on("click", () => addReviewPrompt(gameID));
   }
 }
 
@@ -318,5 +349,174 @@ async function removeFromWantToPlay(gameID) {
   } catch (e) {
     //toast message here
     console.log(e.message);
+  }
+}
+
+function addReviewPrompt(gameID) {
+  Swal.fire({
+    title: "New Review",
+    background: "#555a68",
+    color: `#e9e3e3`,
+    confirmButtonText: "Add review",
+    confirmButtonColor: "#04724D",
+    showCancelButton: true,
+    cancelButtonText: "Cancel",
+    cancelButtonColor: "#e15554",
+    html: `
+          <textarea id="reviewText" class="swal2-textarea" placeholder="Review here..."></textarea>
+          <div id="starScore2">
+            <div class="star" id="st1">
+              <div id="score_1" class="st-l"></div>
+              <div id="score_2" class="st-r"></div>
+            </div>
+            <div class="star" id="st2">
+              <div id="score_3" class="st-l"></div>
+              <div id="score_4" class="st-r"></div>
+            </div>
+            <div class="star" id="st3">
+              <div id="score_5" class="st-l"></div>
+              <div id="score_6" class="st-r"></div>
+            </div>
+            <div class="star" id="st4">
+              <div id="score_7" class="st-l"></div>
+              <div id="score_8" class="st-r"></div>
+            </div>
+            <div class="star" id="st5">
+              <div id="score_9" class="st-l"></div>
+              <div id="score_10" class="st-r"></div>
+            </div>
+          </div>
+        `,
+    preConfirm: () => {
+      let reviewText = $("#reviewText").val();
+      let starScore  = $(".checked").attr("id").split("_")[1];
+
+      let reviewObj = {
+        reviewText: reviewText,
+        starScore: parseInt(starScore),
+        likes: 0,
+        gameId: gameID,
+      };
+      
+      addReview(reviewObj)
+    },
+  });
+
+  starSelector();
+}
+
+function starSelector() {
+  // 0.5 stars
+  $("#st1 .st-l").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st1 .st-l").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 .st-l").css("background-color", "#2e7f2e")
+  });
+
+  // 1 star
+  $("#st1 .st-r").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st1 .st-r").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 > *").css("background-color", "#2e7f2e");
+  });
+
+  // 1.5 stars
+  $("#st2 .st-l").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st2 .st-l").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 > *, #st2 .st-l")
+      .css("background-color", "#2e7f2e")
+      .addClass(`checked`);
+  });
+
+  // 2 stars
+  $("#st2 .st-r").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st2 .st-r").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 > *, #st2 > *").css("background-color", "#2e7f2e");
+  });
+
+  // 2.5 stars
+  $("#st3 .st-l").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st3 .st-l").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 > *, #st2 > *, #st3 .st-l").css("background-color", "#2e7f2e");
+  });
+
+  // 3 stars
+  $("#st3 .st-r").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st3 .st-r").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 > *, #st2 > *, #st3 > *").css("background-color", "#2e7f2e");
+  });
+
+  // 3.5 stars
+  $("#st4 .st-l").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st4 .st-l").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 > *, #st2 > *, #st3 > *, #st4 .st-l").css("background-color", "#2e7f2e");
+  });
+
+  // 4 stars
+  $("#st4 .st-r").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st4 .st-r").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 > *, #st2 > *, #st3 > *, #st4 > *").css("background-color", "#2e7f2e");
+  });
+
+  // 4.5 stars
+  $("#st5 .st-l").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st5 .st-l").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 > *, #st2 > *, #st3 > *, #st4 > *, #st5 .st-l").css(
+      "background-color",
+      "#2e7f2e"
+    );
+  });
+
+  // 5 stars
+  $("#st5 .st-r").on("click", () => {
+    $(".st-l").attr("class", "st-l");
+    $(".st-r").attr("class", "st-r");
+    $("#st5 .st-r").addClass("checked");
+    $(".star > *").css("background-color", "#fff");
+    $("#st1 > *, #st2 > *, #st3 > *, #st4 > *, #st5 > *").css(
+      "background-color",
+      "#2e7f2e"
+    );
+  });
+}
+
+async function addReview(reviewObj) {
+  try {
+    let user = auth.currentUser;
+    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let reviewArray = userDoc.data().reviews;
+
+    reviewArray.push(reviewObj); //push new review object to old array
+
+    await updateDoc(doc(db, "GameDB", user.uid), {
+      reviews: reviewArray,
+    }).then(() => checkReviewBtn(1, gameID));
+  } catch (error) {
+    console.log();
   }
 }
