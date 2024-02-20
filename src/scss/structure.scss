@@ -14,7 +14,7 @@ body {
 #app {
   max-width: 1500px;
   margin: 0 auto;
-  min-height: calc(100vh - 150px);
+  min-height: $appHeight;
   background-color: $secondaryColor;
   border-radius: 10px;
   overflow: hidden;

@@ -233,12 +233,12 @@ function checkReviewBtn(check, gameID) {
     $("#addedToWantToPlay").prop("onclick", null).off("click");
     $("#addedReview").on("click", () => viewReview(gameID));
   } else {
-    //game NOT added to "To play"
+    //game NOT reviewed
     $("#addedReview")
       .attr("id", "addReview")
       .attr("class", "")
       .html(`Add Review <i class="fa-solid fa-plus"></i>`);
-    $("#addedToWantToPlay").prop("onclick", null).off("click");
+    $("#addedReview").prop("onclick", null).off("click");
     $("#addReview").on("click", () => addReviewPrompt(gameID));
   }
 }
@@ -398,7 +398,7 @@ function addReviewPrompt(gameID) {
         gameId: gameID,
       };
       
-      addReview(reviewObj)
+      addReview(reviewObj, gameID)
     },
   });
 
@@ -505,7 +505,7 @@ function starSelector() {
   });
 }
 
-async function addReview(reviewObj) {
+async function addReview(reviewObj, gameID) {
   try {
     let user = auth.currentUser;
     let userDoc = await getDoc(doc(db, "GameDB", user.uid));
