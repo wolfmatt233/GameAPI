@@ -229,9 +229,15 @@ function checkReviewBtn(check, gameID) {
     $("#addReview")
       .attr("id", "addedReview")
       .attr("class", "addedBtn-review")
-      .html(`View Your Review <i class="fa-solid fa-check"></i>`);
-    $("#addedToWantToPlay").prop("onclick", null).off("click");
-    $("#addedReview").on("click", () => viewReview(gameID));
+      .html(`Edit Your Review <i class="fa-solid fa-check"></i>`);
+    $("#addedReview").prop("onclick", null).off("click");
+    $("#addedReview").on("click", () => editReviewPrompt(gameID));
+    if ($("#deleteReview").length == 0) {
+      $(".detail-left").append(
+        `<button id="deleteReview">Delete Review <i class="fa-solid fa-trash"></i></button>`
+      );
+    }
+    $("#deleteReview").on("click", () => deleteReviewPrompt(gameID));
   } else {
     //game NOT reviewed
     $("#addedReview")
@@ -240,6 +246,7 @@ function checkReviewBtn(check, gameID) {
       .html(`Add Review <i class="fa-solid fa-plus"></i>`);
     $("#addedReview").prop("onclick", null).off("click");
     $("#addReview").on("click", () => addReviewPrompt(gameID));
+    $("#deleteReview").remove();
   }
 }
 
@@ -352,18 +359,52 @@ async function removeFromWantToPlay(gameID) {
   }
 }
 
+//----Operations for Review Add, Edit, Delete----\\
+
 function addReviewPrompt(gameID) {
+  addEditPrompt("add", "New Review", "Add review", {}, gameID);
+}
+
+async function editReviewPrompt(gameID) {
+  let reviewObj;
+
+  try {
+    let user = auth.currentUser;
+    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let reviewArray = userDoc.data().reviews;
+
+    reviewArray.forEach((review) => {
+      if (review.gameId == gameID) {
+        reviewObj = review;
+      }
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+
+  addEditPrompt("edit", "Edit Review", "Update review", reviewObj, gameID);
+}
+
+function addEditPrompt(type, title, buttonText, reviewObj, gameID) {
+  let reviewText;
+
+  if (type == "add") {
+    reviewText = "";
+  } else if (type == "edit") {
+    reviewText = reviewObj.reviewText;
+  }
+
   Swal.fire({
-    title: "New Review",
+    title: `${title}`,
     background: "#555a68",
     color: `#e9e3e3`,
-    confirmButtonText: "Add review",
+    confirmButtonText: `${buttonText}`,
     confirmButtonColor: "#04724D",
     showCancelButton: true,
     cancelButtonText: "Cancel",
     cancelButtonColor: "#e15554",
     html: `
-          <textarea id="reviewText" class="swal2-textarea" placeholder="Review here..."></textarea>
+          <textarea id="reviewText" class="swal2-textarea" placeholder="Review here...">${reviewText}</textarea>
           <div id="starScore2">
             <div class="star" id="st1">
               <div id="score_1" class="st-l"></div>
@@ -389,30 +430,44 @@ function addReviewPrompt(gameID) {
         `,
     preConfirm: () => {
       let reviewText = $("#reviewText").val();
-      let starScore  = $(".checked").attr("id").split("_")[1];
+      let starScore = $(".checked").attr("id").split("_")[1];
+      let reviewObj;
 
-      let reviewObj = {
-        reviewText: reviewText,
-        starScore: parseInt(starScore),
-        likes: 0,
-        gameId: gameID,
-      };
-      
-      addReview(reviewObj, gameID)
+      if (type == "add") {
+        reviewObj = {
+          reviewText: reviewText,
+          starScore: parseInt(starScore),
+          likes: 0,
+          gameId: gameID,
+        };
+
+        addReview(reviewObj, gameID);
+      } else if (type == "edit") {
+        reviewObj = {
+          reviewText: reviewText,
+          starScore: parseInt(starScore),
+        };
+
+        editReview(reviewObj, gameID);
+      }
     },
   });
 
-  starSelector();
+  if (type == "edit") {
+    starSelector(reviewObj.starScore);
+  } else {
+    starSelector();
+  }
 }
 
-function starSelector() {
+function starSelector(starScore) {
   // 0.5 stars
   $("#st1 .st-l").on("click", () => {
     $(".st-l").attr("class", "st-l");
     $(".st-r").attr("class", "st-r");
     $("#st1 .st-l").addClass("checked");
     $(".star > *").css("background-color", "#fff");
-    $("#st1 .st-l").css("background-color", "#2e7f2e")
+    $("#st1 .st-l").css("background-color", "#2e7f2e");
   });
 
   // 1 star
@@ -468,7 +523,10 @@ function starSelector() {
     $(".st-r").attr("class", "st-r");
     $("#st4 .st-l").addClass("checked");
     $(".star > *").css("background-color", "#fff");
-    $("#st1 > *, #st2 > *, #st3 > *, #st4 .st-l").css("background-color", "#2e7f2e");
+    $("#st1 > *, #st2 > *, #st3 > *, #st4 .st-l").css(
+      "background-color",
+      "#2e7f2e"
+    );
   });
 
   // 4 stars
@@ -477,7 +535,10 @@ function starSelector() {
     $(".st-r").attr("class", "st-r");
     $("#st4 .st-r").addClass("checked");
     $(".star > *").css("background-color", "#fff");
-    $("#st1 > *, #st2 > *, #st3 > *, #st4 > *").css("background-color", "#2e7f2e");
+    $("#st1 > *, #st2 > *, #st3 > *, #st4 > *").css(
+      "background-color",
+      "#2e7f2e"
+    );
   });
 
   // 4.5 stars
@@ -503,6 +564,10 @@ function starSelector() {
       "#2e7f2e"
     );
   });
+
+  if (starScore != null) {
+    $(`#score_${starScore}`).trigger("click");
+  }
 }
 
 async function addReview(reviewObj, gameID) {
@@ -518,5 +583,63 @@ async function addReview(reviewObj, gameID) {
     }).then(() => checkReviewBtn(1, gameID));
   } catch (error) {
     console.log();
+  }
+}
+
+async function editReview(updatedObj, gameID) {
+  try {
+    let user = auth.currentUser;
+    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let reviewArray = userDoc.data().reviews;
+    console.log(reviewArray);
+
+    reviewArray.forEach((review) => {
+      if (review.gameId == gameID) {
+        review.reviewText = updatedObj.reviewText;
+        review.starScore = updatedObj.starScore;
+      }
+    });
+
+    await updateDoc(doc(db, "GameDB", user.uid), {
+      reviews: reviewArray,
+    }).then(() => checkReviewBtn(1, gameID));
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+function deleteReviewPrompt(gameID) {
+  Swal.fire({
+    title: "Delete your review?",
+    background: "#555a68",
+    color: `#e9e3e3`,
+    showCancelButton: true,
+    confirmButtonText: "Delete",
+    confirmButtonColor: "#e15554",
+    showCancelButton: true,
+    cancelButtonText: "Cancel",
+    cancelButtonColor: "#04724D",
+    preConfirm: () => {
+      deleteReview(gameID);
+    },
+  });
+}
+
+async function deleteReview(gameID) {
+  try {
+    let userDoc = await getDoc(doc(db, "GameDB", auth.currentUser.uid));
+    let reviewArray = userDoc.data().reviews;
+
+    reviewArray.forEach((review, idx) => {
+      if (review.gameId == gameID) {
+        reviewArray.splice(idx, 1);
+      }
+    });
+
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
+      reviews: reviewArray,
+    }).then(() => checkReviewBtn(0, gameID));
+  } catch (error) {
+    console.log(error.message);
   }
 }

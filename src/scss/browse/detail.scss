@@ -92,6 +92,7 @@
 
         &:hover {
           background-color: #2e7f2e;
+          filter: brightness(85%);
         }
       }
 
@@ -107,8 +108,12 @@
         background-color: rgb(46, 127, 46);
 
         &:hover {
-          filter: brightness(90%);
+          background-color: #e79933;
         }
+      }
+
+      #deleteReview {
+        background-color: $red;
       }
     }
 

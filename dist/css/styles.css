@@ -480,6 +480,7 @@ footer {
 }
 #detailView .detail-content .detail-left button:hover {
   background-color: #2e7f2e;
+  filter: brightness(85%);
 }
 #detailView .detail-content .detail-left .addedBtn {
   background-color: rgb(46, 127, 46);
@@ -491,7 +492,10 @@ footer {
   background-color: rgb(46, 127, 46);
 }
 #detailView .detail-content .detail-left .addedBtn-review:hover {
-  filter: brightness(90%);
+  background-color: #e79933;
+}
+#detailView .detail-content .detail-left #deleteReview {
+  background-color: #e15554;
 }
 #detailView .detail-content .detail-right {
   width: 80%;
