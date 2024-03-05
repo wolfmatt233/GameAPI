@@ -129,7 +129,7 @@ export async function showReviews(gameID) {
           }
 
           if (auth.currentUser === null) {
-            $(".reviewItem button").attr("class", null).css("cursor", "auto")
+            $(".reviewItem button").attr("class", null).css("cursor", "auto");
           } else {
             review.likes.forEach((username) => {
               if (auth.currentUser.displayName == username) {
@@ -146,11 +146,13 @@ export async function showReviews(gameID) {
 
     function calcAvg(score) {
       score /= 2;
-      avgScore += score; 
+      avgScore += score;
     }
 
-    avgScore /= idx;
-    avgScore = Math.round(avgScore * 100) / 100
+    if (avgScore > 0) {
+      avgScore /= idx;
+      avgScore = Math.round(avgScore * 100) / 100;
+    }
 
     $("#reviewAvg").html(`Average Rating: ${avgScore} Stars`);
   } catch (error) {
