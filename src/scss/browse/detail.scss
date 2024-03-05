@@ -1,6 +1,6 @@
 #detailView {
   min-height: $appHeight;
-  
+
   .banner-container {
     position: relative;
 
@@ -170,6 +170,85 @@
           margin-left: 10px;
           text-indent: 20px;
           line-height: 30px;
+        }
+      }
+    }
+  }
+
+  .reviews-container {
+    padding: 20px 10%;
+    text-align: center;
+    background-image: linear-gradient(to bottom left, black, transparent);
+
+    h1 {
+      font-weight: 100;
+      margin-bottom: 5px;
+    }
+
+    #reviewAvg {
+      color: #bbb9b9;
+      margin-bottom: 20px;
+    }
+
+    #reviewGallery {
+      text-align: start;
+
+      .reviewItem {
+        background-color: $tertiaryColor;
+        box-shadow: 0 2px 10px 0px #2f3139;
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin-bottom: 20px;
+
+        .review-top {
+          display: flex;
+          align-items: center;
+
+          h3 {
+            font-weight: 100;
+
+            a {
+              text-decoration: none;
+            }
+
+            span {
+              color: #acaaaa;
+              font-size: 15px;
+            }
+          }
+
+          #review-score {
+            font-size: 18px;
+            color: #ffd700;
+            margin-left: 5px;
+          }
+        }
+
+        .reviewText {
+          border-radius: 10px;
+          padding: 10px;
+        }
+
+        button {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+
+          &:hover i {
+            color: #ff0000;
+          }
+
+          &:hover {
+            color: #acaaaa;
+          }
+        }
+
+        .liked i {
+          color: red;
+        }
+
+        .toLike i {
+          color: #fff;
         }
       }
     }
