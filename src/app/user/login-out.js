@@ -108,6 +108,7 @@ async function signUp(auth, email, username, password) {
         topfive: [],
         toplay: [],
         uid: user.uid,
+        username: username,
       };
 
       updateProfile(user, {
