@@ -289,7 +289,7 @@ async function removeFromWantToPlay(gameID) {
 //----Operations for Review Add, Edit, Delete----\\
 
 function addReviewPrompt(gameID) {
-  let reviewObj = {}
+  let reviewObj = {};
   addEditPrompt("add", "New Review", "Add review", reviewObj, gameID);
 }
 
@@ -333,38 +333,38 @@ function addEditPrompt(type, title, buttonText, reviewObj, gameID) {
     cancelButtonColor: "#e15554",
     html: `
             <textarea id="reviewText" class="swal2-textarea" placeholder="Review here...">${reviewText}</textarea>
-            <div id="starScore2">
+            <div id="starScore">
               <div class="star" id="st1">
-                <div id="score_1" class="st-l"></div>
-                <div id="score_2" class="st-r"></div>
+                <div id="score_0.5" class="st-l"></div>
+                <div id="score_1" class="st-r"></div>
               </div>
               <div class="star" id="st2">
-                <div id="score_3" class="st-l"></div>
-                <div id="score_4" class="st-r"></div>
+                <div id="score_1.5" class="st-l"></div>
+                <div id="score_2" class="st-r"></div>
               </div>
               <div class="star" id="st3">
-                <div id="score_5" class="st-l"></div>
-                <div id="score_6" class="st-r"></div>
+                <div id="score_2.5" class="st-l"></div>
+                <div id="score_3" class="st-r"></div>
               </div>
               <div class="star" id="st4">
-                <div id="score_7" class="st-l"></div>
-                <div id="score_8" class="st-r"></div>
+                <div id="score_3.5" class="st-l"></div>
+                <div id="score_4" class="st-r"></div>
               </div>
               <div class="star" id="st5">
-                <div id="score_9" class="st-l"></div>
-                <div id="score_10" class="st-r"></div>
+                <div id="score_4.5" class="st-l"></div>
+                <div id="score_5" class="st-r"></div>
               </div>
             </div>
           `,
     preConfirm: () => {
       let reviewText = $("#reviewText").val();
       let starScore = $(".checked").attr("id").split("_")[1];
-      let reviewObj;
+      let reviewObj = {};
 
       if (type == "add") {
         reviewObj = {
           reviewText: reviewText,
-          starScore: parseInt(starScore),
+          starScore: starScore.toString(),
           likes: [],
           gameId: gameID,
           user: auth.currentUser.displayName,
@@ -374,7 +374,7 @@ function addEditPrompt(type, title, buttonText, reviewObj, gameID) {
       } else if (type == "edit") {
         reviewObj = {
           reviewText: reviewText,
-          starScore: parseInt(starScore),
+          starScore: starScore.toString(),
         };
 
         editReview(reviewObj, gameID);
@@ -383,7 +383,7 @@ function addEditPrompt(type, title, buttonText, reviewObj, gameID) {
   });
 
   if (type == "edit") {
-    starSelector(reviewObj.starScore);
+    starSelector(parseFloat(reviewObj.starScore));
   } else {
     starSelector();
   }
@@ -391,7 +391,7 @@ function addEditPrompt(type, title, buttonText, reviewObj, gameID) {
 
 function starSelector(starScore) {
   // 0.5 stars
-  $("#st1 .st-l").on("click", () => {
+  $("#score_0.5").on("click", () => {
     $(".st-l").attr("class", "st-l");
     $(".st-r").attr("class", "st-r");
     $("#st1 .st-l").addClass("checked");
@@ -493,7 +493,9 @@ function starSelector(starScore) {
   });
 
   if (starScore != null) {
-    $(`#score_${starScore}`).trigger("click");
+    starScore = starScore.toString();
+    starScore = starScore.split(".")
+    $(`#score_${starScore[0]}\\.${starScore[1]}`).trigger("click");
   }
 }
 

@@ -255,15 +255,14 @@
   }
 }
 
-#reviewText,
-#starScore {
+#reviewText{
   min-width: 80%;
   max-width: 80%;
   border: 1px solid #fff;
   border-radius: 5px;
 }
 
-#starScore2 {
+#starScore {
   display: flex;
   align-items: center;
   justify-content: space-evenly;

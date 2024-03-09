@@ -605,22 +605,21 @@ footer {
   color: #fff;
 }
 
-#reviewText,
-#starScore {
+#reviewText {
   min-width: 80%;
   max-width: 80%;
   border: 1px solid #fff;
   border-radius: 5px;
 }
 
-#starScore2 {
+#starScore {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   width: 50%;
   margin: 0 auto;
 }
-#starScore2 .star {
+#starScore .star {
   height: 40px;
   width: 40px;
   background-color: #fff;
@@ -628,12 +627,12 @@ footer {
   cursor: pointer;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
-#starScore2 .star .st-l {
+#starScore .star .st-l {
   width: 50%;
   height: 40px;
   background-color: "#000";
 }
-#starScore2 .star .st-r {
+#starScore .star .st-r {
   width: 50%;
   height: 40px;
   background-color: transparent;

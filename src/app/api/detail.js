@@ -100,7 +100,7 @@ export async function showReviews(gameID) {
         //their review for the game on page
         if (review.gameId == gameID) {
           calcAvg(review.starScore, idx);
-          let score = review.starScore / 2;
+          let score = review.starScore;
           let stars = ("" + score).split(".")[0];
           let starHalf = ("" + score).split(".")[1];
           let likeCheck = 0;
@@ -145,14 +145,15 @@ export async function showReviews(gameID) {
     });
 
     function calcAvg(score) {
-      score /= 2;
-      avgScore += score;
+      avgScore += parseFloat(score);
     }
 
     if (avgScore > 0) {
       avgScore /= idx;
       avgScore = Math.round(avgScore * 100) / 100;
     }
+
+    avgScore.toString();
 
     $("#reviewAvg").html(`Average Rating: ${avgScore} Stars`);
   } catch (error) {
