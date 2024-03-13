@@ -10,10 +10,11 @@ nav {
   .nav-link {
     text-decoration: none;
     padding: 4px 7px;
-  }
+    border-bottom: 1px solid transparent;
 
-  .nav-link:hover {
-    border-bottom: 1px solid $white;
+    &:hover {
+      border-bottom: 1px solid $white;
+    }
   }
 
   .nav-title {
@@ -22,6 +23,7 @@ nav {
     font-size: 20px;
     border-radius: 4px;
     padding: 5px 10px;
+    white-space: nowrap;
 
     i {
       align-self: center;
@@ -100,6 +102,47 @@ nav {
     #nav-user {
       i {
         margin-left: 7px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 975px) {
+  nav {
+    .nav-title {
+      font-size: 15px;
+    }
+
+    .nav-search {
+      width: 30%;
+    }
+    .nav-container {
+      a,
+      button {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 695px) {
+  nav {
+    flex-direction: column;
+
+    .nav-search {
+      width: 90%;
+    }
+
+    .nav-container {
+      padding-bottom: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      width: 90%;
+
+      a,
+      button {
+        white-space: nowrap;
       }
     }
   }

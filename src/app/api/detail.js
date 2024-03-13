@@ -1,6 +1,7 @@
 import { auth, db, apiKey } from "../credentials";
 import { collection, getDocs, query, updateDoc } from "firebase/firestore";
 import { addUserButtons } from "./buttons";
+import { FeedbackMessage } from "../model";
 
 //----SHOW DETAIL PAGE----\\
 
@@ -108,13 +109,13 @@ export async function showReviews(gameID) {
           likeCount == undefined ? (likeCheck = 0) : likeCount;
 
           $("#reviewGallery").append(`
-            <div class="reviewItem" id="review${idx}">
+            <div class="review-item" id="review${idx}">
               <div class="review-top">
                 <h3><span>Review by </span><a href="#user?user=${review.user}">${review.user}</a></h3>
                 <span id="review-score"></span>
               </div>
-              <p class="reviewText">${review.reviewText}</p>
-              <button class="toLike"><i class="fa-solid fa-heart"></i> ${likeCount} Likes</button>
+              <p class="review-text">${review.reviewText}</p>
+              <button class="to-like"><i class="fa-solid fa-heart"></i> ${likeCount} Likes</button>
             </div>
           `);
 
@@ -157,7 +158,7 @@ export async function showReviews(gameID) {
 
     $("#reviewAvg").html(`Average Rating: ${avgScore} Stars`);
   } catch (error) {
-    console.log(error.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -166,7 +167,7 @@ export async function showReviews(gameID) {
 function checkLikeBtn(reviewIndex, username, gameID, check, likeCount) {
   //like is added
   if (check == 1) {
-    $(`#review${reviewIndex} .toLike`).attr("class", "liked");
+    $(`#review${reviewIndex} .to-like`).attr("class", "liked");
     $(`#review${reviewIndex} button`).html(
       `<i class="fa-solid fa-heart"></i> ${likeCount} Likes`
     );
@@ -175,12 +176,12 @@ function checkLikeBtn(reviewIndex, username, gameID, check, likeCount) {
       removeLike(reviewIndex, username, gameID)
     );
   } else {
-    $(`#review${reviewIndex} .liked`).attr("class", "toLike");
+    $(`#review${reviewIndex} .liked`).attr("class", "to-like");
     $(`#review${reviewIndex} button`).html(
       `<i class="fa-solid fa-heart"></i> ${likeCount} Likes`
     );
-    $(`#review${reviewIndex} .toLike`).prop("onclick", null).off("click");
-    $(`#review${reviewIndex} .toLike`).on("click", () =>
+    $(`#review${reviewIndex} .to-like`).prop("onclick", null).off("click");
+    $(`#review${reviewIndex} .to-like`).on("click", () =>
       addLike(reviewIndex, username, gameID)
     );
   }
@@ -228,7 +229,7 @@ async function addLike(reviewIndex, username, gameID) {
       }
     });
   } catch (error) {
-    console.log(error.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -278,7 +279,7 @@ async function removeLike(reviewIndex, username, gameID) {
       }
     });
   } catch (error) {
-    console.log(error.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -296,6 +297,6 @@ async function updateLikes(
       checkLikeBtn(reviewIndex, username, gameID, check, likeCount);
     });
   } catch (error) {
-    console.log(error.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }

@@ -2,11 +2,12 @@ import { auth, db } from "../credentials";
 import Swal from "sweetalert2";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { showReviews } from "./detail";
+import { FeedbackMessage } from "../model";
 
 //----BUTTONS & CHECKS----\\
 
 export async function addUserButtons(gameID) {
-  $(".detail-left").append(`
+  $(".detail-buttons").append(`
       <button id="addToFavorites">Add to "Favorites" <i class="fa-solid fa-plus"></i></button>
       <button id="addToPlayed">Add to "Played" <i class="fa-solid fa-plus"></i></button>
       <button id="addToWantToPlay">Add to "To Play" <i class="fa-solid fa-plus"></i></button>
@@ -53,8 +54,8 @@ export async function addUserButtons(gameID) {
     checkPlayedBtn(playCheck, gameID);
     checkToPlayBtn(wantCheck, gameID);
     checkReviewBtn(reviewCheck, gameID);
-  } catch (e) {
-    console.log(e.message);
+  } catch (error) {
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -160,7 +161,7 @@ function checkReviewBtn(check, gameID) {
     $("#addedReview").prop("onclick", null).off("click");
     $("#addedReview").on("click", () => editReviewPrompt(gameID));
     if ($("#deleteReview").length == 0) {
-      $(".detail-left").append(
+      $(".detail-buttons").append(
         `<button id="deleteReview">Delete Review <i class="fa-solid fa-trash"></i></button>`
       );
     }
@@ -188,10 +189,13 @@ async function addToFavorites(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       favorites: favArray,
-    }).then(() => checkFavBtn(1, gameID));
+    }).then(() => {
+      FeedbackMessage("success", "Success", "Added to Favorites!");
+      checkFavBtn(1, gameID);
+    });
   } catch (e) {
     //toast message here
-    console.log(e.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -208,10 +212,13 @@ async function removeFromFavorites(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       favorites: favArray,
-    }).then(() => checkFavBtn(0, gameID));
-  } catch (e) {
+    }).then(() => {
+      FeedbackMessage("success", "Success", "Removed from Favorites.");
+      checkFavBtn(0, gameID);
+    });
+  } catch (error) {
     //toast message here
-    console.log(e.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -224,10 +231,12 @@ async function addToPlayed(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       played: playedArray,
-    }).then(() => checkPlayedBtn(1, gameID));
-  } catch (e) {
-    //toast message here
-    console.log(e.message);
+    }).then(() => {
+      FeedbackMessage("success", "Success", "Added to Played");
+      checkPlayedBtn(1, gameID);
+    });
+  } catch (error) {
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -244,9 +253,12 @@ async function removeFromPlayed(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       played: playedArray,
-    }).then(() => checkPlayedBtn(0, gameID));
-  } catch (e) {
-    console.log(e.message);
+    }).then(() => {
+      FeedbackMessage("success", "Success", "Removed from Played");
+      checkPlayedBtn(0, gameID);
+    });
+  } catch (error) {
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -259,10 +271,12 @@ async function addToWantToPlay(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       toplay: wantArray,
-    }).then(() => checkToPlayBtn(1, gameID));
-  } catch (e) {
-    //toast message here
-    console.log(e.message);
+    }).then(() => {
+      FeedbackMessage("success", "Success", 'Added to "To Play"');
+      checkToPlayBtn(1, gameID);
+    });
+  } catch (error) {
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -279,10 +293,12 @@ async function removeFromWantToPlay(gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       toplay: wantArray,
-    }).then(() => checkToPlayBtn(0, gameID));
-  } catch (e) {
-    //toast message here
-    console.log(e.message);
+    }).then(() => {
+      FeedbackMessage("success", "Success", 'Removed from "To Play"');
+      checkToPlayBtn(0, gameID);
+    });
+  } catch (error) {
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -494,7 +510,7 @@ function starSelector(starScore) {
 
   if (starScore != null) {
     starScore = starScore.toString();
-    starScore = starScore.split(".")
+    starScore = starScore.split(".");
     $(`#score_${starScore[0]}\\.${starScore[1]}`).trigger("click");
   }
 }
@@ -509,9 +525,12 @@ async function addReview(reviewObj, gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       reviews: reviewArray,
-    }).then(() => checkReviewBtn(1, gameID));
+    }).then(() => {
+      FeedbackMessage("success", "Success", "Review added!");
+      checkReviewBtn(1, gameID);
+    });
   } catch (error) {
-    console.log();
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -530,9 +549,12 @@ async function editReview(updatedObj, gameID) {
 
     await updateDoc(doc(db, "GameDB", user.uid), {
       reviews: reviewArray,
-    }).then(() => checkReviewBtn(1, gameID));
+    }).then(() => {
+      FeedbackMessage("success", "Success", "Review updated!");
+      checkReviewBtn(1, gameID);
+    });
   } catch (error) {
-    console.log(error.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -566,8 +588,11 @@ async function deleteReview(gameID) {
 
     await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       reviews: reviewArray,
-    }).then(() => checkReviewBtn(0, gameID));
+    }).then(() => {
+      FeedbackMessage("success", "Success", "Review deleted.");
+      checkReviewBtn(0, gameID);
+    });
   } catch (error) {
-    console.log(error.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }

@@ -1,13 +1,12 @@
-import {
-  updateProfile,
-  deleteUser,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  updatePassword,
-} from "firebase/auth";
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import Swal from "sweetalert2";
+/*
+  author: Matthew Wolf
+  file: display-user-info.js
+  purpose: holds functions that display user info like favorites, bio/top-five, reviews, etc.
+*/
+
+import { doc, getDoc } from "firebase/firestore";
 import { auth, db, apiKey } from "../credentials";
+import { editInfoListener } from "./user-editing";
 
 export function loggedInButtons(user) {
   if (user !== null) {
@@ -17,7 +16,7 @@ export function loggedInButtons(user) {
       <span>${user.displayName}</span>
       <i class="fa-solid fa-user"></i>
     </a>
-    <button id="logout-btn">
+    <button id="logout-btn" class="nav-link">
       Log Out
       <i class="fa-solid fa-arrow-right-from-bracket"></i>
     </button>
@@ -25,93 +24,14 @@ export function loggedInButtons(user) {
   } else {
     $(".nav-container").empty().append(`
       <a href="#browse?page=1" class="nav-link">Browse</a>
-      <button id="login-btn">Log In</button>
-      <button class="signup-btn">Create Account</button>
+      <button id="login-btn" class="nav-link">Log In</button>
+      <button class="signup-btn nav-link">Create Account</button>
     `);
   }
 }
 
-function editInfoListener(user, userDoc) {
-  $("#edit-info-btn").on("click", () => {
-    Swal.fire({
-      title: "Edit Your Profile",
-      background: "#555a68",
-      color: `#e9e3e3`,
-      confirmButtonText: "Confirm",
-      confirmButtonColor: "#04724D",
-      html: `
-          <input type="text" id="uName" class="swal2-input" placeholder="Username" value="${user.displayName}">
-          <input type="text" id="uBio" class="swal2-input" placeholder="Bio" value="${userDoc.bio}" max="100">
-        `,
-      preConfirm: () => {
-        let uName = $("#uName").val();
-        let uBio = $("#uBio").val();
-        if (!uName || !uBio) {
-          Swal.showValidationMessage(`Ensure fields are completed`);
-        } else {
-          updateInfo(uName, uBio, db, user);
-        }
-      },
-    });
-  });
-
-  $("#user-img-container").on("click", () => {
-    let photoUrl = user.photoURL;
-    if (photoUrl == null) {
-      photoUrl = "";
-    }
-
-    Swal.fire({
-      title: "Edit Your Profile Picture",
-      background: "#555a68",
-      color: `#e9e3e3`,
-      confirmButtonText: "Confirm",
-      confirmButtonColor: "#04724D",
-      html: `
-          <input type="text" id="photoURL" class="swal2-input" placeholder="Photo URL" value="${photoUrl}">
-        `,
-      preConfirm: () => {
-        photoUrl = $("#photoURL").val();
-        updatePicture(photoUrl, user);
-      },
-    });
-  });
-}
-
-async function updateInfo(uName, uBio, user) {
-  try {
-    await updateDoc(doc(db, "GameDB", user.uid), {
-      bio: uBio,
-    }).then(() => {
-      updateProfile(user, {
-        displayName: uName,
-      }).then(() => {
-        $("#nav-user span, #user-info-name").html(`${uName}`);
-        $("#user-info-bio").html(`${uBio}`);
-      });
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
-async function updatePicture(url, user) {
-  try {
-    updateProfile(user, {
-      photoURL: url,
-    }).then(() => {
-      if (url == "") {
-        $("#user-img").attr("src", "./assets/user.png");
-      } else {
-        $("#user-img").attr("src", url);
-      }
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
-export async function showUserInfo(user) {
+export async function showUserInfo() {
+  let user = auth.currentUser;
   try {
     let userDoc = await getDoc(doc(db, "GameDB", user.uid));
     userDoc = userDoc.data();
@@ -146,12 +66,12 @@ export async function showUserInfo(user) {
     });
 
     //if top five is not full, replace last few on page with empty containers
-    if (userDoc.topfive.length - 5 !== 0) {
-      let count = userDoc.topfive.length - 5;
+    if (userDoc.topfive.length - 5 < 0) {
+      let count = 5 - userDoc.topfive.length;
       for (let i = 0; i < count; i++) {
         $("#top-five .grid-row").append(`
           <a class="user-grid-item">
-            <img src="./assets/plus.png" alt="" />
+            <img src="./assets/plus.png" alt="" id="addTopFiveImg" />
             <div class="item-details">
               <div>
                 <p class="details-title"></p>
@@ -164,11 +84,12 @@ export async function showUserInfo(user) {
     }
     editInfoListener(user, userDoc, db);
   } catch (error) {
-    console.log(error.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
-export async function showUserItems(user, title) {
+export async function showUserItems(title) {
+  let user = auth.currentUser;
   try {
     let accessArray = [];
     let userDoc = await getDoc(doc(db, "GameDB", user.uid));
@@ -180,7 +101,7 @@ export async function showUserItems(user, title) {
       accessArray = userDoc.favorites;
     } else if (title == "To Play") {
       accessArray = userDoc.toplay;
-    } else if (title == "Played") {
+    } else if (title == "Played Games") {
       accessArray = userDoc.played;
     }
     accessArray.forEach((gameID) => {
@@ -202,114 +123,18 @@ export async function showUserItems(user, title) {
       });
     });
   } catch (error) {
-    console.log(error.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
-export function deletePrompt(user) {
-  Swal.fire({
-    title: "Delete Your Account?",
-    background: "#555a68",
-    color: `#e9e3e3`,
-    showCancelButton: true,
-    confirmButtonText: "Delete",
-    confirmButtonColor: "#e15554",
-    cancelButtonText: "Cancel",
-    cancelButtonColor: "#04724D",
-    preConfirm: () => {
-      Swal.fire({
-        title: "Sign In Again To Confirm",
-        background: "#555a68",
-        color: `#e9e3e3`,
-        confirmButtonText: "Delete account",
-        confirmButtonColor: "#e15554",
-        showCancelButton: true,
-        cancelButtonText: "Cancel",
-        cancelButtonColor: "#04724D",
-        html: `
-            <input type="text" id="emailLogin" class="swal2-input" placeholder="Email">
-            <input type="password" id="passwordLogin" class="swal2-input" placeholder="Password">
-          `,
-        preConfirm: () => {
-          let email = $("#emailLogin").val();
-          let password = $("#passwordLogin").val();
-
-          if (!email || !password) {
-            Swal.showValidationMessage(`Ensure fields are completed`);
-          } else {
-            let credential = EmailAuthProvider.credential(email, password);
-            let uid = user.uid;
-
-            reauthenticateWithCredential(user, credential).then(() => {
-              deleteUser(user).then(async () => {
-                console.log("success user"); //toast message here
-                try {
-                  await deleteDoc(doc(db, "GameDB", uid)).then(() => {
-                    console.log("success db");
-                  });
-                } catch (error) {
-                  console.log(error.message);
-                }
-                location.hash = "home";
-              });
-            });
-          }
-        },
-      });
-    },
-  });
-}
-
-export function changePasswordPrompt(user) {
-  Swal.fire({
-    title: "Change Your Password",
-    background: "#555a68",
-    color: `#e9e3e3`,
-    showCancelButton: true,
-    confirmButtonText: "Confirm",
-    confirmButtonColor: "#04724D",
-    cancelButtonText: "Cancel",
-    cancelButtonColor: "#e15554",
-    html: `
-        <input type="password" id="newPassword" class="swal2-input" placeholder="Password">
-      `,
-    preConfirm: () => {
-      let newPassword = $("#newPassword").val();
-
-      if (!newPassword) {
-        Swal.showValidationMessage(`Ensure fields are completed`);
-      } else {
-        Swal.fire({
-          title: "Sign In With Old Password",
-          background: "#555a68",
-          color: `#e9e3e3`,
-          confirmButtonText: "Delete account",
-          confirmButtonColor: "#e15554",
-          showCancelButton: true,
-          cancelButtonText: "Cancel",
-          cancelButtonColor: "#04724D",
-          html: `
-              <input type="text" id="emailLogin" class="swal2-input" placeholder="Email">
-              <input type="password" id="passwordLogin" class="swal2-input" placeholder="Password">
-            `,
-          preConfirm: () => {
-            let email = $("#emailLogin").val();
-            let password = $("#passwordLogin").val();
-
-            if (!email || !password) {
-              Swal.showValidationMessage(`Ensure fields are completed`);
-            } else {
-              let credential = EmailAuthProvider.credential(email, password);
-
-              reauthenticateWithCredential(user, credential).then(() => {
-                updatePassword(user, newPassword).then(() => {
-                  console.log("success user password"); //toast message here
-                });
-              });
-            }
-          },
-        });
-      }
-    },
-  });
+export function handleUserBurger() {
+  if ($("#sidebar").hasClass("checked")) {
+    $("#sidebar").removeClass("checked");
+    $("#sidebar").css("width", "25%");
+    $(".userNavBtn").css("visibility", "visible");
+  } else {
+    $("#sidebar").addClass("checked");
+    $("#sidebar").css("width", "40px");
+    $(".userNavBtn").css("visibility", "hidden");
+  }
 }

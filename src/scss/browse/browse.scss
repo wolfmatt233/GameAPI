@@ -89,3 +89,19 @@
     }
   }
 }
+
+@media screen and (max-width: 960px) {
+  #browse-grid {
+    .grid-item {
+      .item-details {
+        .details-title {
+          font-size: 2.6vw;
+        }
+
+        .details-year {
+          font-size: 2vw;
+        }
+      }
+    }
+  }
+}

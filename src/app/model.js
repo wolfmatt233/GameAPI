@@ -11,11 +11,34 @@ import {
   loggedInButtons,
   showUserInfo,
   showUserItems,
-  deletePrompt,
-  changePasswordPrompt,
+  handleUserBurger,
 } from "./user/display-user-info";
+import { deletePrompt, changePasswordPrompt } from "./user/user-editing";
 import { apiList, searchApi } from "./api/browse";
 import { viewDetails } from "./api/detail";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+  toast: true,
+  color: "#fff",
+  background: "#555a68",
+  position: "bottom-end",
+  showConfirmButton: false,
+  timer: 5000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  },
+});
+
+export function FeedbackMessage(icon, title, message) {
+  Toast.fire({
+    icon: icon,
+    title: title,
+    text: message,
+  });
+}
 
 //----SIGN IN/OUT UPDATES----\\
 
@@ -42,7 +65,7 @@ function homePage() {
       .off("click")
       .html(`Welcome ${auth.currentUser.displayName}!`);
   } else {
-    $(".header-container button").html("Create an account today!")
+    $(".header-container button").html("Create an account today!");
     signUpModal();
   }
 }
@@ -101,6 +124,7 @@ function userListener() {
   $("#user-reviews").on("click", () => routeUser("reviews"));
   $("#user-delete").on("click", () => routeUser("delete"));
   $("#user-password").on("click", () => routeUser("password"));
+  $("#userBurger").on("click", () => handleUserBurger());
 }
 
 function routeUser(page) {
@@ -114,16 +138,16 @@ function routeUser(page) {
 
   switch (page) {
     case "info":
-      getUserPage(page, showUserInfo(auth.currentUser));
+      getUserPage(page, showUserInfo());
       break;
     case "favorites":
-      getUserPage("items", showUserItems(auth.currentUser, "Favorites"));
+      getUserPage("items", showUserItems("Favorites"));
       break;
     case "played":
-      getUserPage("items", showUserItems(auth.currentUser, "Played Games"));
+      getUserPage("items", showUserItems("Played Games"));
       break;
     case "toplay":
-      getUserPage("items", showUserItems(auth.currentUser, "To Play"));
+      getUserPage("items", showUserItems("To Play"));
       break;
     case "lists":
       $("#user-content").html("Your Lists");
@@ -132,10 +156,10 @@ function routeUser(page) {
       $("#user-content").html("Your Reviews");
       break;
     case "delete":
-      deletePrompt(auth.currentUser);
+      deletePrompt();
       break;
     case "password":
-      changePasswordPrompt(auth.currentUser);
+      changePasswordPrompt();
       break;
   }
 }

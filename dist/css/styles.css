@@ -34,6 +34,7 @@ nav {
 nav .nav-link {
   text-decoration: none;
   padding: 4px 7px;
+  border-bottom: 1px solid transparent;
 }
 nav .nav-link:hover {
   border-bottom: 1px solid #e9e3e3;
@@ -44,6 +45,7 @@ nav .nav-title {
   font-size: 20px;
   border-radius: 4px;
   padding: 5px 10px;
+  white-space: nowrap;
 }
 nav .nav-title i {
   align-self: center;
@@ -110,6 +112,37 @@ nav .nav-container #nav-user i {
   margin-left: 7px;
 }
 
+@media screen and (max-width: 975px) {
+  nav .nav-title {
+    font-size: 15px;
+  }
+  nav .nav-search {
+    width: 30%;
+  }
+  nav .nav-container a,
+  nav .nav-container button {
+    font-size: 13px;
+  }
+}
+@media screen and (max-width: 695px) {
+  nav {
+    flex-direction: column;
+  }
+  nav .nav-search {
+    width: 90%;
+  }
+  nav .nav-container {
+    padding-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 90%;
+  }
+  nav .nav-container a,
+  nav .nav-container button {
+    white-space: nowrap;
+  }
+}
 footer {
   height: 50px;
   max-width: 1500px;
@@ -120,6 +153,11 @@ footer {
   margin: 0 auto;
 }
 
+@media screen and (max-width: 975px) {
+  footer {
+    font-size: 13px;
+  }
+}
 #home {
   height: calc(100vh - 150px);
   display: flex;
@@ -188,23 +226,23 @@ footer {
 }
 #user #user-content {
   margin: 20px 4% 100px 4%;
-  width: 75%;
+  width: 100%;
 }
-
-#user-content #user-title {
+#user #user-content #user-title {
   margin-bottom: 20px;
+  font-weight: 100;
 }
-#user-content #user-pic-name {
+#user #user-content #user-pic-name {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
   height: 120px;
   position: relative;
 }
-#user-content #user-pic-name #user-img-container {
+#user #user-content #user-pic-name #user-img-container {
   position: relative;
 }
-#user-content #user-pic-name #user-img-container img {
+#user #user-content #user-pic-name #user-img-container img {
   width: 100px;
   height: 100px;
   margin-right: 20px;
@@ -212,7 +250,7 @@ footer {
   background-color: #484c58;
   object-fit: cover;
 }
-#user-content #user-pic-name #user-img-container #user-img-hover {
+#user #user-content #user-pic-name #user-img-container #user-img-hover {
   position: absolute;
   cursor: pointer;
   top: 48%;
@@ -227,22 +265,22 @@ footer {
   width: 100px;
   background: rgba(46, 48, 56, 0.6);
 }
-#user-content #user-pic-name #user-img-container #user-img-hover i {
+#user #user-content #user-pic-name #user-img-container #user-img-hover i {
   margin-left: 5px;
   font-size: 12px;
 }
-#user-content #user-pic-name #user-img-container #user-img-hover:hover {
+#user #user-content #user-pic-name #user-img-container #user-img-hover:hover {
   opacity: 1;
 }
-#user-content #user-pic-name h1 {
+#user #user-content #user-pic-name h1 {
   font-size: 2.5em;
 }
-#user-content #user-pic-name p {
+#user #user-content #user-pic-name p {
   font-size: 0.9em;
   margin-top: 7px;
   color: #d6d2d2;
 }
-#user-content #user-pic-name #edit-info-btn {
+#user #user-content #user-pic-name #edit-info-btn {
   position: absolute;
   top: 0;
   right: 0;
@@ -254,24 +292,24 @@ footer {
   color: #bbb9b9;
   align-items: center;
 }
-#user-content #user-pic-name #edit-info-btn i {
+#user #user-content #user-pic-name #edit-info-btn i {
   margin-left: 5px;
   font-size: 11px;
 }
-#user-content hr {
+#user #user-content hr {
   color: #555a68;
 }
-#user-content #top-five h1 {
+#user #user-content #top-five h1 {
   text-align: center;
   margin: 20px 0;
 }
-#user-content #top-five .grid-row {
+#user #user-content #top-five .grid-row {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   margin-bottom: 35px;
 }
-#user-content #top-five .grid-row .user-grid-item {
+#user #user-content #top-five .grid-row .user-grid-item {
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -281,16 +319,25 @@ footer {
   width: 18%;
   height: 100px;
   position: relative;
+  cursor: pointer;
 }
-#user-content #top-five .grid-row .user-grid-item:hover .item-details {
+#user #user-content #top-five .grid-row .user-grid-item:hover .item-details {
   opacity: 1;
 }
-#user-content #top-five .grid-row .user-grid-item img {
+#user #user-content #top-five .grid-row .user-grid-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-#user-content #top-five .grid-row .user-grid-item .item-details {
+#user #user-content #top-five .grid-row .user-grid-item #addTopFiveImg {
+  height: 40%;
+  width: 20%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#user #user-content #top-five .grid-row .user-grid-item .item-details {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -305,14 +352,19 @@ footer {
   opacity: 0;
   transition: opacity 0.3s ease-in;
 }
-#user-content #top-five .grid-row .user-grid-item .item-details .details-title {
+#user #user-content #top-five .grid-row .user-grid-item .item-details .details-title {
   margin-bottom: 7px;
 }
-#user-content #top-five .grid-row .user-grid-item .item-details .details-year {
+#user #user-content #top-five .grid-row .user-grid-item .item-details .details-year {
   color: #bbb9b9;
   font-size: 1vw;
 }
 
+@media screen and (max-width: 410px) {
+  .swal2-input {
+    font-size: 14px;
+  }
+}
 #browse {
   min-height: calc(100vh - 150px);
   background-image: linear-gradient(to top left, black, transparent);
@@ -389,6 +441,14 @@ footer {
   font-size: 1vw;
 }
 
+@media screen and (max-width: 960px) {
+  #browse-grid .grid-item .item-details .details-title {
+    font-size: 2.6vw;
+  }
+  #browse-grid .grid-item .item-details .details-year {
+    font-size: 2vw;
+  }
+}
 #detailView {
   min-height: calc(100vh - 150px);
 }
@@ -410,6 +470,7 @@ footer {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  white-space: nowrap;
 }
 #detailView .detail-content {
   padding: 0 5%;
@@ -480,7 +541,9 @@ footer {
 }
 #detailView .detail-content .detail-left button:hover {
   background-color: #2e7f2e;
-  filter: brightness(85%);
+}
+#detailView .detail-content .detail-left #deleteReview:hover {
+  filter: brightness(90%);
 }
 #detailView .detail-content .detail-left .addedBtn {
   background-color: rgb(46, 127, 46);
@@ -557,51 +620,51 @@ footer {
 #detailView .reviews-container #reviewGallery {
   text-align: start;
 }
-#detailView .reviews-container #reviewGallery .reviewItem {
+#detailView .reviews-container #reviewGallery .review-item {
   background-color: #484c58;
   box-shadow: 0 2px 10px 0px #2f3139;
   border-radius: 10px;
   padding: 10px 15px;
   margin-bottom: 20px;
 }
-#detailView .reviews-container #reviewGallery .reviewItem .review-top {
+#detailView .reviews-container #reviewGallery .review-item .review-top {
   display: flex;
   align-items: center;
 }
-#detailView .reviews-container #reviewGallery .reviewItem .review-top h3 {
+#detailView .reviews-container #reviewGallery .review-item .review-top h3 {
   font-weight: 100;
 }
-#detailView .reviews-container #reviewGallery .reviewItem .review-top h3 a {
+#detailView .reviews-container #reviewGallery .review-item .review-top h3 a {
   text-decoration: none;
 }
-#detailView .reviews-container #reviewGallery .reviewItem .review-top h3 span {
+#detailView .reviews-container #reviewGallery .review-item .review-top h3 span {
   color: #acaaaa;
   font-size: 15px;
 }
-#detailView .reviews-container #reviewGallery .reviewItem .review-top #review-score {
+#detailView .reviews-container #reviewGallery .review-item .review-top #review-score {
   font-size: 18px;
   color: #ffd700;
   margin-left: 5px;
 }
-#detailView .reviews-container #reviewGallery .reviewItem .reviewText {
+#detailView .reviews-container #reviewGallery .review-item .review-text {
   border-radius: 10px;
   padding: 10px;
 }
-#detailView .reviews-container #reviewGallery .reviewItem button {
+#detailView .reviews-container #reviewGallery .review-item button {
   background: transparent;
   border: none;
   cursor: pointer;
 }
-#detailView .reviews-container #reviewGallery .reviewItem button:hover i {
+#detailView .reviews-container #reviewGallery .review-item button:hover i {
   color: #ff0000;
 }
-#detailView .reviews-container #reviewGallery .reviewItem button:hover {
+#detailView .reviews-container #reviewGallery .review-item button:hover {
   color: #acaaaa;
 }
-#detailView .reviews-container #reviewGallery .reviewItem .liked i {
+#detailView .reviews-container #reviewGallery .review-item .liked i {
   color: red;
 }
-#detailView .reviews-container #reviewGallery .reviewItem .toLike i {
+#detailView .reviews-container #reviewGallery .review-item .to-like i {
   color: #fff;
 }
 
@@ -636,6 +699,83 @@ footer {
   width: 50%;
   height: 40px;
   background-color: transparent;
+}
+
+@media screen and (max-width: 700px) {
+  #detailView .banner-container img {
+    object-position: 50% 50%;
+  }
+  #detailView .banner-container p {
+    font-size: 1.5em;
+  }
+  #detailView .detail-content {
+    flex-direction: column;
+  }
+  #detailView .detail-content .detail-left {
+    width: 100%;
+    padding-top: 0px;
+  }
+  #detailView .detail-content .detail-left .detail-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+  }
+  #detailView .detail-content .detail-left .detail-buttons button {
+    font-size: 11px;
+  }
+  #detailView .detail-content .detail-right {
+    width: 100%;
+  }
+  #detailView .detail-content .detail-right .detail-bar {
+    flex-direction: column;
+  }
+  #detailView .detail-content .detail-right .detail-bar h3,
+  #detailView .detail-content .detail-right .detail-bar h4 {
+    font-size: 20px;
+    margin-top: 10px;
+    font-weight: 100;
+  }
+  #detailView .detail-content .detail-right .detail-bar .platforms {
+    margin-top: 15px;
+  }
+  #detailView .detail-content .detail-right .detail-article {
+    padding: 0px;
+    margin-top: 20px;
+    border-radius: 3px;
+  }
+  #detailView .detail-content .detail-right .detail-article #dev-pub {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+  #detailView .detail-content .detail-right .detail-article #dev-pub div {
+    margin-right: 0px;
+  }
+  #detailView .detail-content .detail-right .detail-article img {
+    height: 150px;
+  }
+}
+@media screen and (max-width: 333px) {
+  #detailView .detail-content .detail-left .detail-buttons {
+    flex-direction: column;
+  }
+  #detailView .detail-content .detail-left .detail-buttons button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media screen and (max-width: 480px) {
+  #reviewText {
+    font-size: 13px;
+  }
+  #starScore .star {
+    height: 25px;
+    width: 25px;
+  }
+}
+.swal2-container .swal2-popup .swal2-html-container {
+  overflow: hidden;
 }
 
 /*# sourceMappingURL=styles.css.map */

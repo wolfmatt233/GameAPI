@@ -7,6 +7,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
+import { FeedbackMessage } from "../model";
 
 //Modal popup to log in, calls "login()" on confirmation
 export function loginModal() {
@@ -72,13 +73,11 @@ export function signUpModal() {
 //logs user in through firebase
 function login(email, password) {
   signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log(user);
+    .then(() => {
+      FeedbackMessage("success", "Success", "Logged in!");
     })
     .catch((error) => {
-      //implement error message modal
-      console.log(error.message);
+      FeedbackMessage("error", "Error", error.message);
     });
 }
 
@@ -86,10 +85,10 @@ function login(email, password) {
 export function logOut() {
   signOut(auth)
     .then(() => {
-      console.log("Logged Out");
+      FeedbackMessage("success", "Success", "Logged out.");
     })
     .catch((error) => {
-      console.log(error.message);
+      FeedbackMessage("error", "Error", error.message);
     });
 }
 
@@ -114,20 +113,23 @@ async function signUp(auth, email, username, password) {
       updateProfile(user, {
         displayName: username,
       });
+
       $("#nav-user span").html(`${username}`);
 
       createUserDoc(user, userObj);
     })
     .catch((error) => {
-      console.log(error.message);
+      FeedbackMessage("error", "Error", error.message);
     });
 }
 
 //creates the document relating to the new user in firestore db
 async function createUserDoc(user, userObj) {
   try {
-    await setDoc(doc(db, "GameDB", user.uid), userObj);
+    await setDoc(doc(db, "GameDB", user.uid), userObj).then(() => {
+      FeedbackMessage("success", "Success", "Account created!");
+    });
   } catch (error) {
-    console.log(error.message);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
