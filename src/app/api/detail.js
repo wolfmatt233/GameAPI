@@ -1,11 +1,18 @@
+/*
+  author: Matthew Wolf
+  file: detail.js
+  purpose: holds functions for the details page
+*/
+
 import { auth, db, apiKey } from "../credentials";
 import { collection, getDocs, query, updateDoc } from "firebase/firestore";
 import { addUserButtons } from "./buttons";
-import { FeedbackMessage } from "../model";
+import { CloseLoading, FeedbackMessage, LoadingMessage } from "../model";
 
 //----SHOW DETAIL PAGE----\\
 
 export function viewDetails(gameID) {
+  LoadingMessage();
   let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
 
   $.getJSON(url, (data) => {
@@ -76,13 +83,14 @@ export function viewDetails(gameID) {
     $("#banner-2").attr("src", data.background_image_additional);
 
     $("#desc").append(data.description);
+  }).then(() => {
+    CloseLoading();
   });
-
-  //show reviews
+  
   showReviews(gameID);
 }
 
-//----SHOW REVIEWS----\\
+//----REVIEWS----\\
 
 export async function showReviews(gameID) {
   $("#reviewGallery").empty();
@@ -161,8 +169,6 @@ export async function showReviews(gameID) {
     FeedbackMessage("error", "Error", error.message);
   }
 }
-
-//----LIKES----\\
 
 function checkLikeBtn(reviewIndex, username, gameID, check, likeCount) {
   //like is added

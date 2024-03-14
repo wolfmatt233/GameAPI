@@ -3,7 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   color: #e9e3e3;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-family: "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
 
 html,
@@ -16,7 +16,7 @@ body {
 #app {
   max-width: 1500px;
   margin: 0 auto;
-  min-height: calc(100vh - 150px);
+  min-height: calc(100vh - 400px);
   background-color: #555a68;
   border-radius: 10px;
   overflow: hidden;
@@ -57,7 +57,7 @@ nav .nav-title span {
   text-align: center;
 }
 nav .nav-title:hover {
-  border: none;
+  border-color: transparent;
 }
 nav .nav-search {
   display: flex;
@@ -68,12 +68,13 @@ nav .nav-search input {
   border-right: none;
   padding: 5px 7px;
   border-radius: 10px 0 0 10px;
-  height: 30px;
+  height: 35px;
   width: 100%;
   background-color: #555a68;
+  font-size: 16px;
 }
 nav .nav-search input:focus {
-  outline: none;
+  outline: 2px solid #8e8e8e;
 }
 nav .nav-search a {
   padding: 4px 7px;
@@ -81,9 +82,37 @@ nav .nav-search a {
   border-left: none;
   border-radius: 0 10px 10px 0;
   background-color: #555a68;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 nav .nav-search a i {
   background-color: #555a68;
+}
+nav .nav-search .tooltip {
+  opacity: 0;
+  background-color: #282727;
+  color: #fff;
+  text-align: center;
+  padding: 7px;
+  border-radius: 6px;
+  position: absolute;
+  top: 75px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  box-shadow: 0 2px 10px 0px #2f3139;
+  transition: opacity 0.6s;
+  visibility: hidden;
+}
+nav .nav-search .tooltip:after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #282727 transparent;
 }
 nav .nav-container {
   display: flex;
@@ -98,6 +127,7 @@ nav .nav-container button {
   margin-left: 10px;
   background-color: #40434e;
   align-items: center;
+  border-bottom: 1px solid transparent;
 }
 nav .nav-container button:hover {
   border-bottom: 1px solid #e9e3e3;
@@ -112,7 +142,10 @@ nav .nav-container #nav-user i {
   margin-left: 7px;
 }
 
-@media screen and (max-width: 975px) {
+@media screen and (max-width: 1021px) {
+  nav {
+    height: 120px;
+  }
   nav .nav-title {
     font-size: 15px;
   }
@@ -124,7 +157,7 @@ nav .nav-container #nav-user i {
     font-size: 13px;
   }
 }
-@media screen and (max-width: 695px) {
+@media screen and (max-width: 733px) {
   nav {
     flex-direction: column;
   }
@@ -159,7 +192,7 @@ footer {
   }
 }
 #home {
-  height: calc(100vh - 150px);
+  height: calc(100vh - 400px);
   display: flex;
   flex-direction: column;
   text-align: center;
@@ -198,7 +231,6 @@ footer {
   display: flex;
 }
 #user #sidebar {
-  width: 25%;
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 150px);
@@ -224,8 +256,16 @@ footer {
 #user #sidebar .burger hr:last-child {
   margin-bottom: 0px;
 }
+#user #sidebar #sidebarButtons {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+#user #sidebar #sidebarButtons button {
+  padding: 10px 30px;
+}
 #user #user-content {
-  margin: 20px 4% 100px 4%;
+  padding: 20px 4% 20px 4%;
   width: 100%;
 }
 #user #user-content #user-title {
@@ -282,7 +322,7 @@ footer {
 }
 #user #user-content #user-pic-name #edit-info-btn {
   position: absolute;
-  top: 0;
+  top: 0%;
   right: 0;
   background-color: #40434e;
   cursor: pointer;
@@ -330,8 +370,8 @@ footer {
   object-fit: cover;
 }
 #user #user-content #top-five .grid-row .user-grid-item #addTopFiveImg {
-  height: 40%;
-  width: 20%;
+  height: 35px;
+  width: 35px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -365,8 +405,31 @@ footer {
     font-size: 14px;
   }
 }
+@media screen and (max-width: 733px) {
+  #user {
+    flex-direction: column;
+  }
+  #user #sidebar {
+    min-height: 0px !important;
+    min-width: 100% !important;
+  }
+  #user #sidebar .burger {
+    align-self: center;
+  }
+  #user #user-content #user-pic-name #user-info-name {
+    font-size: 20px;
+  }
+}
+@media screen and (max-width: 960px) {
+  .user-grid-item .item-details .details-title {
+    font-size: 2.6vw;
+  }
+  .user-grid-item .item-details .details-year {
+    font-size: 2vw;
+  }
+}
 #browse {
-  min-height: calc(100vh - 150px);
+  min-height: calc(100vh - 400px);
   background-image: linear-gradient(to top left, black, transparent);
 }
 #browse #browse-footer {
@@ -450,7 +513,7 @@ footer {
   }
 }
 #detailView {
-  min-height: calc(100vh - 150px);
+  min-height: calc(100vh - 400px);
 }
 #detailView .banner-container {
   position: relative;
@@ -776,6 +839,16 @@ footer {
 }
 .swal2-container .swal2-popup .swal2-html-container {
   overflow: hidden;
+}
+
+#swal2-select {
+  border: 1px solid #959494;
+  border-radius: 4px;
+  background-color: #555a68;
+}
+#swal2-select option {
+  background-color: #555a68;
+  border: none;
 }
 
 /*# sourceMappingURL=styles.css.map */

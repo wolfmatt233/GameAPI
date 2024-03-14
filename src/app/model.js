@@ -40,6 +40,23 @@ export function FeedbackMessage(icon, title, message) {
   });
 }
 
+export function LoadingMessage() {
+  Swal.fire({
+    title: "",
+    background: "#555a68",
+    color: "#fff",
+    html: "Loading...",
+    timerProgressBar: true,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+}
+
+export function CloseLoading() {
+  Swal.close();
+}
+
 //----SIGN IN/OUT UPDATES----\\
 
 onAuthStateChanged(auth, (user) => {
@@ -79,6 +96,11 @@ export function changeRoute() {
   let pagination = queryParams.get("page");
   let gameID = queryParams.get("game");
   let searchQuery = $("#searchBar").val();
+  $("#searchBar").on("keypress", (e) => {
+    if (e.key == "Enter") {
+      location.hash = "#search?page=1";
+    }
+  });
 
   function getPage(pageID, activateFunc) {
     $.get(`pages/${pageID}.html`, (data) => {
@@ -86,6 +108,7 @@ export function changeRoute() {
     }).then(() => {
       activateFunc();
     });
+    $(".tooltip").css("opacity", "0");
   }
 
   switch (pageID) {

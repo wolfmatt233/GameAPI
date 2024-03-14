@@ -7,6 +7,7 @@
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db, apiKey } from "../credentials";
 import { editInfoListener } from "./user-editing";
+import { CloseLoading, FeedbackMessage, LoadingMessage } from "../model";
 
 export function loggedInButtons(user) {
   if (user !== null) {
@@ -31,6 +32,7 @@ export function loggedInButtons(user) {
 }
 
 export async function showUserInfo() {
+  LoadingMessage();
   let user = auth.currentUser;
   try {
     let userDoc = await getDoc(doc(db, "GameDB", user.uid));
@@ -47,30 +49,11 @@ export async function showUserInfo() {
     $("#user-info-bio").html(`${userDoc.bio}`); //show bio
 
     //search api for top five games
-    userDoc.topfive.forEach((gameID) => {
-      let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
-      $.getJSON(url, (data) => {
-        let year = data.released.split("-");
-        $("#top-five .grid-row").append(`
-          <a href="#detail_${gameID}" class="user-grid-item">
-            <img src="${data.background_image}" alt="image" />
-            <div class="item-details">
-              <div>
-                <p class="details-title">${data.name}</p>
-                <p class="details-year">${year[0]}</p>
-              </div>
-            </div>
-          </a>
-        `);
-      });
-    });
-
-    //if top five is not full, replace last few on page with empty containers
-    if (userDoc.topfive.length - 5 < 0) {
-      let count = 5 - userDoc.topfive.length;
-      for (let i = 0; i < count; i++) {
-        $("#top-five .grid-row").append(`
-          <a class="user-grid-item">
+    for (const property in userDoc.topfive) {
+      let gameID = userDoc.topfive[property];
+      if (userDoc.topfive[property] === "") {
+        $("#top-five .grid-row").prepend(`
+          <a class="user-grid-item" id="addUserTopFive">
             <img src="./assets/plus.png" alt="" id="addTopFiveImg" />
             <div class="item-details">
               <div>
@@ -80,8 +63,27 @@ export async function showUserInfo() {
             </div>
           </a>
         `);
+      } else {
+        let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
+        $.getJSON(url, (data) => {
+          let year = data.released.split("-");
+          $("#top-five .grid-row").prepend(`
+          <a href="#detail?game=${gameID}" class="user-grid-item">
+            <img src="${data.background_image}" alt="image" />
+            <div class="item-details">
+              <div>
+                <p class="details-title">${data.name}</p>
+                <p class="details-year">${year[0]}</p>
+              </div>
+            </div>
+          </a>
+        `);
+        }).then(() => {
+          CloseLoading();
+        });
       }
     }
+
     editInfoListener(user, userDoc, db);
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
@@ -128,13 +130,11 @@ export async function showUserItems(title) {
 }
 
 export function handleUserBurger() {
-  if ($("#sidebar").hasClass("checked")) {
-    $("#sidebar").removeClass("checked");
-    $("#sidebar").css("width", "25%");
-    $(".userNavBtn").css("visibility", "visible");
+  if ($("#sidebarButtons").hasClass("checked")) {
+    $("#sidebarButtons").removeClass("checked");
+    $("#sidebarButtons").css("display", "flex");
   } else {
-    $("#sidebar").addClass("checked");
-    $("#sidebar").css("width", "40px");
-    $(".userNavBtn").css("visibility", "hidden");
+    $("#sidebarButtons").addClass("checked");
+    $("#sidebarButtons").css("display", "none");
   }
 }

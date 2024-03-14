@@ -61,6 +61,17 @@ export function editInfoListener(user, userDoc) {
       },
     });
   });
+
+  $("#addUserTopFive").on("click", () => {
+    $(".tooltip").css("opacity", "100");
+    $(".tooltip").css("visibility", "visible");
+    $("#searchBar").focus();
+  });
+
+  $(".tooltip").on("mouseover", () => {
+    $(".tooltip").css("opacity", "0");
+    $(".tooltip").css("visibility", "hidden");
+  });
 }
 
 async function updateInfo(uName, uBio) {

@@ -1,3 +1,9 @@
+/*
+  author: Matthew Wolf
+  file: login-out.js
+  purpose: holds functions for logging in/out and signing up
+*/
+
 import Swal from "sweetalert2";
 import { auth, db } from "../credentials";
 import {

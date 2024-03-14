@@ -1,7 +1,15 @@
+/*
+  author: Matthew Wolf
+  file: browse.js
+  purpose: holds functions for the browse page, showing a list of api items
+*/
+
 import { apiKey } from "../credentials";
+import { LoadingMessage, CloseLoading } from "../model";
 
 //shows all games from browse
 export function apiList(page) {
+  LoadingMessage();
   let url = `https://api.rawg.io/api/games?key=${apiKey}&page=${page}`;
 
   $.getJSON(url, (data) => {
@@ -38,11 +46,14 @@ export function apiList(page) {
     }
 
     $("#next").attr("href", `#browse?page=${data.next.slice(-1)}`);
+  }).then(() => {
+    CloseLoading();
   });
 }
 
 //shows search results, needs filter options
 export function searchApi(searchQuery, page) {
+  LoadingMessage();
   let url = `https://api.rawg.io/api/games?key=${apiKey}&page=${page}&search=${searchQuery}`;
   let filterArray = [];
 
@@ -83,5 +94,7 @@ export function searchApi(searchQuery, page) {
       "href",
       `#search?page=${data.next.split("&")[1].slice(-1)}`
     );
+  }).then(() => {
+    CloseLoading();
   });
 }

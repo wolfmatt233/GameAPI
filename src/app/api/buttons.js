@@ -1,3 +1,9 @@
+/*
+  author: Matthew Wolf
+  file: buttons.js
+  purpose: holds functions for user buttons on the details page
+*/
+
 import { auth, db } from "../credentials";
 import Swal from "sweetalert2";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -11,6 +17,7 @@ export async function addUserButtons(gameID) {
       <button id="addToFavorites">Add to "Favorites" <i class="fa-solid fa-plus"></i></button>
       <button id="addToPlayed">Add to "Played" <i class="fa-solid fa-plus"></i></button>
       <button id="addToWantToPlay">Add to "To Play" <i class="fa-solid fa-plus"></i></button>
+      <button id="addToTopFive">Add to Your Top Five</button>
       <button id="addReview">Add a Review <i class="fa-solid fa-plus"></i></button>
     `);
 
@@ -21,39 +28,43 @@ export async function addUserButtons(gameID) {
     let playCheck = 0;
     let wantCheck = 0;
     let reviewCheck = 0;
+    let topCheck = 0;
 
     userDoc.favorites.forEach((game) => {
-      //if game is already added, change the favorite button accordingly
       if (gameID == game) {
         favCheck++;
       }
     });
 
     userDoc.played.forEach((game) => {
-      //if game is already added, change the favorite button accordingly
       if (gameID == game) {
         playCheck++;
       }
     });
 
     userDoc.toplay.forEach((game) => {
-      //if game is already added, change the favorite button accordingly
       if (gameID == game) {
         wantCheck++;
       }
     });
 
     userDoc.reviews.forEach((game) => {
-      //if game is already added, change the favorite button accordingly
       if (gameID == game.gameId) {
         reviewCheck++;
       }
     });
 
+    for (const property in userDoc.topfive) {
+      if (userDoc.topfive[property] == gameID) {
+        topCheck++;
+      }
+    }
+
     checkFavBtn(favCheck, gameID);
     checkPlayedBtn(playCheck, gameID);
     checkToPlayBtn(wantCheck, gameID);
     checkReviewBtn(reviewCheck, gameID);
+    checkTopFiveBtn(topCheck, gameID);
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
   }
@@ -178,6 +189,36 @@ function checkReviewBtn(check, gameID) {
   }
 }
 
+function checkTopFiveBtn(check, gameID) {
+  if (check == 1) {
+    //you have added the game to Top Five
+    $("#addToTopFive")
+      .attr("id", "addedToTopFive")
+      .attr("class", "addedBtn")
+      .html(`On Top Five <i class="fa-solid fa-check"></i>`);
+    $("#addedToTopFive").on({
+      mouseenter: function () {
+        $("#addedToTopFive").html(`Remove <i class="fa-solid fa-minus"></i>`);
+      },
+      mouseleave: function () {
+        $("#addedToTopFive").html(
+          `On Top Five <i class="fa-solid fa-check"></i>`
+        );
+      },
+    });
+    $("#addedToTopFive").prop("onclick", null).off("click");
+    $("#addedToTopFive").on("click", () => removeFromTopFive(gameID));
+  } else {
+    //game NOT added to Top Five
+    $("#addedToTopFive")
+      .attr("id", "addToTopFive")
+      .attr("class", "")
+      .html(`Add to Top Five <i class="fa-solid fa-plus"></i>`);
+    $("#addToTopFive").prop("onclick", null).off("click");
+    $("#addToTopFive").on("click", () => topFivePrompt(gameID));
+  }
+}
+
 //----ADD & REMOVE FUNCTIONS----\\
 
 async function addToFavorites(gameID) {
@@ -217,7 +258,6 @@ async function removeFromFavorites(gameID) {
       checkFavBtn(0, gameID);
     });
   } catch (error) {
-    //toast message here
     FeedbackMessage("error", "Error", error.message);
   }
 }
@@ -302,7 +342,69 @@ async function removeFromWantToPlay(gameID) {
   }
 }
 
-//----Operations for Review Add, Edit, Delete----\\
+//----Top Five----\\
+
+function topFivePrompt(gameID) {
+  Swal.fire({
+    title: "Add to Top 5",
+    input: "select",
+    background: "#555a68",
+    color: `#e9e3e3`,
+    inputOptions: {
+      1: "1st",
+      2: "2nd",
+      3: "3rd",
+      4: "4th",
+      5: "5th",
+    },
+    inputPlaceholder: "Select a place",
+    showCancelButton: true,
+    inputValidator: (value) => {
+      addToTopFive(value, gameID);
+    },
+  });
+}
+
+async function addToTopFive(place, gameID) {
+  try {
+    let userDoc = await getDoc(doc(db, "GameDB", auth.currentUser.uid));
+    let topFive = userDoc.data().topfive;
+    topFive[place] = gameID.toString();
+
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
+      topfive: topFive,
+    }).then(() => {
+      checkTopFiveBtn(1, gameID);
+      FeedbackMessage("success", "Success", "Added to Top Five!");
+    });
+  } catch (error) {
+    FeedbackMessage("error", "Error", error.message);
+  }
+}
+
+async function removeFromTopFive(gameID) {
+  try {
+    let userDoc = await getDoc(doc(db, "GameDB", auth.currentUser.uid));
+    let topFive = userDoc.data().topfive;
+
+    for (const property in topFive) {
+      if (topFive[property] == gameID) {
+        topFive[property] = "";
+      }
+    }
+
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
+      topfive: topFive,
+    }).then(() => {
+      checkTopFiveBtn(0, gameID);
+      FeedbackMessage("success", "Success", "Removed from Top Five.");
+    });
+  } catch (error) {
+    FeedbackMessage("error", "Error", error.message);
+  }
+}
+
+//----Reviews----\\
 
 function addReviewPrompt(gameID) {
   let reviewObj = {};

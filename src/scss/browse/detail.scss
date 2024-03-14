@@ -423,3 +423,14 @@
     }
   }
 }
+
+#swal2-select {
+  border: 1px solid #959494;
+  border-radius: 4px;
+  background-color: $secondaryColor;
+  
+  option {
+    background-color: $secondaryColor;
+    border: none;
+  }
+}
