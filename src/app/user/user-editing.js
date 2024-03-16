@@ -62,7 +62,7 @@ export function editInfoListener(user, userDoc) {
     });
   });
 
-  $("#addUserTopFive").on("click", () => {
+  $(".addUserTopFive").on("click", () => {
     $(".tooltip").css("opacity", "100");
     $(".tooltip").css("visibility", "visible");
     $("#searchBar").focus();

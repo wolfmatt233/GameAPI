@@ -37,6 +37,7 @@ export async function showUserInfo() {
   try {
     let userDoc = await getDoc(doc(db, "GameDB", user.uid));
     userDoc = userDoc.data();
+    let topFive = userDoc.topfive;
 
     $("#top-five .grid-row").html("");
     $("#user-content #user-info-name").html(`${user.displayName}`);
@@ -49,26 +50,14 @@ export async function showUserInfo() {
     $("#user-info-bio").html(`${userDoc.bio}`); //show bio
 
     //search api for top five games
-    for (const property in userDoc.topfive) {
+    for (const property in topFive) {
       let gameID = userDoc.topfive[property];
-      if (userDoc.topfive[property] === "") {
-        $("#top-five .grid-row").prepend(`
-          <a class="user-grid-item" id="addUserTopFive">
-            <img src="./assets/plus.png" alt="" id="addTopFiveImg" />
-            <div class="item-details">
-              <div>
-                <p class="details-title"></p>
-                <p class="details-year"></p>
-              </div>
-            </div>
-          </a>
-        `);
-      } else {
+      if (gameID !== "") {
         let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
         $.getJSON(url, (data) => {
           let year = data.released.split("-");
-          $("#top-five .grid-row").prepend(`
-          <a href="#detail?game=${gameID}" class="user-grid-item">
+          $("#top-five .grid-row").append(`
+          <a href="#detail?game=${gameID}" class="user-grid-item" id="order_${property}">
             <img src="${data.background_image}" alt="image" />
             <div class="item-details">
               <div>
@@ -81,6 +70,18 @@ export async function showUserInfo() {
         }).then(() => {
           CloseLoading();
         });
+      } else {
+        $("#top-five .grid-row").append(`
+          <a class="user-grid-item addUserTopFive" id="order_${property}">
+            <img src="./assets/plus.png" alt="add" id="addTopFiveImg" />
+            <div class="item-details">
+              <div>
+                <p class="details-title"></p>
+                <p class="details-year"></p>
+              </div>
+            </div>
+          </a>
+        `);
       }
     }
 
