@@ -93,12 +93,13 @@ export function changeRoute() {
   let hashTag = window.location.hash;
   let pageID = hashTag.replace("#", "").split("?")[0];
   let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
-  let pagination = queryParams.get("page");
   let gameID = queryParams.get("game");
+  let pagination = queryParams.get("page");
+  let genres = queryParams.get("genres");
   let searchQuery = $("#searchBar").val();
   $("#searchBar").on("keypress", (e) => {
     if (e.key == "Enter") {
-      location.hash = "#search?page=1";
+      location.hash = `#search?page=1`;
     }
   });
 
@@ -126,13 +127,14 @@ export function changeRoute() {
       });
       break;
     case "browse":
-      getPage(pageID, apiList(pagination));
+      getPage(pageID, apiList(pagination, genres));
       break;
     case "search":
-      getPage("browse", searchApi(searchQuery, pagination));
+      getPage("browse", searchApi(searchQuery, pagination, genres));
       break;
     case "detail":
       getPage(pageID, viewDetails(gameID));
+      break;
   }
 }
 

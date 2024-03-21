@@ -447,6 +447,59 @@ footer {
   min-height: calc(100vh - 150px);
   background-image: linear-gradient(to top left, black, transparent);
 }
+#browse .browse-title-container #browse-title {
+  text-align: center;
+  padding: 10px 0;
+  font-weight: 100;
+}
+#browse .browse-title-container #filter-bar {
+  display: flex;
+  padding: 15px 3%;
+  border-bottom: 1px solid #555a68;
+}
+#browse .browse-title-container #filter-bar #genres-filter {
+  background-color: #555a68;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+}
+#browse .browse-title-container #filter-bar #genres-filter #activate-genres {
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  background-color: #555a68;
+  border: none;
+  color: #a6a7a9;
+  font-size: 15px;
+}
+#browse .browse-title-container #filter-bar #genres-filter .checkbox-items {
+  display: none;
+  border-top: 1px solid #878a91;
+  padding-top: 4px;
+}
+#browse .browse-title-container #filter-bar #genres-filter .checkbox-items .genre-checkbox {
+  display: flex;
+}
+#browse .browse-title-container #filter-bar #genres-filter .checkbox-items .genre-checkbox label {
+  margin-left: 5px;
+}
+#browse .browse-title-container #filter-bar #genres-filter .visible {
+  display: block;
+}
+#browse .browse-title-container #filter-bar #genres-filter .invisible {
+  display: none;
+}
+#browse .browse-title-container #filter-bar #filter-button {
+  cursor: pointer;
+  background-color: #2f3139;
+  border: none;
+  padding: 7px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+#browse .browse-title-container #filter-bar #filter-button:hover {
+  filter: brightness(90%);
+}
 #browse #browse-footer {
   margin: 20px auto 0 auto;
   padding-bottom: 20px;
@@ -493,6 +546,9 @@ footer {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  text-align: center;
+  padding-top: 15px;
+  font-size: 10px;
 }
 #browse-grid .grid-item .item-details {
   display: flex;
