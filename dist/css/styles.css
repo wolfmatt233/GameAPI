@@ -454,16 +454,20 @@ footer {
 }
 #browse .browse-title-container #filter-bar {
   display: flex;
+  align-items: center;
+  justify-content: space-evenly;
   padding: 15px 3%;
   border-bottom: 1px solid #555a68;
 }
-#browse .browse-title-container #filter-bar #genres-filter {
+#browse .browse-title-container #filter-bar .filter-container {
   background-color: #555a68;
   padding: 5px;
-  position: absolute;
-  z-index: 1;
+  min-height: 0px;
+  position: relative;
+  width: 190px;
+  margin-right: 20px;
 }
-#browse .browse-title-container #filter-bar #genres-filter #activate-genres {
+#browse .browse-title-container #filter-bar .filter-container .filter-dropdown-button {
   cursor: pointer;
   width: 100%;
   text-align: left;
@@ -472,21 +476,26 @@ footer {
   color: #a6a7a9;
   font-size: 15px;
 }
-#browse .browse-title-container #filter-bar #genres-filter .checkbox-items {
+#browse .browse-title-container #filter-bar .filter-container .checkbox-items {
   display: none;
+  background-color: #555a68;
   border-top: 1px solid #878a91;
-  padding-top: 4px;
+  position: absolute;
+  left: 0;
+  z-index: 1;
+  padding: 5px;
+  width: 100%;
 }
-#browse .browse-title-container #filter-bar #genres-filter .checkbox-items .genre-checkbox {
+#browse .browse-title-container #filter-bar .filter-container .checkbox-items .filter-checkbox {
   display: flex;
 }
-#browse .browse-title-container #filter-bar #genres-filter .checkbox-items .genre-checkbox label {
+#browse .browse-title-container #filter-bar .filter-container .checkbox-items .filter-checkbox label {
   margin-left: 5px;
 }
-#browse .browse-title-container #filter-bar #genres-filter .visible {
+#browse .browse-title-container #filter-bar .filter-container .visible {
   display: block;
 }
-#browse .browse-title-container #filter-bar #genres-filter .invisible {
+#browse .browse-title-container #filter-bar .filter-container .invisible {
   display: none;
 }
 #browse .browse-title-container #filter-bar #filter-button {
@@ -547,7 +556,6 @@ footer {
   height: 100%;
   object-fit: cover;
   text-align: center;
-  padding-top: 15px;
   font-size: 10px;
 }
 #browse-grid .grid-item .item-details {
@@ -581,6 +589,21 @@ footer {
   }
   #browse-grid .grid-item .item-details .details-year {
     font-size: 2vw;
+  }
+}
+@media screen and (max-width: 587px) {
+  #browse .browse-title-container #browse-title {
+    font-size: 23px;
+  }
+  #browse .browse-title-container #filter-bar {
+    flex-direction: column;
+    align-items: center;
+  }
+  #browse .browse-title-container #filter-bar .filter-container {
+    margin-bottom: 15px;
+  }
+  #browse .browse-title-container #filter-bar #filter-button {
+    margin-left: 0;
   }
 }
 #detailView {

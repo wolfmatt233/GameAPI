@@ -11,16 +11,20 @@
 
     #filter-bar {
       display: flex;
+      align-items: center;
+      justify-content: space-evenly;
       padding: 15px 3%;
       border-bottom: 1px solid #555a68;
 
-      #genres-filter {
+      .filter-container {
         background-color: #555a68;
         padding: 5px;
-        position: absolute;
-        z-index: 1;
+        min-height: 0px;
+        position: relative;
+        width: 190px;
+        margin-right: 20px;
 
-        #activate-genres {
+        .filter-dropdown-button {
           cursor: pointer;
           width: 100%;
           text-align: left;
@@ -32,10 +36,15 @@
 
         .checkbox-items {
           display: none;
+          background-color: #555a68;
           border-top: 1px solid #878a91;
-          padding-top: 4px;
+          position: absolute;
+          left: 0;
+          z-index: 1;
+          padding: 5px;
+          width: 100%;
 
-          .genre-checkbox {
+          .filter-checkbox {
             display: flex;
 
             label {
@@ -126,7 +135,6 @@
       height: 100%;
       object-fit: cover;
       text-align: center;
-      padding-top: 15px;
       font-size: 10px;
     }
 
@@ -169,6 +177,29 @@
 
         .details-year {
           font-size: 2vw;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 587px) {
+  #browse {
+    .browse-title-container {
+      #browse-title {
+        font-size: 23px;
+      }
+
+      #filter-bar {
+        flex-direction: column;
+        align-items: center;
+
+        .filter-container {
+          margin-bottom: 15px;
+        }
+        
+        #filter-button {
+          margin-left: 0;
         }
       }
     }

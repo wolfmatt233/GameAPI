@@ -96,6 +96,7 @@ export function changeRoute() {
   let gameID = queryParams.get("game");
   let pagination = queryParams.get("page");
   let genres = queryParams.get("genres");
+  let stores = queryParams.get("stores");
   let searchQuery = $("#searchBar").val();
   $("#searchBar").on("keypress", (e) => {
     if (e.key == "Enter") {
@@ -130,7 +131,7 @@ export function changeRoute() {
       getPage(pageID, apiList(pagination, genres));
       break;
     case "search":
-      getPage("browse", searchApi(searchQuery, pagination, genres));
+      getPage("browse", searchApi(searchQuery, pagination, genres, stores));
       break;
     case "detail":
       getPage(pageID, viewDetails(gameID));
