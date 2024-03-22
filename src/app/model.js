@@ -134,7 +134,6 @@ export function changeRoute() {
       getPage(pageID, apiList(page, genres, stores));
       break;
     case "search":
-      location.hash = `#search?page=1`;
       getPage("browse", searchApi(searchQuery, page, genres, stores));
       break;
     case "detail":

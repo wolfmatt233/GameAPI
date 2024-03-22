@@ -193,9 +193,9 @@ function getFilters(genres, stores) {
   let genresUrl = `https://api.rawg.io/api/genres?key=${apiKey}`;
   genres != null ? (genres = genres.split(",")) : genres;
 
-  $("#genres-filter .checkbox-items").empty();
-
   $.getJSON(genresUrl, (data) => {
+    $("#genres-filter .checkbox-items").empty();
+
     data.results.forEach((apiGenre) => {
       let checked = "";
 
@@ -221,9 +221,9 @@ function getFilters(genres, stores) {
   let storesUrl = `https://api.rawg.io/api/stores?key=${apiKey}`;
   stores != null ? (stores = stores.split(",")) : stores;
 
-  $("#stores-filter .checkbox-items").empty();
-
   $.getJSON(storesUrl, (data) => {
+    $("#stores-filter .checkbox-items").empty();
+    
     data.results.forEach((apiStore) => {
       let checked = "";
 
