@@ -475,6 +475,9 @@ footer {
   border: none;
   color: #a6a7a9;
   font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 #browse .browse-title-container #filter-bar .filter-container .checkbox-items {
   display: none;
@@ -497,6 +500,10 @@ footer {
 }
 #browse .browse-title-container #filter-bar .filter-container .invisible {
   display: none;
+}
+#browse .browse-title-container #filter-bar p {
+  color: #878a91;
+  font-size: 12px;
 }
 #browse .browse-title-container #filter-bar #filter-button {
   cursor: pointer;

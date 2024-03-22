@@ -7,17 +7,28 @@
 import { apiKey } from "../credentials";
 import { LoadingMessage, CloseLoading } from "../model";
 
-//shows all games from browse
-export function apiList(page, genres) {
-  LoadingMessage();
+//----Build url for search and browse----\\
+function buildUrl(page, searchQuery, genres, stores, type) {
   let url = "https://api.rawg.io/api/games?";
-  genres == null ? (genres = "") : (url += "&genres=" + genres + "&");
+  genres != null ? (url += "&genres=" + genres) : "";
+  stores != null ? (url += "&stores=" + stores) : "";
+  genres != null || stores != null ? (url += "&") : "";
   url += `key=${apiKey}`;
   url += `&page=${page}`;
+  type == "search" ? (url += `&search=${searchQuery}`) : "";
+  return url;
+}
 
-  getFilters(genres);
+//----Browse games----\\
+
+export function apiList(page, genres, stores) {
+  LoadingMessage();
+  getFilters(genres, stores);
+  let url = buildUrl(page, "", genres, stores, "browse");
 
   $.getJSON(url, (data) => {
+    $("#browse-grid").empty();
+    $("#browse-title").html(`Browse Games`);
     let listArr = data.results;
     listArr.forEach((game) => {
       let date;
@@ -41,33 +52,23 @@ export function apiList(page, genres) {
       `);
     });
 
-    pageButtons(data.next, data.previous, genres, "browse");
-
-    $("#browse-title").html(`Browse Games`);
+    pageButtons(data.next, data.previous, genres, stores, "browse");
   }).then(() => {
     CloseLoading();
     filterEvents(null);
   });
 }
 
-//shows search results, including filters
+//----Search games----\\
+
 export function searchApi(searchQuery, page, genres, stores) {
   LoadingMessage();
-
-  // Build api call url
-  let url = "https://api.rawg.io/api/games?";
-  genres == null ? (genres = "") : (url += "&genres=" + genres);
-  stores == null ? (stores = "") : (url += "&stores=" + stores);
-  genres != "" || stores != "" ? (url += "&") : "";
-  url += `key=${apiKey}`;
-  url += `&page=${page}`;
-  url += `&search=${searchQuery}`;
-
   getFilters(genres, stores);
-
-  $("#browse-grid").empty();
+  let url = buildUrl(page, searchQuery, genres, stores, "search");
 
   $.getJSON(url, (data) => {
+    $("#browse-grid").empty();
+    $("#browse-title").html(`Search for "${searchQuery}"`);
     data.results.forEach((game) => {
       let date;
       let background = game.background_image;
@@ -93,31 +94,20 @@ export function searchApi(searchQuery, page, genres, stores) {
     });
 
     pageButtons(data.next, data.previous, genres, stores, "search");
-
-    $("#browse-title").html(`Search for "${searchQuery}"`);
   }).then(() => {
     CloseLoading();
     filterEvents(searchQuery);
   });
 }
 
+//----Pagination-----\\
+
 function pageButtons(next, prev, genres, stores, sender) {
-  genres != "" ? (genres = `&genres=${genres}`) : genres;
-  stores != "" ? (stores = `&stores=${stores}`) : stores;
-  let nextPage = 0;
-  let prevPage = 0;
-  let prevUrl;
-  prev !== null ? (prevUrl = prev.split("?")[1].split("&")) : prev;
+  genres != null ? (genres = `&genres=${genres}`) : (genres = "");
+  stores != null ? (stores = `&stores=${stores}`) : (stores = "");
 
   if (next != null) {
-    let nextUrl = next.split("?")[1].split("&"); //split to get query vars
-
-    nextUrl.forEach((queryVar) => {
-      queryVar = queryVar.split("=");
-      if (queryVar[0] === "page") {
-        nextPage = queryVar[1]; //get page query variable's value
-      }
-    });
+    let nextPage = new URLSearchParams(next).get("page");
 
     if (sender === "search") {
       $("#next").attr("href", `#search?page=${nextPage}${genres}${stores}`);
@@ -129,14 +119,10 @@ function pageButtons(next, prev, genres, stores, sender) {
   }
 
   if (prev != null) {
-    prevUrl.forEach((queryVar) => {
-      queryVar = queryVar.split("=");
-      if (queryVar[0] === "page") {
-        prevPage = queryVar[1];
-      }
-    });
+    let prevPage = new URLSearchParams(prev).get("page");
 
-    if (prevPage === 0) {
+    //check if page 2: api gives page 1 without a page query parameter
+    if (prevPage === null) {
       if (sender === "search") {
         $("#previous").attr("href", `#search?page=1${genres}${stores}`);
       } else if (sender === "browse") {
@@ -144,9 +130,15 @@ function pageButtons(next, prev, genres, stores, sender) {
       }
     } else {
       if (sender === "search") {
-        $("#previous").attr("href", `#search?page=${prevPage}${genres}${stores}`);
+        $("#previous").attr(
+          "href",
+          `#search?page=${prevPage}${genres}${stores}`
+        );
       } else if (sender === "browse") {
-        $("#previous").attr("href", `#browse?page=${prevPage}${genres}${stores}`);
+        $("#previous").attr(
+          "href",
+          `#browse?page=${prevPage}${genres}${stores}`
+        );
       }
     }
   } else if (prev == null) {
@@ -154,25 +146,34 @@ function pageButtons(next, prev, genres, stores, sender) {
   }
 }
 
-//allows checkbox list to be opened and closed, filters to be applied on button click
+//----Checkboxes open & filter button sends info----\\
+
 function filterEvents(searchQuery) {
   $("#activate-genres").off("click");
-  $("#activate-genres").on("click", () => {
+  $("#activate-genres").on("click", (e) => {
     if ($("#genres-boxes").hasClass("visible")) {
+      $(`#${e.target.id} i`).removeClass("fa-solid fa-caret-up");
+      $(`#${e.target.id} i`).addClass("fa-solid fa-caret-down");
       $("#genres-boxes").removeClass("visible");
       $("#genres-boxes").addClass("invisible");
     } else {
+      $(`#${e.target.id} i`).removeClass("fa-solid fa-caret-down");
+      $(`#${e.target.id} i`).addClass("fa-solid fa-caret-up");
       $("#genres-boxes").removeClass("invisible");
       $("#genres-boxes").addClass("visible");
     }
   });
 
   $("#activate-stores").off("click");
-  $("#activate-stores").on("click", () => {
+  $("#activate-stores").on("click", (e) => {
     if ($("#stores-boxes").hasClass("visible")) {
+      $(`#${e.target.id} i`).removeClass("fa-solid fa-caret-up");
+      $(`#${e.target.id} i`).addClass("fa-solid fa-caret-down");
       $("#stores-boxes").removeClass("visible");
       $("#stores-boxes").addClass("invisible");
     } else {
+      $(`#${e.target.id} i`).removeClass("fa-solid fa-caret-down");
+      $(`#${e.target.id} i`).addClass("fa-solid fa-caret-up");
       $("#stores-boxes").removeClass("invisible");
       $("#stores-boxes").addClass("visible");
     }
@@ -184,12 +185,13 @@ function filterEvents(searchQuery) {
   });
 }
 
-//gets filters from api and puts them into a checkbox list
+//----Get filters for dropdown lists----\\
+
 function getFilters(genres, stores) {
   // Get genre filters from api
 
   let genresUrl = `https://api.rawg.io/api/genres?key=${apiKey}`;
-  genres != "" ? (genres = genres.split(",")) : genres;
+  genres != null ? (genres = genres.split(",")) : genres;
 
   $("#genres-filter .checkbox-items").empty();
 
@@ -197,7 +199,7 @@ function getFilters(genres, stores) {
     data.results.forEach((apiGenre) => {
       let checked = "";
 
-      if (genres != "") {
+      if (genres != null) {
         genres.forEach((genre) => {
           if (genre == apiGenre.slug) {
             checked = "checked";
@@ -217,7 +219,7 @@ function getFilters(genres, stores) {
   // Get store filters from api
 
   let storesUrl = `https://api.rawg.io/api/stores?key=${apiKey}`;
-  stores != "" ? (stores = stores.split(",")) : stores;
+  stores != null ? (stores = stores.split(",")) : stores;
 
   $("#stores-filter .checkbox-items").empty();
 
@@ -225,7 +227,7 @@ function getFilters(genres, stores) {
     data.results.forEach((apiStore) => {
       let checked = "";
 
-      if (stores != "") {
+      if (stores != null) {
         stores.forEach((store) => {
           if (store == apiStore.id) {
             checked = "checked";
@@ -245,7 +247,8 @@ function getFilters(genres, stores) {
   });
 }
 
-//constructs the filter query variables
+//----Constructs filter query strings----\\
+
 function applyFilters(searchQuery) {
   //creating the query variable for genres
   let genreChecked = $("#genres-boxes .filter-checkbox input:checked");
@@ -293,6 +296,6 @@ function applyFilters(searchQuery) {
   if (searchQuery) {
     location.hash = `#search?page=1${genres}${stores}`;
   } else if (searchQuery === null) {
-    location.hash = `#browse?page=1${genres}`;
+    location.hash = `#browse?page=1${genres}${stores}`;
   }
 }

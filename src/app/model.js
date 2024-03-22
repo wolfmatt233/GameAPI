@@ -92,11 +92,14 @@ function homePage() {
 export function changeRoute() {
   let hashTag = window.location.hash;
   let pageID = hashTag.replace("#", "").split("?")[0];
+
+  //query variables
   let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
   let gameID = queryParams.get("game");
-  let pagination = queryParams.get("page");
+  let page = queryParams.get("page");
   let genres = queryParams.get("genres");
   let stores = queryParams.get("stores");
+
   let searchQuery = $("#searchBar").val();
   $("#searchBar").on("keypress", (e) => {
     if (e.key == "Enter") {
@@ -128,10 +131,11 @@ export function changeRoute() {
       });
       break;
     case "browse":
-      getPage(pageID, apiList(pagination, genres));
+      getPage(pageID, apiList(page, genres, stores));
       break;
     case "search":
-      getPage("browse", searchApi(searchQuery, pagination, genres, stores));
+      location.hash = `#search?page=1`;
+      getPage("browse", searchApi(searchQuery, page, genres, stores));
       break;
     case "detail":
       getPage(pageID, viewDetails(gameID));
