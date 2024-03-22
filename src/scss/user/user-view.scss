@@ -136,6 +136,20 @@
         margin: 20px 0;
       }
 
+      .top-five-labels {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        margin-bottom: 10px;
+
+        p {
+          width: 18%;
+          text-align: center;
+          font-size: 24px;
+          font-weight: 100;
+        }
+      }
+
       .grid-row {
         display: flex;
         align-items: center;

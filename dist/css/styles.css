@@ -343,6 +343,18 @@ footer {
   text-align: center;
   margin: 20px 0;
 }
+#user #user-content #top-five .top-five-labels {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 10px;
+}
+#user #user-content #top-five .top-five-labels p {
+  width: 18%;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 100;
+}
 #user #user-content #top-five .grid-row {
   display: flex;
   align-items: center;

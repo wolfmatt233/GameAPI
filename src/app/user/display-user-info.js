@@ -113,7 +113,7 @@ export async function showUserItems(title) {
       $.getJSON(url, (data) => {
         let year = data.released.split("-");
         $("#user-content #browse-grid").append(`
-          <a href="#detail_${gameID}" class="grid-item">
+          <a href="#detail?game=${gameID}" class="grid-item">
             <img src="${data.background_image}" alt="image" />
             <div class="item-details">
               <div>
