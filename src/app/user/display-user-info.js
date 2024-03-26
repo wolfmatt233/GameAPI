@@ -4,49 +4,58 @@
   purpose: holds functions that display user info like favorites, bio/top-five, reviews, etc.
 */
 
-import { doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { auth, db, apiKey } from "../credentials";
 import { editInfoListener } from "./user-editing";
-import { CloseLoading, FeedbackMessage, LoadingMessage } from "../model";
-
-export function loggedInButtons(user) {
-  if (user !== null) {
-    $(".nav-container").empty().append(`
-    <a href="#browse?page=1" class="nav-link">Browse</a>
-    <a id="nav-user" href="#user-personal" class="nav-link">
-      <span>${user.displayName}</span>
-      <i class="fa-solid fa-user"></i>
-    </a>
-    <button id="logout-btn" class="nav-link">
-      Log Out
-      <i class="fa-solid fa-arrow-right-from-bracket"></i>
-    </button>
-  `);
-  } else {
-    $(".nav-container").empty().append(`
-      <a href="#browse?page=1" class="nav-link">Browse</a>
-      <button id="login-btn" class="nav-link">Log In</button>
-      <button class="signup-btn nav-link">Create Account</button>
-    `);
-  }
-}
+import {
+  CloseLoading,
+  FeedbackMessage,
+  LoadingMessage,
+  routeUser,
+} from "../model";
 
 export async function showUserInfo() {
-  LoadingMessage();
-  let user = auth.currentUser;
   try {
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
-    userDoc = userDoc.data();
+    LoadingMessage();
+    const userDoc = await findUser();
+
+    //current user only
+    if (auth.currentUser.uid === userDoc.uid) {
+      $("#user-img-container").append(
+        `<div id="user-img-hover">Edit<i class="fa-solid fa-pen"></i></div>`
+      );
+
+      $("#user-pic-name").append(`
+        <button id="edit-info-btn">Edit<i class="fa-solid fa-pen"></i></button>
+      `);
+      $("#sidebarButtons").append(`
+        <button id="user-delete" class="userNavBtn">Delete Account</button>
+        <button id="user-password" class="userNavBtn">Change Password</button>
+      `);
+
+      $("#user-delete").on("click", () => routeUser("delete"));
+      $("#user-password").on("click", () => routeUser("password"));
+    }
+
     let topFive = userDoc.topfive;
 
     $("#top-five .grid-row").html("");
-    $("#user-content #user-info-name").html(`${user.displayName}`);
+    $("#user-content #user-info-name").html(`${userDoc.username}`);
 
     if (user.photoURL == null || user.photoURL == "") {
       $("#user-img").attr("src", "./assets/user.png");
     } else {
       $("#user-img").attr("src", user.photoURL);
     }
+
     $("#user-info-bio").html(`${userDoc.bio}`); //show bio
 
     //search api for top five games
@@ -67,8 +76,6 @@ export async function showUserInfo() {
             </div>
           </a>
         `);
-        }).then(() => {
-          CloseLoading();
         });
       } else {
         $("#top-five .grid-row").append(`
@@ -85,20 +92,44 @@ export async function showUserInfo() {
       }
     }
 
-    editInfoListener(user, userDoc, db);
+    //current user only
+    if (auth.currentUser.uid === userDoc.uid) {
+      editInfoListener(user, userDoc, db);
+    }
+
+    CloseLoading();
   } catch (error) {
-    FeedbackMessage("error", "Error", error.message);
+    console.log(error);
   }
 }
 
 export async function showUserItems(title) {
-  let user = auth.currentUser;
   try {
     let accessArray = [];
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
-    userDoc = userDoc.data();
+    const userDoc = await findUser();
 
     $("#user-title").html(title);
+
+    if (auth.currentUser.uid !== userDoc.uid) {
+      const privateHTML = () =>
+        $("#browse-grid").append(
+          `<h2 id="privacy-text">Private <i class="fa-solid fa-eye-slash"></i></h2>`
+        );
+      if (title === "Favorites" && userDoc.privacy.favorites === "private") {
+        return privateHTML();
+      } else if (
+        title === "Played Games" &&
+        userDoc.privacy.played === "private"
+      ) {
+        return privateHTML();
+      } else if (title === "To Play" && userDoc.privacy.toplay === "private") {
+        return privateHTML();
+      }
+    }
+
+    if (auth.currentUser.uid === userDoc.uid) {
+      togglePrivacyHandler(title);
+    }
 
     if (title == "Favorites") {
       accessArray = userDoc.favorites;
@@ -107,6 +138,7 @@ export async function showUserItems(title) {
     } else if (title == "Played Games") {
       accessArray = userDoc.played;
     }
+
     accessArray.forEach((gameID) => {
       let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
 
@@ -137,5 +169,126 @@ export function handleUserBurger() {
   } else {
     $("#sidebarButtons").addClass("checked");
     $("#sidebarButtons").css("display", "none");
+  }
+}
+
+async function findUser() {
+  try {
+    let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+    let user = queryParams.get("user");
+    let q = query(collection(db, "GameDB"), where("username", "==", user));
+    let userDoc = "";
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      userDoc = doc.data();
+    });
+
+    return userDoc;
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+async function togglePrivacyHandler(title) {
+  try {
+    const userDoc = await findUser();
+    let privacyObj = userDoc.privacy;
+    $("#toggle-privacy").remove();
+
+    console.log(privacyObj);
+
+    const publicHTML = () => {
+      $("#user-title-container").append(
+        `<button id="toggle-privacy">Mark as Private <i class="fa-solid fa-eye-slash"></i></button>`
+      );
+    };
+
+    const privateHTML = () => {
+      $("#user-title-container").append(
+        `<button id="toggle-privacy">Mark as Public <i class="fa-solid fa-eye"></i></button>`
+      );
+    };
+
+    $("#toggle-privacy").off("click");
+
+    if (title === "Favorites") {
+      if (privacyObj.favorites === "public") {
+        publicHTML();
+        $("#toggle-privacy").on("click", () => {
+          togglePrivacy(title, "private");
+        });
+      } else if (privacyObj.favorites === "private") {
+        privateHTML();
+        $("#toggle-privacy").on("click", () => {
+          togglePrivacy(title, "public");
+        });
+      }
+    } else if (title === "Played Games") {
+      if (privacyObj.played === "public") {
+        publicHTML();
+        $("#toggle-privacy").on("click", () => {
+          togglePrivacy(title, "private");
+        });
+      } else if (privacyObj.played === "private") {
+        privateHTML();
+        $("#toggle-privacy").on("click", () => {
+          togglePrivacy(title, "public");
+        });
+      }
+    } else if (title === "To Play") {
+      if (privacyObj.toplay === "public") {
+        publicHTML();
+        $("#toggle-privacy").on("click", () => {
+          togglePrivacy(title, "private");
+        });
+      } else if (privacyObj.toplay === "private") {
+        privateHTML();
+        $("#toggle-privacy").on("click", () => {
+          togglePrivacy(title, "public");
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function togglePrivacy(title, toggle) {
+  let userDocRef = doc(db, "GameDB", auth.currentUser.uid);
+
+  if (title === "Favorites") {
+    await updateDoc(userDocRef, {
+      "privacy.favorites": toggle,
+    })
+      .catch((error) => {
+        console.log(error);
+      })
+      .then(() => {
+        togglePrivacyHandler(title);
+        FeedbackMessage("success", "Success", "Privacy changed.");
+      });
+  } else if (title === "Played Games") {
+    await updateDoc(userDocRef, {
+      "privacy.played": toggle,
+    })
+      .catch((error) => {
+        console.log(error);
+      })
+      .then(() => {
+        togglePrivacyHandler(title);
+        FeedbackMessage("success", "Success", "Privacy changed.");
+      });
+  } else if (title === "To Play") {
+    await updateDoc(userDocRef, {
+      "privacy.toplay": toggle,
+    })
+      .catch((error) => {
+        console.log(error);
+      })
+      .then(() => {
+        togglePrivacyHandler(title);
+        FeedbackMessage("success", "Success", "Privacy changed.");
+      });
   }
 }

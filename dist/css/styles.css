@@ -267,10 +267,24 @@ footer {
 #user #user-content {
   padding: 20px 4% 20px 4%;
   width: 100%;
+  position: relative;
 }
-#user #user-content #user-title {
+#user #user-content #user-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#user #user-content #user-title-container #user-title {
   margin-bottom: 20px;
   font-weight: 100;
+}
+#user #user-content #user-title-container #toggle-privacy {
+  background-color: #40434e;
+  border: none;
+  padding: 5px;
+  border-radius: 10px;
+  font-size: 11px;
+  cursor: pointer;
 }
 #user #user-content #user-pic-name {
   display: flex;
@@ -554,6 +568,13 @@ footer {
 #browse-grid {
   display: flex;
   flex-wrap: wrap;
+}
+#browse-grid #privacy-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 100;
 }
 #browse-grid .grid-item {
   display: flex;

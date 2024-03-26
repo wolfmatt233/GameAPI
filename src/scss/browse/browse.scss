@@ -122,6 +122,14 @@
   display: flex;
   flex-wrap: wrap;
 
+  #privacy-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 100;
+  }
+
   .grid-item {
     display: flex;
     flex: 0 0 19%;
@@ -205,7 +213,7 @@
         .filter-container {
           margin-bottom: 15px;
         }
-        
+
         #filter-button {
           margin-left: 0;
         }

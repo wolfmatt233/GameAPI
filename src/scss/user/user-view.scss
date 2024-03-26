@@ -46,10 +46,26 @@
   #user-content {
     padding: 20px 4% 20px 4%;
     width: 100%;
+    position: relative;
 
-    #user-title {
-      margin-bottom: 20px;
-      font-weight: 100;
+    #user-title-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      #user-title {
+        margin-bottom: 20px;
+        font-weight: 100;
+      }
+
+      #toggle-privacy {
+        background-color: $primaryColor;
+        border: none;
+        padding: 5px;
+        border-radius: 10px;
+        font-size: 11px;
+        cursor: pointer;
+      }
     }
 
     #user-pic-name {

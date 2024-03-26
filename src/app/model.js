@@ -6,9 +6,8 @@
 
 import { auth } from "./credentials";
 import { onAuthStateChanged } from "firebase/auth";
-import { loginModal, signUpModal, logOut } from "./user/login-out";
+import { loggedInButtons, loginModal, signUpModal, logOut } from "./user/login-out";
 import {
-  loggedInButtons,
   showUserInfo,
   showUserItems,
   handleUserBurger,
@@ -80,9 +79,12 @@ function homePage() {
     $(".header-container button")
       .prop("onclick", null)
       .off("click")
-      .html(`Welcome ${auth.currentUser.displayName}!`);
+      .html(`Welcome ${auth.currentUser.displayName}!`)
+      .css("cursor", "auto");
   } else {
-    $(".header-container button").html("Create an account today!");
+    $(".header-container button")
+      .html("Create an account today!")
+      .css("cursor", "pointer");
     signUpModal();
   }
 }
@@ -99,6 +101,7 @@ export function changeRoute() {
   let page = queryParams.get("page");
   let genres = queryParams.get("genres");
   let stores = queryParams.get("stores");
+  let user = queryParams.get("user");
 
   let searchQuery = $("#searchBar").val();
   $("#searchBar").on("keypress", (e) => {
@@ -124,7 +127,7 @@ export function changeRoute() {
     case "home":
       getPage(pageID, homePage);
       break;
-    case "user-personal":
+    case "user":
       getPage(pageID, () => {
         userListener();
         routeUser("info");
@@ -149,14 +152,11 @@ function userListener() {
   $("#user-favs").on("click", () => routeUser("favorites"));
   $("#user-played").on("click", () => routeUser("played"));
   $("#user-toplay").on("click", () => routeUser("toplay"));
-  $("#user-lists").on("click", () => routeUser("lists"));
   $("#user-reviews").on("click", () => routeUser("reviews"));
-  $("#user-delete").on("click", () => routeUser("delete"));
-  $("#user-password").on("click", () => routeUser("password"));
   $("#userBurger").on("click", () => handleUserBurger());
 }
 
-function routeUser(page) {
+export function routeUser(page) {
   function getUserPage(page, showInfo) {
     $.get(`pages/user/user-${page}.html`, (data) => {
       $("#user-content").html(data);
@@ -177,9 +177,6 @@ function routeUser(page) {
       break;
     case "toplay":
       getUserPage("items", showUserItems("To Play"));
-      break;
-    case "lists":
-      $("#user-content").html("Your Lists");
       break;
     case "reviews":
       $("#user-content").html("Your Reviews");
