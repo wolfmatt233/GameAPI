@@ -81,12 +81,19 @@ export function viewDetails(gameID) {
     });
 
     //Right side info and gallery
-    data.developers.forEach((dev) => {
-      $("#devs").append(`<li>${dev.name}</li>`);
+    data.developers.forEach((dev, idx) => {
+      $("#devs").append(`${dev.name}`);
+      console.log(dev, dev[idx - 1]);
+      dev.name != data.developers[data.developers.length - 1].name
+        ? $("#devs").append(", ")
+        : "";
     });
 
-    data.publishers.forEach((pub) => {
-      $("#pubs").append(`<li>${pub.name}</li>`);
+    data.publishers.forEach((pub, idx) => {
+      $("#pubs").append(`${pub.name}`);
+      pub.name != data.publishers[data.publishers.length - 1].name
+        ? $("#pubs").append(", ")
+        : "";
     });
 
     if (data.background_image_additional === null) {

@@ -130,6 +130,11 @@
         justify-content: space-evenly;
         padding: 7px;
 
+        h3,
+        h4 {
+          font-weight: 100;
+        }
+
         i {
           margin-left: 10px;
         }
@@ -139,7 +144,7 @@
         padding: 30px;
 
         img {
-          height: 300px;
+          // height: 300px;
           width: 100%;
           object-fit: cover;
           object-position: 0 50%;
@@ -148,14 +153,14 @@
         }
 
         #dev-pub {
-          display: flex;
+          h3 {
+            font-weight: 100;
+          }
 
-          div {
-            margin-right: 20px;
-
-            li {
-              margin-left: 25px;
-            }
+          #devs,
+          #pubs {
+            margin-bottom: 10px;
+            margin-left: 25px;
           }
         }
 
@@ -163,6 +168,10 @@
           li {
             margin-left: 35px;
             line-height: 30px;
+          }
+
+          p {
+            margin-bottom: 10px;
           }
         }
 
@@ -428,7 +437,7 @@
   border: 1px solid #959494;
   border-radius: 4px;
   background-color: $secondaryColor;
-  
+
   option {
     background-color: $secondaryColor;
     border: none;

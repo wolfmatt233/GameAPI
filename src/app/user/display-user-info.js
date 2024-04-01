@@ -241,6 +241,7 @@ function viewReviewModal(review) {
   }
 
   Swal.fire({
+    title: "Review",
     background: "#555a68",
     color: `#e9e3e3`,
     showCancelButton: false,
