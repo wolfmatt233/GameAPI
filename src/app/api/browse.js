@@ -21,83 +21,93 @@ function buildUrl(page, searchQuery, genres, stores, type) {
 
 //----Browse games----\\
 
-export function apiList(page, genres, stores) {
+export async function apiList(page, genres, stores) {
   LoadingMessage();
   getFilters(genres, stores);
   let url = buildUrl(page, "", genres, stores, "browse");
 
-  $.getJSON(url, (data) => {
-    $("#browse-grid").empty();
-    $("#browse-title").html(`Browse Games`);
-    let listArr = data.results;
-    listArr.forEach((game) => {
-      let date;
+  await fetch(url)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      $("#browse-grid").empty();
+      $("#browse-title").html(`Browse Games`);
+      let listArr = data.results;
+      listArr.forEach((game) => {
+        let date;
 
-      if (game.released == null) {
-        date = "TBA";
-      } else {
-        date = game.released.split("-")[0];
-      }
+        if (game.released == null) {
+          date = "TBA";
+        } else {
+          date = game.released.split("-")[0];
+        }
 
-      $("#browse-grid").append(`
-        <a href="#detail?game=${game.id}" class="grid-item">
-            <img src="${game.background_image}" alt="image" />
-            <div class="item-details">
-            <div>
-                <p class="details-title">${game.name}</p>
-                <p class="details-year">${date}</p>
-            </div>
-            </div>
-        </a>
-      `);
+        $("#browse-grid").append(`
+          <a href="#detail?game=${game.id}" class="grid-item">
+              <img src="${game.background_image}" alt="image" />
+              <div class="item-details">
+              <div>
+                  <p class="details-title">${game.name}</p>
+                  <p class="details-year">${date}</p>
+              </div>
+              </div>
+          </a>
+        `);
+      });
+
+      pageButtons(data.next, data.previous, genres, stores, "browse");
+    })
+    .then(() => {
+      CloseLoading();
+      filterEvents(null);
     });
-
-    pageButtons(data.next, data.previous, genres, stores, "browse");
-  }).then(() => {
-    CloseLoading();
-    filterEvents(null);
-  });
 }
 
 //----Search games----\\
 
-export function searchApi(searchQuery, page, genres, stores) {
+export async function searchApi(searchQuery, page, genres, stores) {
   LoadingMessage();
   getFilters(genres, stores);
   let url = buildUrl(page, searchQuery, genres, stores, "search");
 
-  $.getJSON(url, (data) => {
-    $("#browse-grid").empty();
-    $("#browse-title").html(`Search for "${searchQuery}"`);
-    data.results.forEach((game) => {
-      let date;
-      let background = game.background_image;
-      background == null ? (background = "") : background;
+  await fetch(url)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      $("#browse-grid").empty();
+      $("#browse-title").html(`Search for "${searchQuery}"`);
+      data.results.forEach((game) => {
+        let date;
+        let background = game.background_image;
+        background == null ? (background = "") : background;
 
-      if (game.released == null) {
-        date = "TBA";
-      } else {
-        date = game.released.split("-")[0];
-      }
+        if (game.released == null) {
+          date = "TBA";
+        } else {
+          date = game.released.split("-")[0];
+        }
 
-      $("#browse-grid").append(`
-        <a href="#detail?game=${game.id}" class="grid-item">
-            <img src="${background}" alt="No image found" />
-            <div class="item-details">
-            <div>
-                <p class="details-title">${game.name}</p>
-                <p class="details-year">${date}</p>
-            </div>
-            </div>
-        </a>
-      `);
+        $("#browse-grid").append(`
+          <a href="#detail?game=${game.id}" class="grid-item">
+              <img src="${background}" alt="No image found" />
+              <div class="item-details">
+              <div>
+                  <p class="details-title">${game.name}</p>
+                  <p class="details-year">${date}</p>
+              </div>
+              </div>
+          </a>
+        `);
+      });
+
+      pageButtons(data.next, data.previous, genres, stores, "search");
+    })
+    .then(() => {
+      CloseLoading();
+      filterEvents(searchQuery);
     });
-
-    pageButtons(data.next, data.previous, genres, stores, "search");
-  }).then(() => {
-    CloseLoading();
-    filterEvents(searchQuery);
-  });
 }
 
 //----Pagination-----\\
@@ -161,6 +171,9 @@ function filterEvents(searchQuery) {
       $(`#${e.target.id} i`).addClass("fa-solid fa-caret-up");
       $("#genres-boxes").removeClass("invisible");
       $("#genres-boxes").addClass("visible");
+      if ($("#stores-boxes").hasClass("visible")) {
+        $("#activate-stores").trigger("click");
+      }
     }
   });
 
@@ -176,6 +189,9 @@ function filterEvents(searchQuery) {
       $(`#${e.target.id} i`).addClass("fa-solid fa-caret-up");
       $("#stores-boxes").removeClass("invisible");
       $("#stores-boxes").addClass("visible");
+      if ($("#genres-boxes").hasClass("visible")) {
+        $("#activate-genres").trigger("click");
+      }
     }
   });
 
@@ -187,64 +203,75 @@ function filterEvents(searchQuery) {
 
 //----Get filters for dropdown lists----\\
 
-function getFilters(genres, stores) {
+async function getFilters(genres, stores) {
   // Get genre filters from api
-
   let genresUrl = `https://api.rawg.io/api/genres?key=${apiKey}`;
   genres != null ? (genres = genres.split(",")) : genres;
+  LoadingMessage();
 
-  $.getJSON(genresUrl, (data) => {
-    $("#genres-filter .checkbox-items").empty();
+  await fetch(genresUrl)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      $("#genres-filter .checkbox-items").empty();
 
-    data.results.forEach((apiGenre) => {
-      let checked = "";
+      data.results.forEach((apiGenre) => {
+        let checked = "";
 
-      if (genres != null) {
-        genres.forEach((genre) => {
-          if (genre == apiGenre.slug) {
-            checked = "checked";
-          }
-        });
-      }
+        if (genres != null) {
+          genres.forEach((genre) => {
+            if (genre == apiGenre.slug) {
+              checked = "checked";
+            }
+          });
+        }
 
-      $("#genres-filter .checkbox-items").append(`
+        $("#genres-filter .checkbox-items").append(`
         <div class="filter-checkbox">
           <input type="checkbox" id="${apiGenre.slug}" class="checkbox-click" ${checked} name="${apiGenre.name}" value="${apiGenre.slug}" />
           <label for="${apiGenre.name}">${apiGenre.name}</label><br />
         </div>
       `);
+      });
     });
-  });
 
   // Get store filters from api
 
   let storesUrl = `https://api.rawg.io/api/stores?key=${apiKey}`;
   stores != null ? (stores = stores.split(",")) : stores;
 
-  $.getJSON(storesUrl, (data) => {
-    $("#stores-filter .checkbox-items").empty();
-    
-    data.results.forEach((apiStore) => {
-      let checked = "";
+  await fetch(storesUrl)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      $("#stores-filter .checkbox-items").empty();
 
-      if (stores != null) {
-        stores.forEach((store) => {
-          if (store == apiStore.id) {
-            checked = "checked";
-          }
-        });
-      }
+      data.results.forEach((apiStore) => {
+        let checked = "";
 
-      let storeId = "store_" + apiStore.id;
+        if (stores != null) {
+          stores.forEach((store) => {
+            if (store == apiStore.id) {
+              checked = "checked";
+            }
+          });
+        }
 
-      $("#stores-filter .checkbox-items").append(`
-        <div class="filter-checkbox">
-          <input type="checkbox" id="${storeId}" class="checkbox-click" ${checked} name="${apiStore.name}" value="${apiStore.slug}" />
-          <label for="${apiStore.name}">${apiStore.name}</label><br />
-        </div>
-      `);
+        let storeId = "store_" + apiStore.id;
+
+        $("#stores-filter .checkbox-items").append(`
+          <div class="filter-checkbox">
+            <input type="checkbox" id="${storeId}" class="checkbox-click" ${checked} name="${apiStore.name}" value="${apiStore.slug}" />
+            <label for="${apiStore.name}">${apiStore.name}</label><br />
+          </div>
+        `);
+      });
+    })
+    .then(() => {
+      CloseLoading();
     });
-  });
 }
 
 //----Constructs filter query strings----\\

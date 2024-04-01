@@ -6,11 +6,17 @@
 
 import { auth } from "./credentials";
 import { onAuthStateChanged } from "firebase/auth";
-import { loggedInButtons, loginModal, signUpModal, logOut } from "./user/login-out";
+import {
+  loggedInButtons,
+  loginModal,
+  signUpModal,
+  logOut,
+} from "./user/login-out";
 import {
   showUserInfo,
   showUserItems,
   handleUserBurger,
+  showUserReviews,
 } from "./user/display-user-info";
 import { deletePrompt, changePasswordPrompt } from "./user/user-editing";
 import { apiList, searchApi } from "./api/browse";
@@ -21,7 +27,7 @@ const Toast = Swal.mixin({
   toast: true,
   color: "#fff",
   background: "#555a68",
-  position: "bottom-end",
+  position: "bottom",
   showConfirmButton: false,
   timer: 5000,
   timerProgressBar: true,
@@ -179,7 +185,7 @@ export function routeUser(page) {
       getUserPage("items", showUserItems("To Play"));
       break;
     case "reviews":
-      $("#user-content").html("Your Reviews");
+      getUserPage("reviews", showUserReviews());
       break;
     case "delete":
       deletePrompt();

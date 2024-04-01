@@ -5,6 +5,7 @@
     display: flex;
     flex-direction: column;
     min-height: calc(100vh - 150px);
+    width: 15%;
     background-color: $tertiaryColor;
 
     button {
@@ -65,6 +66,39 @@
         border-radius: 10px;
         font-size: 11px;
         cursor: pointer;
+      }
+    }
+
+    #reviews-list {
+      display: flex;
+      flex-direction: column;
+
+      .review-item {
+        background-color: $tertiaryColor;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        a {
+          font-size: 18px;
+          text-decoration: none;
+          text-overflow: ellipsis;
+        }
+
+        .review-item-info {
+          display: flex;
+          align-items: center;
+          justify-content: space-evenly;
+          width: 60%;
+
+          .edit-review-btn {
+            cursor: pointer;
+            border-bottom: 1px solid #fff;
+          }
+        }
       }
     }
 
@@ -253,9 +287,52 @@
   }
 }
 
+#viewReviewName {
+  font-size: 15px;
+  color: #acaaaa;
+}
+
+#viewReviewGame {
+  font-size: 20px;
+  margin-bottom: 13px;
+}
+
+#viewReviewStars {
+  color: #ffd700;
+  font-size: 20px;
+}
+
+.swal2-input {
+  width: 60%;
+  font-size: 17px;
+}
+
 @media screen and (max-width: 410px) {
   .swal2-input {
     font-size: 14px;
+  }
+
+  #user {
+    #user-content {
+      #reviews-list {
+        .review-item {
+          .review-item-info {
+            flex-direction: column;
+            align-items: normal;
+
+            .edit-review-btn {
+              margin-top: 5px;
+              display: flex;
+              align-items: center;
+              justify-content: space-evenly;
+              border: 1px solid #fff;
+              font-weight: 600;
+              padding: 7px;
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -276,6 +353,25 @@
       #user-pic-name {
         #user-info-name {
           font-size: 20px;
+        }
+      }
+
+      #reviews-list {
+        .review-item {
+          flex-direction: column;
+          align-items: baseline;
+
+          a {
+            font-size: 16px;
+            margin-bottom: 5px;
+          }
+
+          .review-item-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            width: 100%;
+          }
         }
       }
     }

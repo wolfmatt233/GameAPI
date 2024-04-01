@@ -67,7 +67,7 @@ export function viewDetails(gameID) {
 
     //if logged in, display user buttons
     if (auth.currentUser != null) {
-      addUserButtons(gameID);
+      addUserButtons(gameID, data.name);
     }
 
     //Right side top bar

@@ -234,6 +234,7 @@ footer {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 150px);
+  width: 15%;
   background-color: #484c58;
 }
 #user #sidebar button {
@@ -285,6 +286,34 @@ footer {
   border-radius: 10px;
   font-size: 11px;
   cursor: pointer;
+}
+#user #user-content #reviews-list {
+  display: flex;
+  flex-direction: column;
+}
+#user #user-content #reviews-list .review-item {
+  background-color: #484c58;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#user #user-content #reviews-list .review-item a {
+  font-size: 18px;
+  text-decoration: none;
+  text-overflow: ellipsis;
+}
+#user #user-content #reviews-list .review-item .review-item-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 60%;
+}
+#user #user-content #reviews-list .review-item .review-item-info .edit-review-btn {
+  cursor: pointer;
+  border-bottom: 1px solid #fff;
 }
 #user #user-content #user-pic-name {
   display: flex;
@@ -441,9 +470,42 @@ footer {
   order: 5;
 }
 
+#viewReviewName {
+  font-size: 15px;
+  color: #acaaaa;
+}
+
+#viewReviewGame {
+  font-size: 20px;
+  margin-bottom: 13px;
+}
+
+#viewReviewStars {
+  color: #ffd700;
+  font-size: 20px;
+}
+
+.swal2-input {
+  width: 60%;
+  font-size: 17px;
+}
+
 @media screen and (max-width: 410px) {
   .swal2-input {
     font-size: 14px;
+  }
+  #user #user-content #reviews-list .review-item .review-item-info {
+    flex-direction: column;
+    align-items: normal;
+  }
+  #user #user-content #reviews-list .review-item .review-item-info .edit-review-btn {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    border: 1px solid #fff;
+    font-weight: 600;
+    padding: 7px;
   }
 }
 @media screen and (max-width: 733px) {
@@ -459,6 +521,20 @@ footer {
   }
   #user #user-content #user-pic-name #user-info-name {
     font-size: 20px;
+  }
+  #user #user-content #reviews-list .review-item {
+    flex-direction: column;
+    align-items: baseline;
+  }
+  #user #user-content #reviews-list .review-item a {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  #user #user-content #reviews-list .review-item .review-item-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    width: 100%;
   }
 }
 @media screen and (max-width: 960px) {

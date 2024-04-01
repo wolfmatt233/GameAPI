@@ -9,10 +9,11 @@ import Swal from "sweetalert2";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { showReviews } from "./detail";
 import { FeedbackMessage } from "../model";
+import { showUserReviews } from "../user/display-user-info";
 
 //----BUTTONS & CHECKS----\\
 
-export async function addUserButtons(gameID) {
+export async function addUserButtons(gameID, name) {
   $(".detail-buttons").append(`
       <button id="addToFavorites">Add to "Favorites" <i class="fa-solid fa-plus"></i></button>
       <button id="addToPlayed">Add to "Played" <i class="fa-solid fa-plus"></i></button>
@@ -63,7 +64,7 @@ export async function addUserButtons(gameID) {
     checkFavBtn(favCheck, gameID);
     checkPlayedBtn(playCheck, gameID);
     checkToPlayBtn(wantCheck, gameID);
-    checkReviewBtn(reviewCheck, gameID);
+    checkReviewBtn(reviewCheck, gameID, name);
     checkTopFiveBtn(topCheck, gameID);
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
@@ -160,7 +161,7 @@ function checkToPlayBtn(check, gameID) {
   }
 }
 
-function checkReviewBtn(check, gameID) {
+function checkReviewBtn(check, gameID, name) {
   showReviews(gameID);
 
   if (check == 1) {
@@ -184,7 +185,7 @@ function checkReviewBtn(check, gameID) {
       .attr("class", "")
       .html(`Add Review <i class="fa-solid fa-plus"></i>`);
     $("#addedReview").prop("onclick", null).off("click");
-    $("#addReview").on("click", () => addReviewPrompt(gameID));
+    $("#addReview").on("click", () => addReviewPrompt(gameID, name));
     $("#deleteReview").remove();
   }
 }
@@ -406,12 +407,12 @@ async function removeFromTopFive(gameID) {
 
 //----Reviews----\\
 
-function addReviewPrompt(gameID) {
+function addReviewPrompt(gameID, name) {
   let reviewObj = {};
-  addEditPrompt("add", "New Review", "Add review", reviewObj, gameID);
+  addEditPrompt("add", "New Review", "Add review", reviewObj, gameID, name);
 }
 
-async function editReviewPrompt(gameID) {
+export async function editReviewPrompt(gameID) {
   let reviewObj;
 
   try {
@@ -431,13 +432,14 @@ async function editReviewPrompt(gameID) {
   addEditPrompt("edit", "Edit Review", "Update review", reviewObj, gameID);
 }
 
-function addEditPrompt(type, title, buttonText, reviewObj, gameID) {
+function addEditPrompt(type, title, buttonText, reviewObj, gameID, name) {
   let reviewText;
 
   if (type == "add") {
     reviewText = "";
   } else if (type == "edit") {
     reviewText = reviewObj.reviewText;
+    name = reviewObj.name;
   }
 
   Swal.fire({
@@ -485,6 +487,7 @@ function addEditPrompt(type, title, buttonText, reviewObj, gameID) {
           starScore: starScore.toString(),
           likes: [],
           gameId: gameID,
+          gameName: name,
           user: auth.currentUser.displayName,
         };
 
@@ -509,7 +512,7 @@ function addEditPrompt(type, title, buttonText, reviewObj, gameID) {
 
 function starSelector(starScore) {
   // 0.5 stars
-  $("#score_0.5").on("click", () => {
+  $("#st1 .st-r").on("click", () => {
     $(".st-l").attr("class", "st-l");
     $(".st-r").attr("class", "st-r");
     $("#st1 .st-l").addClass("checked");
@@ -612,8 +615,13 @@ function starSelector(starScore) {
 
   if (starScore != null) {
     starScore = starScore.toString();
-    starScore = starScore.split(".");
-    $(`#score_${starScore[0]}\\.${starScore[1]}`).trigger("click");
+    let halfScore = starScore.split(".")[1];
+    starScore = starScore.split(".")[0];
+    if (halfScore != undefined) {
+      $(`#score_${starScore}\\.${halfScore}`).trigger("click");
+    } else {
+      $(`#score_${starScore}`).trigger("click");
+    }
   }
 }
 
@@ -653,6 +661,7 @@ async function editReview(updatedObj, gameID) {
       reviews: reviewArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Review updated!");
+      showUserReviews();
       checkReviewBtn(1, gameID);
     });
   } catch (error) {
@@ -660,7 +669,7 @@ async function editReview(updatedObj, gameID) {
   }
 }
 
-function deleteReviewPrompt(gameID) {
+export function deleteReviewPrompt(gameID) {
   Swal.fire({
     title: "Delete your review?",
     background: "#555a68",
@@ -692,6 +701,7 @@ async function deleteReview(gameID) {
       reviews: reviewArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Review deleted.");
+      showUserReviews();
       checkReviewBtn(0, gameID);
     });
   } catch (error) {

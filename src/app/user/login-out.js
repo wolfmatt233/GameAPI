@@ -55,7 +55,7 @@ export function loginModal() {
       confirmButtonText: "Sign In",
       confirmButtonColor: "#04724D",
       html: `
-          <input type="text" id="emailLogin" class="swal2-input" placeholder="Email">
+          <input type="email" id="emailLogin" class="swal2-input" placeholder="Email">
           <input type="password" id="passwordLogin" class="swal2-input" placeholder="Password">
         `,
       preConfirm: () => {

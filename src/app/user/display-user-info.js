@@ -7,7 +7,6 @@
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -21,11 +20,17 @@ import {
   LoadingMessage,
   routeUser,
 } from "../model";
+import { editReviewPrompt, deleteReviewPrompt } from "../api/buttons";
+import Swal from "sweetalert2";
 
 export async function showUserInfo() {
   try {
     LoadingMessage();
     const userDoc = await findUser();
+
+    if (!userDoc) {
+      location.hash = `user?user=${auth.currentUser.displayName}`;
+    }
 
     //current user only
     if (auth.currentUser.uid === userDoc.uid) {
@@ -63,9 +68,13 @@ export async function showUserInfo() {
       let gameID = userDoc.topfive[property];
       if (gameID !== "") {
         let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
-        $.getJSON(url, (data) => {
-          let year = data.released.split("-");
-          $("#top-five .grid-row").append(`
+        await fetch(url)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            let year = data.released.split("-");
+            $("#top-five .grid-row").append(`
           <a href="#detail?game=${gameID}" class="user-grid-item" id="order_${property}">
             <img src="${data.background_image}" alt="image" />
             <div class="item-details">
@@ -76,7 +85,7 @@ export async function showUserInfo() {
             </div>
           </a>
         `);
-        });
+          });
       } else {
         $("#top-five .grid-row").append(`
           <a class="user-grid-item addUserTopFive" id="order_${property}">
@@ -139,12 +148,17 @@ export async function showUserItems(title) {
       accessArray = userDoc.played;
     }
 
-    accessArray.forEach((gameID) => {
+    accessArray.forEach(async (gameID) => {
       let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
+      LoadingMessage();
 
-      $.getJSON(url, (data) => {
-        let year = data.released.split("-");
-        $("#user-content #browse-grid").append(`
+      await fetch(url)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          let year = data.released.split("-");
+          $("#user-content #browse-grid").append(`
           <a href="#detail?game=${gameID}" class="grid-item">
             <img src="${data.background_image}" alt="image" />
             <div class="item-details">
@@ -155,11 +169,92 @@ export async function showUserItems(title) {
             </div>
           </a>
         `);
-      });
+        })
+        .then(() => {
+          CloseLoading();
+        });
     });
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
   }
+}
+
+export async function showUserReviews() {
+  try {
+    const userDoc = await findUser();
+    $("#user-title").html("Reviews");
+    $("#reviews-list").empty();
+
+    userDoc.reviews.forEach((review) => {
+      //display on page
+      $("#reviews-list").append(`
+        <div class="review-item" id="review-${review.gameId}">
+          <a href="#detail?game=${review.gameId}">${review.gameName}</a>
+          <div class="review-item-info">
+            <p>${review.likes.length} Likes</p>
+            <p>${review.reviewText.length} Characters</p>
+            <p>${parseFloat(review.starScore)}/5 Stars</p>
+            ${
+              auth.currentUser.uid === userDoc.uid
+                ? `<p class="edit-review-btn" id="editReview-${review.gameId}">Edit</p>`
+                : `<p class="edit-review-btn" id="viewReview-${review.gameId}">View</p>`
+            }
+            ${
+              auth.currentUser.uid === userDoc.uid
+                ? `<p class="edit-review-btn" id="deleteReview-${review.gameId}">Delete</p>`
+                : ""
+            }
+          </div>
+        </div>
+      `);
+
+      $(`#viewReview-${review.gameId}`).on("click", () => {
+        viewReviewModal(review);
+      });
+
+      $(`#editReview-${review.gameId}`).on("click", () => {
+        editReviewPrompt(review.gameId);
+      });
+
+      $(`#deleteReview-${review.gameId}`).on("click", () => {
+        deleteReviewPrompt(review.gameId);
+      });
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+function viewReviewModal(review) {
+  let stars = review.starScore.split(".")[0];
+  let starHalf = review.starScore.split(".")[1];
+  let starElement = "";
+
+  //apply stars to review
+  for (let i = 1; i <= stars; i++) {
+    starElement += "&#9733;";
+  }
+
+  //apply half star to review
+  if (starHalf != undefined) {
+    starElement += "&#189;";
+  }
+
+  Swal.fire({
+    background: "#555a68",
+    color: `#e9e3e3`,
+    showCancelButton: false,
+    showConfirmButton: false,
+    html: `
+      <p id="viewReviewGame">
+        <span id="viewReviewName">Review of </span>
+        <a href="#detail?game=${review.gameId}">${review.gameName}</a>
+        <span id="viewReviewName"> by ${review.user}</span>
+      </p>
+      <p>${review.reviewText}</p>
+      <p id="viewReviewStars">${starElement}</p>
+    `,
+  });
 }
 
 export function handleUserBurger() {
@@ -177,7 +272,7 @@ async function findUser() {
     let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
     let user = queryParams.get("user");
     let q = query(collection(db, "GameDB"), where("username", "==", user));
-    let userDoc = "";
+    let userDoc;
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -195,8 +290,6 @@ async function togglePrivacyHandler(title) {
     const userDoc = await findUser();
     let privacyObj = userDoc.privacy;
     $("#toggle-privacy").remove();
-
-    console.log(privacyObj);
 
     const publicHTML = () => {
       $("#user-title-container").append(
