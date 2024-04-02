@@ -694,6 +694,7 @@ footer {
 #browse-grid .grid-item .item-details .details-title {
   font-size: 1.3vw;
   margin-bottom: 7px;
+  font-weight: 100;
 }
 #browse-grid .grid-item .item-details .details-year {
   color: #bbb9b9;
@@ -841,7 +842,20 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  padding: 7px;
+  padding-top: 7px;
+}
+#detailView .detail-content .detail-right .detail-bar .metascore {
+  display: flex;
+  align-items: center;
+}
+#detailView .detail-content .detail-right .detail-bar .metascore img {
+  width: 25px;
+  margin-right: 3px;
+}
+#detailView .detail-content .detail-right .detail-bar .metascore h3 {
+  padding: 1px 4px;
+  border-radius: 5px;
+  background-color: #2e7f2e;
 }
 #detailView .detail-content .detail-right .detail-bar h3,
 #detailView .detail-content .detail-right .detail-bar h4 {
@@ -857,8 +871,11 @@ footer {
   width: 100%;
   object-fit: cover;
   object-position: 0 50%;
-  margin: 20px 0;
+  margin-bottom: 20px;
   border-radius: 10px;
+}
+#detailView .detail-content .detail-right .detail-article #dev-pub {
+  margin-bottom: 20px;
 }
 #detailView .detail-content .detail-right .detail-article #dev-pub h3 {
   font-weight: 100;

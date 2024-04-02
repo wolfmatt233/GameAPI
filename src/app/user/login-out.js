@@ -133,6 +133,7 @@ function login(email, password) {
 export function logOut() {
   signOut(auth)
     .then(() => {
+      location.hash = "home";
       FeedbackMessage("success", "Success", "Logged out.");
     })
     .catch((error) => {

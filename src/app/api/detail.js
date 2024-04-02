@@ -11,102 +11,123 @@ import { CloseLoading, FeedbackMessage, LoadingMessage } from "../model";
 
 //----SHOW DETAIL PAGE----\\
 
-export function viewDetails(gameID) {
+export async function viewDetails(gameID) {
   LoadingMessage();
   let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
 
-  $.getJSON(url, (data) => {
-    let rating;
-    let date = data.released;
-    let metascore = data.metacritic;
+  await fetch(url)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      let rating;
+      let date = new Date(data.released);
+      var dobArr = date.toDateString().split(" ");
+      var dobFormat = dobArr[2] + " " + dobArr[1] + " " + dobArr[3];
+      let metascore = data.metacritic;
 
-    if (data.esrb_rating === null) {
-      rating = "No  rating";
-    } else {
-      rating = data.esrb_rating.slug;
-    }
+      if (data.esrb_rating === null) {
+        rating = "No  rating";
+      } else {
+        rating = data.esrb_rating.slug;
+      }
 
-    if (date == null) {
-      date = "TBA";
-    } else if (metascore == null) {
-      metascore = "N/A";
-    }
+      if (date == null) {
+        date = "TBA";
+      } else if (metascore == null) {
+        metascore = "N/A";
+      }
 
-    $(".banner-container img").attr("src", `${data.background_image}`);
-    $(".banner-container p").html(`${data.name}`);
+      $(".banner-container img").attr("src", `${data.background_image}`);
+      $(".banner-container p").html(`${data.name}`);
 
-    //Left side bar
+      //Left side bar
 
-    //genres
-    data.genres.forEach((genre, idx) => {
-      idx != 0 ? $("#genres").append(` | `) : idx;
-      $("#genres").append(`<span>${genre.name}</span>`);
+      //genres
+      data.genres.forEach((genre, idx) => {
+        idx != 0 ? $("#genres").append(` | `) : idx;
+        $("#genres").append(`<span>${genre.name}</span>`);
+      });
+
+      //tags
+      data.tags.forEach((tag, idx) => {
+        idx != 0 ? $("#tags").append(` | `) : idx;
+        $("#tags").append(`<span>${tag.name}</span>`);
+      });
+
+      //storefronts
+      data.stores.forEach((store, idx) => {
+        idx != 0 ? $("#stores").append(` | `) : idx;
+        $("#stores").append(
+          `<a href="http://${store.store.domain}">${store.store.name}</a>`
+        );
+      });
+
+      //rating image
+      if (rating == "No ESRB rating") {
+        $(".detail-left img").attr("alt", rating);
+        $(".detail-left img").css("width", "100%");
+      } else {
+        $(".detail-left img").attr("src", `./assets/esrb_${rating}.png`);
+      }
+
+      //if logged in, display user buttons
+      if (auth.currentUser != null) {
+        addUserButtons(gameID, data.name);
+      }
+
+      //Right side top bar
+      $(".detail-bar h4").html(`${dobFormat}`);
+
+      //metascore with color based on score
+      $(".detail-bar .metascore h3").html(`${metascore}`);
+      if (metascore <= 100 && metascore >= 75) {
+        $(".detail-bar .metascore h3").css("background-color", "#66CC33");
+        $(".detail-bar .metascore h3").css("color", "#fff");
+      } else if (metascore <= 74 && metascore >= 50) {
+        $(".detail-bar .metascore h3").css("background-color", "#FFCC33");
+        $(".detail-bar .metascore h3").css("color", "#000");
+      } else if (metascore <= 49 && metascore >= 0) {
+        $(".detail-bar .metascore h3").css("background-color", "#FF0000");
+        $(".detail-bar .metascore h3").css("color", "#fff");
+      }
+
+      data.parent_platforms.forEach((platform) => {
+        platform = platform.platform.slug;
+        platform == "pc" ? (platform = "windows") : platform;
+        platform == "mac" ? (platform = "apple") : platform;
+        $(".detail-bar .platforms").append(
+          `<i class="fa-brands fa-${platform}"></i>`
+        );
+      });
+
+      //Right side info and gallery
+      data.developers.forEach((dev, idx) => {
+        $("#devs").append(`${dev.name}`);
+        dev.name != data.developers[data.developers.length - 1].name
+          ? $("#devs").append(", ")
+          : "";
+      });
+
+      data.publishers.forEach((pub, idx) => {
+        $("#pubs").append(`${pub.name}`);
+        pub.name != data.publishers[data.publishers.length - 1].name
+          ? $("#pubs").append(", ")
+          : "";
+      });
+
+      if (data.background_image_additional === null) {
+        $("#banner-2").css("display", "none");
+        $("#dev-pub").css("margin-bottom", "20px");
+      } else {
+        $("#banner-2").attr("src", data.background_image_additional);
+      }
+
+      $("#desc").append(data.description);
+    })
+    .then(() => {
+      CloseLoading();
     });
-
-    //tags
-    data.tags.forEach((tag, idx) => {
-      idx != 0 ? $("#tags").append(` | `) : idx;
-      $("#tags").append(`<span>${tag.name}</span>`);
-    });
-
-    //storefronts
-    data.stores.forEach((store, idx) => {
-      idx != 0 ? $("#stores").append(` | `) : idx;
-      $("#stores").append(
-        `<a href="http://${store.store.domain}">${store.store.name}</a>`
-      );
-    });
-
-    //rating image
-    if (rating == "No ESRB rating") {
-      $(".detail-left img").attr("alt", rating);
-      $(".detail-left img").css("width", "100%");
-    } else {
-      $(".detail-left img").attr("src", `./assets/esrb_${rating}.png`);
-    }
-
-    //if logged in, display user buttons
-    if (auth.currentUser != null) {
-      addUserButtons(gameID, data.name);
-    }
-
-    //Right side top bar
-    $(".detail-bar h4").html(`Released: ${date}`);
-    $(".detail-bar h3").html(`Metascore: ${metascore}`);
-    data.parent_platforms.forEach((platform) => {
-      platform = platform.platform.slug;
-      platform == "pc" ? (platform = "windows") : platform;
-      platform == "mac" ? (platform = "apple") : platform;
-      $(".detail-bar div").append(`<i class="fa-brands fa-${platform}"></i>`);
-    });
-
-    //Right side info and gallery
-    data.developers.forEach((dev, idx) => {
-      $("#devs").append(`${dev.name}`);
-      console.log(dev, dev[idx - 1]);
-      dev.name != data.developers[data.developers.length - 1].name
-        ? $("#devs").append(", ")
-        : "";
-    });
-
-    data.publishers.forEach((pub, idx) => {
-      $("#pubs").append(`${pub.name}`);
-      pub.name != data.publishers[data.publishers.length - 1].name
-        ? $("#pubs").append(", ")
-        : "";
-    });
-
-    if (data.background_image_additional === null) {
-      $("#banner-2").css("display", "none");
-      $("#dev-pub").css("margin-bottom", "20px");
-    } else {
-      $("#banner-2").attr("src", data.background_image_additional);
-    }
-
-    $("#desc").append(data.description);
-  }).then(() => {
-    CloseLoading();
-  });
 
   showReviews(gameID);
 }

@@ -28,12 +28,12 @@ export async function showUserInfo() {
     LoadingMessage();
     const userDoc = await findUser();
 
-    if (!userDoc) {
+    if (!userDoc && auth.currentUser != null) {
       location.hash = `user?user=${auth.currentUser.displayName}`;
     }
 
     //current user only
-    if (auth.currentUser.uid === userDoc.uid) {
+    if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
       $("#user-img-container").append(
         `<div id="user-img-hover">Edit<i class="fa-solid fa-pen"></i></div>`
       );
@@ -52,7 +52,7 @@ export async function showUserInfo() {
 
     let topFive = userDoc.topfive;
 
-    $("#top-five .grid-row").html("");
+    $("#top-five .grid-row").empty();
     $("#user-content #user-info-name").html(`${userDoc.username}`);
 
     if (user.photoURL == null || user.photoURL == "") {
@@ -102,13 +102,13 @@ export async function showUserInfo() {
     }
 
     //current user only
-    if (auth.currentUser.uid === userDoc.uid) {
+    if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
       editInfoListener(user, userDoc, db);
     }
 
     CloseLoading();
   } catch (error) {
-    console.log(error);
+    FeedbackMessage("error", "Error", error.message);
   }
 }
 
@@ -119,7 +119,7 @@ export async function showUserItems(title) {
 
     $("#user-title").html(title);
 
-    if (auth.currentUser.uid !== userDoc.uid) {
+    if (auth.currentUser != null && auth.currentUser.uid !== userDoc.uid) {
       const privateHTML = () =>
         $("#browse-grid").append(
           `<h2 id="privacy-text">Private <i class="fa-solid fa-eye-slash"></i></h2>`
@@ -136,7 +136,7 @@ export async function showUserItems(title) {
       }
     }
 
-    if (auth.currentUser.uid === userDoc.uid) {
+    if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
       togglePrivacyHandler(title);
     }
 

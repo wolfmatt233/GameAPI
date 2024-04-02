@@ -128,7 +128,23 @@
         display: flex;
         align-items: center;
         justify-content: space-evenly;
-        padding: 7px;
+        padding-top: 7px;
+
+        .metascore {
+          display: flex;
+          align-items: center;
+
+          img {
+            width: 25px;
+            margin-right: 3px;
+          }
+
+          h3 {
+            padding: 1px 4px;
+            border-radius: 5px;
+            background-color: #2e7f2e;
+          }
+        }
 
         h3,
         h4 {
@@ -148,11 +164,13 @@
           width: 100%;
           object-fit: cover;
           object-position: 0 50%;
-          margin: 20px 0;
+          margin-bottom: 20px;
           border-radius: 10px;
         }
 
         #dev-pub {
+          margin-bottom: 20px;
+
           h3 {
             font-weight: 100;
           }
