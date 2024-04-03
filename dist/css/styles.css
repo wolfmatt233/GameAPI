@@ -800,6 +800,7 @@ footer {
 #detailView .detail-content .detail-left img {
   width: 50px;
   display: flex;
+  margin-top: 15px;
 }
 #detailView .detail-content .detail-left button {
   background-color: transparent;
@@ -847,6 +848,7 @@ footer {
 #detailView .detail-content .detail-right .detail-bar .metascore {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 #detailView .detail-content .detail-right .detail-bar .metascore img {
   width: 25px;
@@ -855,7 +857,6 @@ footer {
 #detailView .detail-content .detail-right .detail-bar .metascore h3 {
   padding: 1px 4px;
   border-radius: 5px;
-  background-color: #2e7f2e;
 }
 #detailView .detail-content .detail-right .detail-bar h3,
 #detailView .detail-content .detail-right .detail-bar h4 {
@@ -1023,30 +1024,10 @@ footer {
   #detailView .detail-content .detail-right {
     width: 100%;
   }
-  #detailView .detail-content .detail-right .detail-bar {
-    flex-direction: column;
-  }
-  #detailView .detail-content .detail-right .detail-bar h3,
-  #detailView .detail-content .detail-right .detail-bar h4 {
-    font-size: 20px;
-    margin-top: 10px;
-    font-weight: 100;
-  }
-  #detailView .detail-content .detail-right .detail-bar .platforms {
-    margin-top: 15px;
-  }
   #detailView .detail-content .detail-right .detail-article {
     padding: 0px;
     margin-top: 20px;
     border-radius: 3px;
-  }
-  #detailView .detail-content .detail-right .detail-article #dev-pub {
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-  }
-  #detailView .detail-content .detail-right .detail-article #dev-pub div {
-    margin-right: 0px;
   }
   #detailView .detail-content .detail-right .detail-article img {
     height: 150px;

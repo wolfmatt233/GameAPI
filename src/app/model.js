@@ -48,6 +48,8 @@ export function FeedbackMessage(icon, title, message) {
 export function LoadingMessage() {
   Swal.fire({
     title: "",
+    allowOutsideClick: false,
+    allowEscapeKey: false,
     background: "#555a68",
     color: "#fff",
     html: "Loading...",
