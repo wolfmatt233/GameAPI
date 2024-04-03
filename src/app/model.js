@@ -80,6 +80,28 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+//----NAV BURGER----\\
+
+export function navBurger() {
+  $("#nav-burger").on("click", () => {
+    if ($(".nav-burger-container").hasClass("hide-burger")) {
+      $(".nav-burger-container").removeClass("hide-burger");
+      $(".nav-burger-container").addClass("show-burger");
+      $("#nav-burger").html(`<i class="fa-solid fa-xmark"></i>`);
+    } else if ($(".nav-burger-container").hasClass("show-burger")) {
+      $(".nav-burger-container").removeClass("show-burger");
+      $(".nav-burger-container").addClass("hide-burger");
+      $("#nav-burger").html(`<hr><hr><hr>`);
+    }
+  });
+}
+
+function navBurgerReset() {
+  if ($(".nav-burger-container").hasClass("show-burger")) {
+    $("#nav-burger").trigger("click");
+  }
+}
+
 //----HOME PAGE----\\
 
 function homePage() {
@@ -100,6 +122,7 @@ function homePage() {
 //----PAGE ROUTING----\\
 
 export function changeRoute() {
+  navBurgerReset();
   let hashTag = window.location.hash;
   let pageID = hashTag.replace("#", "").split("?")[0];
 

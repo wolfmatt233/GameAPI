@@ -4,7 +4,7 @@
   purpose: base js page that starts the app and page routing
 */
 
-import { changeRoute } from "./model";
+import { changeRoute, navBurger } from "./model";
 
 function initURLListener() {
   $(window).on("hashchange", changeRoute);
@@ -14,4 +14,5 @@ function initURLListener() {
 $(document).ready(function () {
   $("#searchBtn").on("click", changeRoute);
   initURLListener();
+  navBurger();
 });

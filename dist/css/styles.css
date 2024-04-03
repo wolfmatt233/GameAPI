@@ -11,6 +11,7 @@ body {
   height: 100%;
   margin: 0 2%;
   background-color: #40434e;
+  position: relative;
 }
 
 #app {
@@ -59,11 +60,24 @@ nav .nav-title span {
 nav .nav-title:hover {
   border-color: transparent;
 }
-nav .nav-search {
-  display: flex;
-  width: 40%;
+nav .show-burger {
+  visibility: visible;
 }
-nav .nav-search input {
+nav .hide-burger {
+  visibility: hidden;
+}
+nav .nav-burger-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 70%;
+  transition: opacity 1s;
+}
+nav .nav-burger-container .nav-search {
+  display: flex;
+  width: 50%;
+}
+nav .nav-burger-container .nav-search input {
   border: 1px solid #e9e3e3;
   border-right: none;
   padding: 5px 7px;
@@ -73,10 +87,10 @@ nav .nav-search input {
   background-color: #555a68;
   font-size: 16px;
 }
-nav .nav-search input:focus {
+nav .nav-burger-container .nav-search input:focus {
   outline: 2px solid #8e8e8e;
 }
-nav .nav-search a {
+nav .nav-burger-container .nav-search a {
   padding: 4px 7px;
   border: 1px solid #e9e3e3;
   border-left: none;
@@ -86,10 +100,10 @@ nav .nav-search a {
   align-items: center;
   justify-content: center;
 }
-nav .nav-search a i {
+nav .nav-burger-container .nav-search a i {
   background-color: #555a68;
 }
-nav .nav-search .tooltip {
+nav .nav-burger-container .nav-search .tooltip {
   opacity: 0;
   background-color: #282727;
   color: #fff;
@@ -104,7 +118,7 @@ nav .nav-search .tooltip {
   transition: opacity 0.6s;
   visibility: hidden;
 }
-nav .nav-search .tooltip:after {
+nav .nav-burger-container .nav-search .tooltip:after {
   content: "";
   position: absolute;
   bottom: 100%;
@@ -114,12 +128,16 @@ nav .nav-search .tooltip:after {
   border-style: solid;
   border-color: transparent transparent #282727 transparent;
 }
-nav .nav-container {
+nav .nav-burger-container .nav-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-nav .nav-container button {
+nav .nav-burger-container .nav-container button,
+nav .nav-burger-container .nav-container a {
+  white-space: nowrap;
+}
+nav .nav-burger-container .nav-container button {
   font-size: 16px;
   border: none;
   padding: 4px 7px;
@@ -129,22 +147,34 @@ nav .nav-container button {
   align-items: center;
   border-bottom: 1px solid transparent;
 }
-nav .nav-container button:hover {
+nav .nav-burger-container .nav-container button:hover {
   border-bottom: 1px solid #e9e3e3;
 }
-nav .nav-container button i {
+nav .nav-burger-container .nav-container button i {
   margin-left: 7px;
 }
-nav .nav-container a {
+nav .nav-burger-container .nav-container a {
   margin-left: 10px;
 }
-nav .nav-container #nav-user i {
+nav .nav-burger-container .nav-container #nav-user i {
   margin-left: 7px;
+}
+nav #nav-burger {
+  width: 20px;
+  cursor: pointer;
+  display: none;
+  font-size: 25px;
+}
+nav #nav-burger hr {
+  border: none;
+  background-color: #fff;
+  height: 2px;
+  margin-top: 6px;
 }
 
 @media screen and (max-width: 1021px) {
   nav {
-    height: 120px;
+    height: 100px;
   }
   nav .nav-title {
     font-size: 15px;
@@ -152,28 +182,57 @@ nav .nav-container #nav-user i {
   nav .nav-search {
     width: 30%;
   }
-  nav .nav-container a,
-  nav .nav-container button {
+  nav .nav-burger-container .nav-container a,
+  nav .nav-burger-container .nav-container button {
     font-size: 13px;
   }
 }
+@media screen and (min-width: 734px) {
+  nav .nav-burger-container {
+    visibility: visible;
+  }
+}
 @media screen and (max-width: 733px) {
-  nav {
+  nav .nav-burger-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    min-width: 100vw;
+    min-height: 107vh;
+    background: #40434e;
+  }
+  nav .nav-burger-container .nav-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     flex-direction: column;
   }
-  nav .nav-search {
-    width: 90%;
+  nav .nav-burger-container .nav-container button,
+  nav .nav-burger-container .nav-container a {
+    font-size: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #fff;
+    padding: 10px;
+    width: 200px;
+    text-align: center;
   }
-  nav .nav-container {
-    padding-bottom: 7px;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    width: 90%;
+  nav .nav-burger-container .nav-container button:hover,
+  nav .nav-burger-container .nav-container a:hover {
+    border-bottom: 1px solid transparent;
   }
-  nav .nav-container a,
-  nav .nav-container button {
-    white-space: nowrap;
+  nav .nav-burger-container .nav-search {
+    position: absolute;
+    width: 70%;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  nav #nav-burger {
+    display: block;
+    z-index: 3;
   }
 }
 footer {

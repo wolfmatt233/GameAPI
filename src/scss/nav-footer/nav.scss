@@ -41,108 +41,143 @@ nav {
     }
   }
 
-  .nav-search {
+  .show-burger {
+    visibility: visible;
+  }
+
+  .hide-burger {
+    visibility: hidden;
+  }
+
+  .nav-burger-container {
     display: flex;
-    width: 40%;
+    align-items: center;
+    justify-content: space-between;
+    width: 70%;
+    transition: opacity 1s;
 
-    input {
-      border: 1px solid $white;
-      border-right: none;
-      padding: 5px 7px;
-      border-radius: 10px 0 0 10px;
-      height: 35px;
-      width: 100%;
-      background-color: $secondaryColor;
-      font-size: 16px;
+    .nav-search {
+      display: flex;
+      width: 50%;
 
-      &:focus {
-        outline: 2px solid #8e8e8e;
+      input {
+        border: 1px solid $white;
+        border-right: none;
+        padding: 5px 7px;
+        border-radius: 10px 0 0 10px;
+        height: 35px;
+        width: 100%;
+        background-color: $secondaryColor;
+        font-size: 16px;
+
+        &:focus {
+          outline: 2px solid #8e8e8e;
+        }
+      }
+
+      a {
+        padding: 4px 7px;
+        border: 1px solid $white;
+        border-left: none;
+        border-radius: 0 10px 10px 0;
+        background-color: $secondaryColor;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+          background-color: $secondaryColor;
+        }
+      }
+
+      // Tooltip from W3Schools
+      .tooltip {
+        opacity: 0;
+        background-color: #282727;
+        color: #fff;
+        text-align: center;
+        padding: 7px;
+        border-radius: 6px;
+        position: absolute;
+        top: 75px;
+        left: 50%;
+        transform: translate(-50%, 0%);
+        box-shadow: 0 2px 10px 0px #2f3139;
+        transition: opacity 0.6s;
+        visibility: hidden;
+
+        &:after {
+          content: "";
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          margin-left: -5px;
+          border-width: 5px;
+          border-style: solid;
+          border-color: transparent transparent #282727 transparent;
+        }
       }
     }
 
-    a {
-      padding: 4px 7px;
-      border: 1px solid $white;
-      border-left: none;
-      border-radius: 0 10px 10px 0;
-      background-color: $secondaryColor;
+    .nav-container {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
 
-      i {
-        background-color: $secondaryColor;
+      button,
+      a {
+        white-space: nowrap;
       }
-    }
 
-    // Tooltip from W3Schools
-    .tooltip {
-      opacity: 0;
-      background-color: #282727;
-      color: #fff;
-      text-align: center;
-      padding: 7px;
-      border-radius: 6px;
-      position: absolute;
-      top: 75px;
-      left: 50%;
-      transform: translate(-50%, 0%);
-      box-shadow: 0 2px 10px 0px #2f3139;
-      transition: opacity 0.6s;
-      visibility: hidden;
+      button {
+        font-size: 16px;
+        border: none;
+        padding: 4px 7px;
+        cursor: pointer;
+        margin-left: 10px;
+        background-color: $primaryColor;
+        align-items: center;
+        border-bottom: 1px solid transparent;
 
-      &:after {
-        content: "";
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: transparent transparent #282727 transparent;
+        &:hover {
+          border-bottom: 1px solid $white;
+        }
+
+        i {
+          margin-left: 7px;
+        }
+      }
+
+      a {
+        margin-left: 10px;
+      }
+
+      #nav-user {
+        i {
+          margin-left: 7px;
+        }
       }
     }
   }
 
-  .nav-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  #nav-burger {
+    width: 20px;
+    cursor: pointer;
+    display: none;
+    font-size: 25px;
 
-    button {
-      font-size: 16px;
+    hr {
       border: none;
-      padding: 4px 7px;
-      cursor: pointer;
-      margin-left: 10px;
-      background-color: $primaryColor;
-      align-items: center;
-      border-bottom: 1px solid transparent;
-
-      &:hover {
-        border-bottom: 1px solid $white;
-      }
-
-      i {
-        margin-left: 7px;
-      }
-    }
-
-    a {
-      margin-left: 10px;
-    }
-
-    #nav-user {
-      i {
-        margin-left: 7px;
-      }
+      background-color: #fff;
+      height: 2px;
+      margin-top: 6px;
     }
   }
 }
 
 @media screen and (max-width: 1021px) {
   nav {
-    height: 120px;
+    height: 100px;
 
     .nav-title {
       font-size: 15px;
@@ -151,35 +186,72 @@ nav {
     .nav-search {
       width: 30%;
     }
-    .nav-container {
-      a,
-      button {
-        font-size: 13px;
+
+    .nav-burger-container {
+      .nav-container {
+        a,
+        button {
+          font-size: 13px;
+        }
       }
     }
+  }
+}
 
+@media screen and (min-width: 734px) {
+  nav {
+    .nav-burger-container {
+      visibility: visible;
+    }
   }
 }
 
 @media screen and (max-width: 733px) {
   nav {
-    flex-direction: column;
+    .nav-burger-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      min-width: 100vw;
+      min-height: 107vh;
+      background: $primaryColor;
 
-    .nav-search {
-      width: 90%;
+      .nav-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        flex-direction: column;
+
+        button,
+        a {
+          font-size: 20px;
+          margin-bottom: 10px;
+          border-bottom: 1px solid #fff;
+          padding: 10px;
+          width: 200px;
+          text-align: center;
+
+          &:hover {
+            border-bottom: 1px solid transparent;
+          }
+        }
+      }
+
+      .nav-search {
+        position: absolute;
+        width: 70%;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
 
-    .nav-container {
-      padding-bottom: 7px;
-      display: flex;
-      align-items: center;
-      justify-content: space-evenly;
-      width: 90%;
-
-      a,
-      button {
-        white-space: nowrap;
-      }
+    #nav-burger {
+      display: block;
+      z-index: 3;
     }
   }
 }
