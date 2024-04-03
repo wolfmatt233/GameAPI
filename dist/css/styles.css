@@ -1024,6 +1024,9 @@ footer {
   #detailView .detail-content .detail-right {
     width: 100%;
   }
+  #detailView .detail-content .detail-right .detail-bar {
+    justify-content: space-between;
+  }
   #detailView .detail-content .detail-right .detail-article {
     padding: 0px;
     margin-top: 20px;

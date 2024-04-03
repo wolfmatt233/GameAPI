@@ -369,6 +369,10 @@
       .detail-right {
         width: 100%;
 
+        .detail-bar {
+          justify-content: space-between;
+        }
+
         .detail-article {
           padding: 0px;
           margin-top: 20px;
