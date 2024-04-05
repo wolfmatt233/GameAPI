@@ -2,10 +2,9 @@
   display: flex;
 
   #sidebar {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     min-height: calc(100vh - 150px);
-    width: 15%;
     background-color: $tertiaryColor;
 
     button {
@@ -13,23 +12,19 @@
       border: none;
       cursor: pointer;
       background-color: transparent;
+      white-space: nowrap;
 
       &:hover {
         background-color: $primaryColor;
       }
     }
 
-    .burger {
+    #userBurger {
       width: 40px;
       align-self: flex-end;
 
-      hr {
-        margin-bottom: 5px;
-        color: $white;
-
-        &:last-child {
-          margin-bottom: 0px;
-        }
+      i {
+        font-size: 18px;
       }
     }
 
@@ -287,20 +282,50 @@
   }
 }
 
-#viewReviewName {
-  font-size: 15px;
-  color: #acaaaa;
-}
+#viewReview {
+  text-align: left;
 
-#viewReviewGame {
-  font-size: 20px;
-  margin-bottom: 13px;
-}
+  #viewReviewTitle {
+    margin-bottom: 15px;
+    position: relative;
 
-#viewReviewStars {
-  color: #ffd700;
-  font-size: 20px;
-  margin-top: 3px;
+    span {
+      font-size: 15px;
+      color: #acaaaa;
+    }
+
+    a {
+      font-size: 20px;
+      font-weight: 100;
+    }
+  }
+
+  #viewReviewText {
+    margin-left: 10px;
+    font-size: 17px;
+  }
+
+  #viewReviewBtm {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+
+    #viewReviewLikes {
+      font-size: 17px;
+
+      i {
+        font-size: 14px;
+        color: red;
+      }
+    }
+
+    #viewReviewStars {
+      color: #ffd700;
+      font-size: 20px;
+      display: inline;
+      margin-left: 10px;
+    }
+  }
 }
 
 .swal2-input {
@@ -326,7 +351,7 @@
               display: flex;
               align-items: center;
               justify-content: space-evenly;
-              border: 1px solid #fff;
+              border-bottom: 1px solid #fff;
               font-weight: 600;
               padding: 7px;
             }
@@ -345,8 +370,12 @@
       min-height: 0px !important;
       min-width: 100% !important;
 
-      .burger {
-        align-self: center;
+      #userBurger {
+        width: 100%;
+        
+        i {
+          transform: rotate(-90deg);
+        }
       }
     }
 

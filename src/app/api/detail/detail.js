@@ -1,0 +1,218 @@
+/*
+  author: Matthew Wolf
+  file: detail.js
+  purpose: functions for displaying the details page
+*/
+
+import { auth, db, apiKey } from "../../credentials";
+import { collection, getDocs, query } from "firebase/firestore";
+import { addUserButtons } from "./buttons";
+import { CloseLoading, FeedbackMessage, LoadingMessage } from "../../model";
+import { checkLikeBtn } from "./reviews";
+
+//----Detail page----\\
+
+export async function viewDetails(gameID) {
+  LoadingMessage();
+  let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
+
+  try {
+    await fetch(url)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        let rating;
+        let date = new Date(data.released);
+        var dobArr = date.toDateString().split(" ");
+        var dobFormat = dobArr[2] + " " + dobArr[1] + " " + dobArr[3];
+        let metascore = data.metacritic;
+
+        if (data.esrb_rating === null) {
+          rating = "No  rating";
+        } else {
+          rating = data.esrb_rating.slug;
+        }
+
+        if (date == null) {
+          date = "TBA";
+        } else if (metascore == null) {
+          metascore = "N/A";
+        }
+
+        $(".banner-container img").attr("src", `${data.background_image}`);
+        $(".banner-container p").html(`${data.name}`);
+
+        //Left side bar
+
+        //genres
+        data.genres.forEach((genre, idx) => {
+          idx != 0 ? $("#genres").append(` | `) : idx;
+          $("#genres").append(`<span>${genre.name}</span>`);
+        });
+
+        //tags
+        data.tags.forEach((tag, idx) => {
+          idx != 0 ? $("#tags").append(` | `) : idx;
+          $("#tags").append(`<span>${tag.name}</span>`);
+        });
+
+        //storefronts
+        data.stores.forEach((store, idx) => {
+          idx != 0 ? $("#stores").append(` | `) : idx;
+          $("#stores").append(
+            `<a href="http://${store.store.domain}">${store.store.name}</a>`
+          );
+        });
+
+        //rating image
+        if (rating == "No ESRB rating") {
+          $(".detail-left img").attr("alt", rating);
+          $(".detail-left img").css("width", "100%");
+        } else {
+          $(".detail-left img").attr("src", `./assets/esrb_${rating}.png`);
+        }
+
+        //if logged in, display user buttons
+        if (auth.currentUser != null) {
+          addUserButtons(gameID, data.name);
+        }
+
+        //Right side top bar
+        $(".detail-bar h4").html(`${dobFormat}`);
+
+        //metascore with color based on score
+        $(".detail-bar .metascore h3").html(`${metascore}`);
+        if (metascore <= 100 && metascore >= 75) {
+          $(".detail-bar .metascore h3").css("background-color", "#66CC33");
+          $(".detail-bar .metascore h3").css("color", "#fff");
+        } else if (metascore <= 74 && metascore >= 50) {
+          $(".detail-bar .metascore h3").css("background-color", "#FFCC33");
+          $(".detail-bar .metascore h3").css("color", "#000");
+        } else if (metascore <= 49 && metascore >= 0) {
+          $(".detail-bar .metascore h3").css("background-color", "#FF0000");
+          $(".detail-bar .metascore h3").css("color", "#fff");
+        }
+
+        data.parent_platforms.forEach((platform) => {
+          platform = platform.platform.slug;
+          platform == "pc" ? (platform = "windows") : platform;
+          platform == "mac" ? (platform = "apple") : platform;
+          $(".detail-bar .platforms").append(
+            `<i class="fa-brands fa-${platform}"></i>`
+          );
+        });
+
+        //Right side info and gallery
+        data.developers.forEach((dev, idx) => {
+          $("#devs").append(`${dev.name}`);
+          dev.name != data.developers[data.developers.length - 1].name
+            ? $("#devs").append(", ")
+            : "";
+        });
+
+        data.publishers.forEach((pub, idx) => {
+          $("#pubs").append(`${pub.name}`);
+          pub.name != data.publishers[data.publishers.length - 1].name
+            ? $("#pubs").append(", ")
+            : "";
+        });
+
+        if (data.background_image_additional === null) {
+          $("#banner-2").css("display", "none");
+          $("#dev-pub").css("margin-bottom", "20px");
+        } else {
+          $("#banner-2").attr("src", data.background_image_additional);
+        }
+
+        $("#desc").append(data.description);
+      })
+      .then(() => {
+        CloseLoading();
+      });
+  } catch (error) {
+    FeedbackMessage("error", "API Error", error.message);
+  }
+
+  showReviews(gameID);
+}
+
+//----Reviews display----\\
+
+export async function showReviews(gameID) {
+  $("#reviewGallery").empty();
+
+  try {
+    const q = query(collection(db, "GameDB"));
+    const querySnapshot = await getDocs(q);
+    let avgScore = 0;
+    let idx = 0;
+
+    //each user
+    querySnapshot.forEach((doc) => {
+      doc = doc.data();
+      //thier reviews
+      doc.reviews.forEach((review) => {
+        //their review for the game on page
+        if (review.gameId == gameID) {
+          calcAvg(review.starScore, idx);
+          let score = review.starScore;
+          let stars = ("" + score).split(".")[0];
+          let starHalf = ("" + score).split(".")[1];
+          let likeCheck = 0;
+          let likeCount = review.likes.length;
+          likeCount == undefined ? (likeCheck = 0) : likeCount;
+
+          $("#reviewGallery").append(`
+            <div class="review-item" id="review${idx}">
+              <div class="review-top">
+                <h3><span>Review by </span><a href="#user?user=${review.user}">${review.user}</a></h3>
+                <span id="review-score"></span>
+              </div>
+              <p class="review-text">${review.reviewText}</p>
+              <button class="to-like"><i class="fa-solid fa-heart"></i> ${likeCount} Likes</button>
+            </div>
+          `);
+
+          //apply stars to review
+          for (let i = 1; i <= stars; i++) {
+            $(`#review${idx} .review-top #review-score`).append(`&#9733;`);
+          }
+
+          //apply half star to review
+          if (starHalf != undefined) {
+            $(`#review${idx} .review-top #review-score`).append(`&#189;`);
+          }
+
+          if (auth.currentUser === null) {
+            $(".reviewItem button").attr("class", null).css("cursor", "auto");
+          } else {
+            review.likes.forEach((username) => {
+              if (auth.currentUser.displayName == username) {
+                likeCheck++;
+              }
+            });
+
+            checkLikeBtn(idx, doc.username, gameID, likeCheck, likeCount);
+          }
+          idx++;
+        }
+      });
+    });
+
+    function calcAvg(score) {
+      avgScore += parseFloat(score);
+    }
+
+    if (avgScore > 0) {
+      avgScore /= idx;
+      avgScore = Math.round(avgScore * 100) / 100;
+    }
+
+    avgScore.toString();
+
+    $("#reviewAvg").html(`Average Rating: ${avgScore} Stars`);
+  } catch (error) {
+    FeedbackMessage("error", "Error", error.message);
+  }
+}

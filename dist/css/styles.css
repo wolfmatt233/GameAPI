@@ -290,10 +290,9 @@ footer {
   display: flex;
 }
 #user #sidebar {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   min-height: calc(100vh - 150px);
-  width: 15%;
   background-color: #484c58;
 }
 #user #sidebar button {
@@ -301,20 +300,17 @@ footer {
   border: none;
   cursor: pointer;
   background-color: transparent;
+  white-space: nowrap;
 }
 #user #sidebar button:hover {
   background-color: #40434e;
 }
-#user #sidebar .burger {
+#user #sidebar #userBurger {
   width: 40px;
   align-self: flex-end;
 }
-#user #sidebar .burger hr {
-  margin-bottom: 5px;
-  color: #e9e3e3;
-}
-#user #sidebar .burger hr:last-child {
-  margin-bottom: 0px;
+#user #sidebar #userBurger i {
+  font-size: 18px;
 }
 #user #sidebar #sidebarButtons {
   display: flex;
@@ -529,20 +525,42 @@ footer {
   order: 5;
 }
 
-#viewReviewName {
+#viewReview {
+  text-align: left;
+}
+#viewReview #viewReviewTitle {
+  margin-bottom: 15px;
+  position: relative;
+}
+#viewReview #viewReviewTitle span {
   font-size: 15px;
   color: #acaaaa;
 }
-
-#viewReviewGame {
+#viewReview #viewReviewTitle a {
   font-size: 20px;
-  margin-bottom: 13px;
+  font-weight: 100;
 }
-
-#viewReviewStars {
+#viewReview #viewReviewText {
+  margin-left: 10px;
+  font-size: 17px;
+}
+#viewReview #viewReviewBtm {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+}
+#viewReview #viewReviewBtm #viewReviewLikes {
+  font-size: 17px;
+}
+#viewReview #viewReviewBtm #viewReviewLikes i {
+  font-size: 14px;
+  color: red;
+}
+#viewReview #viewReviewBtm #viewReviewStars {
   color: #ffd700;
   font-size: 20px;
-  margin-top: 3px;
+  display: inline;
+  margin-left: 10px;
 }
 
 .swal2-input {
@@ -563,7 +581,7 @@ footer {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    border: 1px solid #fff;
+    border-bottom: 1px solid #fff;
     font-weight: 600;
     padding: 7px;
   }
@@ -576,8 +594,11 @@ footer {
     min-height: 0px !important;
     min-width: 100% !important;
   }
-  #user #sidebar .burger {
-    align-self: center;
+  #user #sidebar #userBurger {
+    width: 100%;
+  }
+  #user #sidebar #userBurger i {
+    transform: rotate(-90deg);
   }
   #user #user-content #user-pic-name #user-info-name {
     font-size: 20px;
@@ -703,6 +724,8 @@ footer {
 
 #browse-grid {
   display: flex;
+  align-items: center;
+  justify-content: space-evenly;
   flex-wrap: wrap;
 }
 #browse-grid #privacy-text {
@@ -713,11 +736,10 @@ footer {
   font-weight: 100;
 }
 #browse-grid .grid-item {
-  display: flex;
-  flex: 0 0 19%;
-  margin: 2% 3% 0 3%;
-  flex-direction: column;
+  flex: 0 0 17%;
   overflow: hidden;
+  min-width: 200px;
+  margin-top: 50px;
   text-decoration: none;
   border-radius: 6px;
   box-shadow: 0 2px 10px 0px #2f3139;
@@ -751,21 +773,21 @@ footer {
   transition: opacity 0.3s ease-in;
 }
 #browse-grid .grid-item .item-details .details-title {
-  font-size: 1.3vw;
+  font-size: 20px;
   margin-bottom: 7px;
   font-weight: 100;
 }
 #browse-grid .grid-item .item-details .details-year {
   color: #bbb9b9;
-  font-size: 1vw;
+  font-size: 16px;
 }
 
 @media screen and (max-width: 960px) {
   #browse-grid .grid-item .item-details .details-title {
-    font-size: 2.6vw;
+    font-size: 16px;
   }
   #browse-grid .grid-item .item-details .details-year {
-    font-size: 2vw;
+    font-size: 13px;
   }
 }
 @media screen and (max-width: 587px) {

@@ -19,8 +19,8 @@ import {
   showUserReviews,
 } from "./user/display-user-info";
 import { deletePrompt, changePasswordPrompt } from "./user/user-editing";
-import { apiList, searchApi } from "./api/browse";
-import { viewDetails } from "./api/detail";
+import { browse, searchApi } from "./api/browse/browse";
+import { viewDetails } from "./api/detail/detail";
 import Swal from "sweetalert2";
 
 const Toast = Swal.mixin({
@@ -69,11 +69,11 @@ export function CloseLoading() {
 onAuthStateChanged(auth, (user) => {
   homePage();
   if (user) {
-    location.hash = "home";
+    // location.hash = "home";
     loggedInButtons(user);
     $("#logout-btn").on("click", () => logOut());
   } else {
-    location.hash = "home";
+    // location.hash = "home";
     loggedInButtons(user);
     loginModal();
     signUpModal();
@@ -165,7 +165,7 @@ export function changeRoute() {
       });
       break;
     case "browse":
-      getPage(pageID, apiList(page, genres, stores));
+      getPage(pageID, browse(page, genres, stores));
       break;
     case "search":
       getPage("browse", searchApi(searchQuery, page, genres, stores));

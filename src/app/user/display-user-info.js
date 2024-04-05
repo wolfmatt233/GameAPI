@@ -20,8 +20,30 @@ import {
   LoadingMessage,
   routeUser,
 } from "../model";
-import { editReviewPrompt, deleteReviewPrompt } from "../api/buttons";
+import { editReviewPrompt, deleteReviewPrompt } from "../api/detail/buttons";
 import Swal from "sweetalert2";
+
+//----Finds user----\\
+
+async function findUser() {
+  try {
+    let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+    let user = queryParams.get("user");
+    let q = query(collection(db, "GameDB"), where("username", "==", user));
+    let userDoc;
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      userDoc = doc.data();
+    });
+
+    return userDoc;
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+//----Shows profile pic, username, bio, top 5----\\
 
 export async function showUserInfo() {
   try {
@@ -68,13 +90,15 @@ export async function showUserInfo() {
       let gameID = userDoc.topfive[property];
       if (gameID !== "") {
         let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
-        await fetch(url)
-          .then((response) => {
-            return response.json();
-          })
-          .then((data) => {
-            let year = data.released.split("-");
-            $("#top-five .grid-row").append(`
+
+        try {
+          await fetch(url)
+            .then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              let year = data.released.split("-");
+              $("#top-five .grid-row").append(`
           <a href="#detail?game=${gameID}" class="user-grid-item" id="order_${property}">
             <img src="${data.background_image}" alt="image" />
             <div class="item-details">
@@ -85,7 +109,10 @@ export async function showUserInfo() {
             </div>
           </a>
         `);
-          });
+            });
+        } catch (error) {
+          FeedbackMessage("error", "API Error", error.message);
+        }
       } else {
         $("#top-five .grid-row").append(`
           <a class="user-grid-item addUserTopFive" id="order_${property}">
@@ -111,6 +138,8 @@ export async function showUserInfo() {
     FeedbackMessage("error", "Error", error.message);
   }
 }
+
+//----Fetches games from api: favs, played, to play----\\
 
 export async function showUserItems(title) {
   try {
@@ -152,13 +181,14 @@ export async function showUserItems(title) {
       let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
       LoadingMessage();
 
-      await fetch(url)
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          let year = data.released.split("-");
-          $("#user-content #browse-grid").append(`
+      try {
+        await fetch(url)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            let year = data.released.split("-");
+            $("#user-content #browse-grid").append(`
           <a href="#detail?game=${gameID}" class="grid-item">
             <img src="${data.background_image}" alt="image" />
             <div class="item-details">
@@ -169,15 +199,20 @@ export async function showUserItems(title) {
             </div>
           </a>
         `);
-        })
-        .then(() => {
-          CloseLoading();
-        });
+          })
+          .then(() => {
+            CloseLoading();
+          });
+      } catch (error) {
+        FeedbackMessage("error", "API Error", error.message);
+      }
     });
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
   }
 }
+
+//----User reviews----\\
 
 export async function showUserReviews() {
   try {
@@ -195,12 +230,12 @@ export async function showUserReviews() {
             <p>${review.reviewText.length} Characters</p>
             <p>${parseFloat(review.starScore)}/5 Stars</p>
             ${
-              auth.currentUser.uid === userDoc.uid
+              auth.currentUser != null && auth.currentUser.uid === userDoc.uid
                 ? `<p class="edit-review-btn" id="editReview-${review.gameId}">Edit</p>`
                 : `<p class="edit-review-btn" id="viewReview-${review.gameId}">View</p>`
             }
             ${
-              auth.currentUser.uid === userDoc.uid
+              auth.currentUser != null && auth.currentUser.uid === userDoc.uid
                 ? `<p class="edit-review-btn" id="deleteReview-${review.gameId}">Delete</p>`
                 : ""
             }
@@ -244,47 +279,41 @@ function viewReviewModal(review) {
     title: "Review",
     background: "#555a68",
     color: `#e9e3e3`,
-    showCancelButton: false,
+    showCancelButton: true,
+    cancelButtonText: "Close",
     showConfirmButton: false,
     html: `
-      <p id="viewReviewGame">
-        <span id="viewReviewName">Review of </span>
-        <a href="#detail?game=${review.gameId}">${review.gameName}</a>
-        <span id="viewReviewName"> by ${review.user}</span>
-      </p>
-      <p>${review.reviewText}</p>
-      <p id="viewReviewStars">${starElement}</p>
+      <div id="viewReview">
+        <div id="viewReviewTitle">
+          <span>Review of </span>
+          <a href="#detail?game=${review.gameId}">${review.gameName}</a>
+          <span> by ${review.user}</span>
+        </div>
+        <p id="viewReviewText">${review.reviewText}</p>
+        <div id="viewReviewBtm">
+          <p id="viewReviewLikes"><i class="fa-solid fa-heart"></i> ${review.likes.length} Likes</p>
+          <p id="viewReviewStars">${starElement}</p>
+        </div>
+      </div>
     `,
   });
 }
 
+//----User page navigation burger----\\
+
 export function handleUserBurger() {
   if ($("#sidebarButtons").hasClass("checked")) {
+    $("#userBurger").css("rotate", "0deg");
     $("#sidebarButtons").removeClass("checked");
     $("#sidebarButtons").css("display", "flex");
   } else {
+    $("#userBurger").css("rotate", "180deg");
     $("#sidebarButtons").addClass("checked");
     $("#sidebarButtons").css("display", "none");
   }
 }
 
-async function findUser() {
-  try {
-    let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
-    let user = queryParams.get("user");
-    let q = query(collection(db, "GameDB"), where("username", "==", user));
-    let userDoc;
-
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      userDoc = doc.data();
-    });
-
-    return userDoc;
-  } catch (error) {
-    console.log(error.message);
-  }
-}
+//----Privacy for favs, played, and to play----\\
 
 async function togglePrivacyHandler(title) {
   try {
