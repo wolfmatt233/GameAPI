@@ -4,10 +4,14 @@
   purpose: functions for displaying the details page
 */
 
-import { auth, db, apiKey } from "../../credentials";
-import { collection, getDocs, query } from "firebase/firestore";
+import { auth, apiKey } from "../../credentials";
 import { addUserButtons } from "./buttons";
-import { CloseLoading, FeedbackMessage, LoadingMessage } from "../../model";
+import {
+  CloseLoading,
+  FeedbackMessage,
+  LoadingMessage,
+  getAllDocs,
+} from "../../model";
 import { checkLikeBtn } from "./reviews";
 
 //----Detail page----\\
@@ -128,13 +132,12 @@ export async function viewDetails(gameID) {
         $("#desc").append(data.description);
       })
       .then(() => {
+        showReviews(gameID);
         CloseLoading();
       });
   } catch (error) {
     FeedbackMessage("error", "API Error", error.message);
   }
-
-  showReviews(gameID);
 }
 
 //----Reviews display----\\
@@ -143,14 +146,14 @@ export async function showReviews(gameID) {
   $("#reviewGallery").empty();
 
   try {
-    const q = query(collection(db, "GameDB"));
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getAllDocs();
     let avgScore = 0;
     let idx = 0;
 
     //each user
     querySnapshot.forEach((doc) => {
       doc = doc.data();
+
       //thier reviews
       doc.reviews.forEach((review) => {
         //their review for the game on page
@@ -163,10 +166,11 @@ export async function showReviews(gameID) {
           let likeCount = review.likes.length;
           likeCount == undefined ? (likeCheck = 0) : likeCount;
 
-          $("#reviewGallery").append(`
+          if ($(`#review${idx}`).length == 0) {
+            $("#reviewGallery").append(`
             <div class="review-item" id="review${idx}">
               <div class="review-top">
-                <h3><span>Review by </span><a href="#user?user=${review.user}">${review.user}</a></h3>
+                <h3><span>Review by </span><a href="#user?user=${doc.username}">${doc.username}</a></h3>
                 <span id="review-score"></span>
               </div>
               <p class="review-text">${review.reviewText}</p>
@@ -174,14 +178,15 @@ export async function showReviews(gameID) {
             </div>
           `);
 
-          //apply stars to review
-          for (let i = 1; i <= stars; i++) {
-            $(`#review${idx} .review-top #review-score`).append(`&#9733;`);
-          }
+            //apply stars to review
+            for (let i = 1; i <= stars; i++) {
+              $(`#review${idx} .review-top #review-score`).append(`&#9733;`);
+            }
 
-          //apply half star to review
-          if (starHalf != undefined) {
-            $(`#review${idx} .review-top #review-score`).append(`&#189;`);
+            //apply half star to review
+            if (starHalf != undefined) {
+              $(`#review${idx} .review-top #review-score`).append(`&#189;`);
+            }
           }
 
           if (auth.currentUser === null) {
@@ -212,6 +217,9 @@ export async function showReviews(gameID) {
     avgScore.toString();
 
     $("#reviewAvg").html(`Average Rating: ${avgScore} Stars`);
+    if ($(".review-item").length == 0) {
+      $("#reviewGallery").html(`<p id="emptyText">No reviews here yet. You can be the first!</p>`);
+    }
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
   }

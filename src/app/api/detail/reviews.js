@@ -1,14 +1,20 @@
 import { auth, db } from "../../credentials";
 import Swal from "sweetalert2";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  query,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { showReviews } from "./detail";
 import { showUserReviews } from "../../user/display-user-info";
+import { FeedbackMessage, getAllDocs, getUserDoc } from "../../model";
 
 //----Reviews----\\
 
 export function checkReviewBtn(check, gameID, name) {
-  showReviews(gameID);
-
   if (check == 1) {
     //you have added a review
     $("#addReview")
@@ -100,7 +106,6 @@ export function addEditPrompt(
           likes: [],
           gameId: gameID,
           gameName: name,
-          user: auth.currentUser.displayName,
         };
 
         addReview(reviewObj, gameID);
@@ -246,8 +251,7 @@ export async function editReviewPrompt(gameID) {
   let reviewObj;
 
   try {
-    let user = auth.currentUser;
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let userDoc = await getUserDoc();
     let reviewArray = userDoc.data().reviews;
 
     reviewArray.forEach((review) => {
@@ -283,17 +287,17 @@ export function deleteReviewPrompt(gameID) {
 
 export async function addReview(reviewObj, gameID) {
   try {
-    let user = auth.currentUser;
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let userDoc = await getUserDoc();
     let reviewArray = userDoc.data().reviews;
 
     reviewArray.push(reviewObj); //push new review object to old array
 
-    await updateDoc(doc(db, "GameDB", user.uid), {
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       reviews: reviewArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Review added!");
       checkReviewBtn(1, gameID);
+      showReviews(gameID);
     });
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
@@ -302,8 +306,7 @@ export async function addReview(reviewObj, gameID) {
 
 export async function editReview(updatedObj, gameID) {
   try {
-    let user = auth.currentUser;
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let userDoc = await getUserDoc();
     let reviewArray = userDoc.data().reviews;
 
     reviewArray.forEach((review) => {
@@ -313,12 +316,13 @@ export async function editReview(updatedObj, gameID) {
       }
     });
 
-    await updateDoc(doc(db, "GameDB", user.uid), {
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       reviews: reviewArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Review updated!");
       showUserReviews();
       checkReviewBtn(1, gameID);
+      showReviews(gameID);
     });
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
@@ -327,7 +331,7 @@ export async function editReview(updatedObj, gameID) {
 
 export async function deleteReview(gameID) {
   try {
-    let userDoc = await getDoc(doc(db, "GameDB", auth.currentUser.uid));
+    let userDoc = await getUserDoc();
     let reviewArray = userDoc.data().reviews;
 
     reviewArray.forEach((review, idx) => {
@@ -340,8 +344,9 @@ export async function deleteReview(gameID) {
       reviews: reviewArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Review deleted.");
-      showUserReviews();
+      showUserReviews(); //refresh user page reviews
       checkReviewBtn(0, gameID);
+      showReviews(gameID); //refresh detail page reviews
     });
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
@@ -375,8 +380,7 @@ export function checkLikeBtn(reviewIndex, username, gameID, check, likeCount) {
 
 async function addLike(reviewIndex, username, gameID) {
   try {
-    const q = query(collection(db, "GameDB"));
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getAllDocs();
 
     querySnapshot.forEach((doc) => {
       //if the user matches the one to be liked
@@ -421,8 +425,7 @@ async function addLike(reviewIndex, username, gameID) {
 
 async function removeLike(reviewIndex, username, gameID) {
   try {
-    const q = query(collection(db, "GameDB"));
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getAllDocs();
 
     querySnapshot.forEach((doc) => {
       //if the user matches the targeted one

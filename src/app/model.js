@@ -4,8 +4,9 @@
   purpose: central hub for page routing and auth state recognition, other functionality will be imported from relevant files for organization
 */
 
-import { auth } from "./credentials";
+import { auth, db } from "./credentials";
 import { onAuthStateChanged } from "firebase/auth";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import {
   loggedInButtons,
   loginModal,
@@ -64,16 +65,22 @@ export function CloseLoading() {
   Swal.close();
 }
 
+export async function getAllDocs() {
+  return await getDocs(collection(db, "GameDB"));
+}
+
+export async function getUserDoc() {
+  return await getDoc(doc(db, "GameDB", auth.currentUser.uid));
+}
+
 //----SIGN IN/OUT UPDATES----\\
 
 onAuthStateChanged(auth, (user) => {
-  homePage();
+  homePage()
   if (user) {
-    // location.hash = "home";
     loggedInButtons(user);
     $("#logout-btn").on("click", () => logOut());
   } else {
-    // location.hash = "home";
     loggedInButtons(user);
     loginModal();
     signUpModal();
@@ -132,7 +139,6 @@ export function changeRoute() {
   let page = queryParams.get("page");
   let genres = queryParams.get("genres");
   let stores = queryParams.get("stores");
-  let user = queryParams.get("user");
 
   let searchQuery = $("#searchBar").val();
   $("#searchBar").on("keypress", (e) => {

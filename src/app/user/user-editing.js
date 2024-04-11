@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 import { auth, db } from "../credentials";
 import { FeedbackMessage } from "../model";
 
-export function editInfoListener(user, userDoc) {
+export function editInfoListener(username, bio) {
   $("#edit-info-btn").on("click", () => {
     Swal.fire({
       title: "Edit Your Profile",
@@ -25,9 +25,9 @@ export function editInfoListener(user, userDoc) {
       confirmButtonText: "Confirm",
       confirmButtonColor: "#04724D",
       html: `
-            <input type="text" id="uName" class="swal2-input" placeholder="Username" value="${user.displayName}">
-            <input type="text" id="uBio" class="swal2-input" placeholder="Bio" value="${userDoc.bio}" max="100">
-          `,
+        <input type="text" id="uName" class="swal2-input" placeholder="Username" value="${username}">
+        <input type="text" id="uBio" class="swal2-input" placeholder="Bio" value="${bio}" max="100">
+        `,
       preConfirm: () => {
         let uName = $("#uName").val();
         let uBio = $("#uBio").val();
@@ -41,7 +41,7 @@ export function editInfoListener(user, userDoc) {
   });
 
   $("#user-img-container").on("click", () => {
-    let photoUrl = user.photoURL;
+    let photoUrl = auth.currentUser.photoURL;
     if (photoUrl == null) {
       photoUrl = "";
     }
@@ -57,7 +57,7 @@ export function editInfoListener(user, userDoc) {
           `,
       preConfirm: () => {
         photoUrl = $("#photoURL").val();
-        updatePicture(photoUrl, user);
+        updatePicture(photoUrl);
       },
     });
   });
@@ -78,6 +78,7 @@ async function updateInfo(uName, uBio) {
   try {
     await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       bio: uBio,
+      username: uName
     }).then(() => {
       updateProfile(auth.currentUser, {
         displayName: uName,
@@ -92,9 +93,9 @@ async function updateInfo(uName, uBio) {
   }
 }
 
-async function updatePicture(url, user) {
+async function updatePicture(url) {
   try {
-    updateProfile(user, {
+    updateProfile(auth.currentUser, {
       photoURL: url,
     }).then(() => {
       if (url == "") {

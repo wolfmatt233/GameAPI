@@ -20,7 +20,7 @@ import {
   LoadingMessage,
   routeUser,
 } from "../model";
-import { editReviewPrompt, deleteReviewPrompt } from "../api/detail/buttons";
+import { editReviewPrompt, deleteReviewPrompt } from "../api/detail/reviews";
 import Swal from "sweetalert2";
 
 //----Finds user----\\
@@ -77,10 +77,10 @@ export async function showUserInfo() {
     $("#top-five .grid-row").empty();
     $("#user-content #user-info-name").html(`${userDoc.username}`);
 
-    if (user.photoURL == null || user.photoURL == "") {
-      $("#user-img").attr("src", "./assets/user.png");
+    if (auth.currentUser.photoURL) {
+      $("#user-img").attr("src", auth.currentUser.photoURL);
     } else {
-      $("#user-img").attr("src", user.photoURL);
+      $("#user-img").attr("src", "./assets/user.png");
     }
 
     $("#user-info-bio").html(`${userDoc.bio}`); //show bio
@@ -130,7 +130,7 @@ export async function showUserInfo() {
 
     //current user only
     if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
-      editInfoListener(user, userDoc, db);
+      editInfoListener(auth.currentUser.displayName, userDoc.bio);
     }
 
     CloseLoading();

@@ -176,6 +176,8 @@
     }
 
     #top-five {
+      margin-top: 50px;
+
       h1 {
         text-align: center;
         margin: 20px 0;
@@ -190,8 +192,26 @@
         p {
           width: 18%;
           text-align: center;
-          font-size: 24px;
+          font-size: 20px;
           font-weight: 100;
+          border-radius: 10px;
+          padding: 5px 0;
+        }
+
+        p:nth-child(1) {
+          background-color: #e2c419e7;
+        }
+        p:nth-child(2) {
+          background-color: #98c7c3; 
+        }
+        p:nth-child(3) {
+          background-color: #e5e4e28d;
+        }
+        p:nth-child(4) {
+          background-color: #c15656;
+        }
+        p:nth-child(5) {
+          background-color: #CD7F32;
         }
       }
 
@@ -284,6 +304,10 @@
 
 #viewReview {
   text-align: left;
+  display: inline-block;
+  border: 1px solid #636c74;
+  padding: 15px;
+  border-radius: 10px;
 
   #viewReviewTitle {
     margin-bottom: 15px;
@@ -372,7 +396,7 @@
 
       #userBurger {
         width: 100%;
-        
+
         i {
           transform: rotate(-90deg);
         }

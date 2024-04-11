@@ -6,9 +6,10 @@
 
 import { auth, db } from "../../credentials";
 import Swal from "sweetalert2";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { FeedbackMessage } from "../../model";
+import { doc, updateDoc } from "firebase/firestore";
+import { FeedbackMessage, getUserDoc } from "../../model";
 import { checkReviewBtn } from "./reviews";
+import { onAuthStateChanged } from "firebase/auth";
 
 //----BUTTONS & CHECKS----\\
 
@@ -22,7 +23,7 @@ export async function addUserButtons(gameID, name) {
     `);
 
   try {
-    let userDoc = await getDoc(doc(db, "GameDB", auth.currentUser.uid));
+    let userDoc = await getUserDoc();
     userDoc = userDoc.data();
     let favCheck = 0;
     let playCheck = 0;
@@ -194,12 +195,11 @@ function checkTopFiveBtn(check, gameID) {
 
 async function addToFavorites(gameID) {
   try {
-    let user = auth.currentUser;
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let userDoc = await getUserDoc();
     let favArray = userDoc.data().favorites;
     favArray.push(gameID);
 
-    await updateDoc(doc(db, "GameDB", user.uid), {
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       favorites: favArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Added to Favorites!");
@@ -213,16 +213,16 @@ async function addToFavorites(gameID) {
 
 async function removeFromFavorites(gameID) {
   try {
-    let user = auth.currentUser;
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let userDoc = await getUserDoc();
     let favArray = userDoc.data().favorites;
+
     favArray.forEach((game, idx) => {
       if (game == gameID) {
         favArray.splice(idx, 1);
       }
     });
 
-    await updateDoc(doc(db, "GameDB", user.uid), {
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       favorites: favArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Removed from Favorites.");
@@ -235,12 +235,11 @@ async function removeFromFavorites(gameID) {
 
 async function addToPlayed(gameID) {
   try {
-    let user = auth.currentUser;
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let userDoc = await getUserDoc();
     let playedArray = userDoc.data().played;
     playedArray.push(gameID);
 
-    await updateDoc(doc(db, "GameDB", user.uid), {
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       played: playedArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Added to Played");
@@ -253,16 +252,16 @@ async function addToPlayed(gameID) {
 
 async function removeFromPlayed(gameID) {
   try {
-    let user = auth.currentUser;
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let userDoc = await getUserDoc();
     let playedArray = userDoc.data().played;
+
     playedArray.forEach((game, idx) => {
       if (game == gameID) {
         playedArray.splice(idx, 1);
       }
     });
 
-    await updateDoc(doc(db, "GameDB", user.uid), {
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       played: playedArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Removed from Played");
@@ -275,12 +274,11 @@ async function removeFromPlayed(gameID) {
 
 async function addToWantToPlay(gameID) {
   try {
-    let user = auth.currentUser;
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let userDoc = await getUserDoc();
     let wantArray = userDoc.data().toplay;
     wantArray.push(gameID);
 
-    await updateDoc(doc(db, "GameDB", user.uid), {
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       toplay: wantArray,
     }).then(() => {
       FeedbackMessage("success", "Success", 'Added to "To Play"');
@@ -293,8 +291,7 @@ async function addToWantToPlay(gameID) {
 
 async function removeFromWantToPlay(gameID) {
   try {
-    let user = auth.currentUser;
-    let userDoc = await getDoc(doc(db, "GameDB", user.uid));
+    let userDoc = await getUserDoc();
     let wantArray = userDoc.data().toplay;
     wantArray.forEach((game, idx) => {
       if (game == gameID) {
@@ -302,7 +299,7 @@ async function removeFromWantToPlay(gameID) {
       }
     });
 
-    await updateDoc(doc(db, "GameDB", user.uid), {
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       toplay: wantArray,
     }).then(() => {
       FeedbackMessage("success", "Success", 'Removed from "To Play"');
@@ -338,7 +335,7 @@ function topFivePrompt(gameID) {
 
 async function addToTopFive(place, gameID) {
   try {
-    let userDoc = await getDoc(doc(db, "GameDB", auth.currentUser.uid));
+    let userDoc = await getUserDoc();
     let topFive = userDoc.data().topfive;
     topFive[place] = gameID.toString();
 
@@ -355,7 +352,7 @@ async function addToTopFive(place, gameID) {
 
 async function removeFromTopFive(gameID) {
   try {
-    let userDoc = await getDoc(doc(db, "GameDB", auth.currentUser.uid));
+    let userDoc = await getUserDoc();
     let topFive = userDoc.data().topfive;
 
     for (const property in topFive) {

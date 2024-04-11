@@ -122,6 +122,7 @@ export function signUpModal() {
 function login(email, password) {
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
+      location.hash = "home";
       FeedbackMessage("success", "Success", "Logged in!");
     })
     .catch((error) => {
