@@ -7,18 +7,18 @@
 import { auth, db } from "../../credentials";
 import Swal from "sweetalert2";
 import { doc, updateDoc } from "firebase/firestore";
-import { FeedbackMessage, getUserDoc } from "../../model";
+import { FeedbackMessage, getUserDoc } from "../../extras";
 import { checkReviewBtn } from "./reviews";
-import { onAuthStateChanged } from "firebase/auth";
 
 //----BUTTONS & CHECKS----\\
 
 export async function addUserButtons(gameID, name) {
+  $(".detail-buttons").empty();
   $(".detail-buttons").append(`
-      <button id="addToFavorites">Add to "Favorites" <i class="fa-solid fa-plus"></i></button>
-      <button id="addToPlayed">Add to "Played" <i class="fa-solid fa-plus"></i></button>
-      <button id="addToWantToPlay">Add to "To Play" <i class="fa-solid fa-plus"></i></button>
-      <button id="addToTopFive">Add to Your Top Five</button>
+      <button id="addToFavorites">Add to Favorites <i class="fa-solid fa-plus"></i></button>
+      <button id="addToPlayed">Add to Played <i class="fa-solid fa-plus"></i></button>
+      <button id="addToWantToPlay">Add to To Play <i class="fa-solid fa-plus"></i></button>
+      <button id="addToTopFive">Add to Top Five <i class="fa-solid fa-plus"></i></button>
       <button id="addReview">Add a Review <i class="fa-solid fa-plus"></i></button>
     `);
 

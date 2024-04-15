@@ -20,14 +20,15 @@ import {
   getDocs,
   where,
 } from "firebase/firestore";
-import { FeedbackMessage } from "../model";
+import { FeedbackMessage } from "../extras";
 
-//Nav buttons
+//----NAV BUTTONS----\\
+
 export function loggedInButtons(user) {
   if (user !== null) {
     $(".nav-container").empty().append(`
     <a href="#browse?page=1" class="nav-link">Browse</a>
-    <a id="nav-user" href="#user?user=${auth.currentUser.displayName}" class="nav-link">
+    <a id="nav-user" href="#user?user=${auth.currentUser.displayName}&page=info" class="nav-link">
       <span>${user.displayName}</span>
       <i class="fa-solid fa-user"></i>
     </a>
@@ -45,7 +46,8 @@ export function loggedInButtons(user) {
   }
 }
 
-//Modal popup to log in, calls "login()" on confirmation
+//----MODALS----\\
+
 export function loginModal() {
   $("#login-btn").on("click", () => {
     Swal.fire({
@@ -70,7 +72,6 @@ export function loginModal() {
   });
 }
 
-//Modal popup for sign up, calls "signUp()" on confirmation
 export function signUpModal() {
   $(".signup-btn").on("click", () => {
     Swal.fire({
@@ -83,7 +84,7 @@ export function signUpModal() {
             <input type="text" id="emailSignUp" class="swal2-input" placeholder="Email"> 
             <input type="text" id="usernameSignUp" class="swal2-input" placeholder="Username">
             <input type="password" id="passwordSignUp" class="swal2-input" placeholder="Password">
-            <input type="password" id="passwordSignUp2" class="swal2-input" placeholder="Enter password again">
+            <input type="password" id="passwordSignUp2" class="swal2-input" placeholder="Confirm password">
         `,
       preConfirm: async () => {
         let email = $("#emailSignUp").val();
@@ -118,23 +119,32 @@ export function signUpModal() {
   });
 }
 
-//logs user in through firebase
+//----LOGIN/OUT----\\
+
 function login(email, password) {
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
+      let curHash = location.hash;
       location.hash = "home";
+      location.hash = curHash;
       FeedbackMessage("success", "Success", "Logged in!");
     })
     .catch((error) => {
-      FeedbackMessage("error", "Error", error.message);
+      let errorMsg = error.message
+        .split("/")[1]
+        .split(")")[0]
+        .replace("-", " ");
+      $("#login-btn").trigger("click");
+      Swal.showValidationMessage(`Error: ${errorMsg}`);
     });
 }
 
-//logs current user out through firebase
 export function logOut() {
   signOut(auth)
     .then(() => {
+      let curHash = location.hash;
       location.hash = "home";
+      location.hash = curHash;
       FeedbackMessage("success", "Success", "Logged out.");
     })
     .catch((error) => {
@@ -142,7 +152,8 @@ export function logOut() {
     });
 }
 
-//creates new email user in firebase
+//----SIGNUP/CREATE----\\
+
 async function signUp(auth, email, username, password) {
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
@@ -150,6 +161,7 @@ async function signUp(auth, email, username, password) {
 
       let userObj = {
         bio: "",
+        photoURL: "",
         favorites: [],
         played: [],
         reviews: [],
@@ -177,7 +189,6 @@ async function signUp(auth, email, username, password) {
     });
 }
 
-//creates the document relating to the new user in firestore db
 async function createUserDoc(user, userObj) {
   try {
     await setDoc(doc(db, "GameDB", user.uid), userObj).then(() => {

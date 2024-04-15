@@ -14,18 +14,14 @@ import {
 } from "firebase/firestore";
 import { auth, db, apiKey } from "../credentials";
 import { editInfoListener } from "./user-editing";
-import {
-  CloseLoading,
-  FeedbackMessage,
-  LoadingMessage,
-  routeUser,
-} from "../model";
+import { CloseLoading, FeedbackMessage, LoadingMessage } from "../extras";
+import { routeUser } from "../model";
 import { editReviewPrompt, deleteReviewPrompt } from "../api/detail/reviews";
 import Swal from "sweetalert2";
 
 //----Finds user----\\
 
-async function findUser() {
+export async function findUser() {
   try {
     let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
     let user = queryParams.get("user");
@@ -50,44 +46,52 @@ export async function showUserInfo() {
     LoadingMessage();
     const userDoc = await findUser();
 
-    if (!userDoc && auth.currentUser != null) {
-      location.hash = `user?user=${auth.currentUser.displayName}`;
+    function userExceptions() {
+      if (!userDoc && auth.currentUser != null) {
+        location.hash = `user?user=${auth.currentUser.displayName}`;
+      } else if (!userDoc && auth.currentUser == null) {
+        location.hash = `error?type=no-user`;
+      }
+
+      if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
+        $("#user-img-container").append(
+          `<div id="user-img-hover">Edit<i class="fa-solid fa-pen"></i></div>`
+        );
+
+        $("#user-pic-name").append(`
+          <button id="edit-info-btn">Edit<i class="fa-solid fa-pen"></i></button>
+        `);
+
+        editInfoListener(auth.currentUser.displayName, userDoc.bio);
+      }
     }
 
-    //current user only
-    if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
-      $("#user-img-container").append(
-        `<div id="user-img-hover">Edit<i class="fa-solid fa-pen"></i></div>`
-      );
-
-      $("#user-pic-name").append(`
-        <button id="edit-info-btn">Edit<i class="fa-solid fa-pen"></i></button>
-      `);
-      $("#sidebarButtons").append(`
-        <button id="user-delete" class="userNavBtn">Delete Account</button>
-        <button id="user-password" class="userNavBtn">Change Password</button>
-      `);
-
-      $("#user-delete").on("click", () => routeUser("delete"));
-      $("#user-password").on("click", () => routeUser("password"));
+    function getSuper(property) {
+      let sup;
+      property == 1 ? (sup = "st") : "";
+      property == 2 ? (sup = "nd") : "";
+      property == 3 ? (sup = "rd") : "";
+      property == 4 || property == 5 ? (sup = "th") : "";
+      return sup;
     }
 
-    let topFive = userDoc.topfive;
-
-    $("#top-five .grid-row").empty();
-    $("#user-content #user-info-name").html(`${userDoc.username}`);
-
-    if (auth.currentUser.photoURL) {
-      $("#user-img").attr("src", auth.currentUser.photoURL);
+    // Picture, name, bio
+    if (userDoc.photoURL) {
+      $("#user-img").attr("src", userDoc.photoURL);
     } else {
       $("#user-img").attr("src", "./assets/user.png");
     }
 
-    $("#user-info-bio").html(`${userDoc.bio}`); //show bio
+    $("#user-content #user-info-name").html(`${userDoc.username}`);
+    $("#user-info-bio").html(`${userDoc.bio}`);
 
-    //search api for top five games
+    // Top 5 games
+    let topFive = userDoc.topfive;
+    $("#top-five .grid-row").empty();
+
     for (const property in topFive) {
       let gameID = userDoc.topfive[property];
+      let sup = getSuper(property);
       if (gameID !== "") {
         let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
 
@@ -98,44 +102,62 @@ export async function showUserInfo() {
             })
             .then((data) => {
               let year = data.released.split("-");
-              $("#top-five .grid-row").append(`
-          <a href="#detail?game=${gameID}" class="user-grid-item" id="order_${property}">
-            <img src="${data.background_image}" alt="image" />
-            <div class="item-details">
-              <div>
-                <p class="details-title">${data.name}</p>
-                <p class="details-year">${year[0]}</p>
-              </div>
-            </div>
-          </a>
-        `);
+
+              if ($("#order_" + property).length == 0) {
+                $("#top-five .grid-row").append(`
+                  <a href="#detail?game=${gameID}" class="grid-item" id="order_${property}">
+                    <img src="${data.background_image}" alt="image" />
+                    <div class="item-details">
+                      <div>
+                        <p class="top-position">${property}<sup>${sup}</sup></p>
+                        <p class="details-title">${data.name}</p>
+                        <p class="details-year">${year[0]}</p>
+                      </div>
+                    </div>
+                  </a>
+                `);
+              }
             });
         } catch (error) {
-          FeedbackMessage("error", "API Error", error.message);
+          if ($("#order_" + property).length == 0) {
+            $("#top-five .grid-row").append(`
+              <a href="#detail?game=${gameID}" class="grid-item" id="order_${property}">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p class="error-text">Error Retrieving Game</p>
+                <div class="item-details">
+                  <div>
+                    <p class="top-position">${property}<sup>${sup}</sup></p>
+                    <p class="details-title"></p>
+                    <p class="details-year"></p>
+                  </div>
+                </div>
+              </a>
+            `);
+          }
         }
       } else {
-        $("#top-five .grid-row").append(`
-          <a class="user-grid-item addUserTopFive" id="order_${property}">
-            <img src="./assets/plus.png" alt="add" id="addTopFiveImg" />
-            <div class="item-details">
-              <div>
-                <p class="details-title"></p>
-                <p class="details-year"></p>
+        if ($("#order_" + property).length == 0) {
+          $("#top-five .grid-row").append(`
+            <a class="grid-item addUserTopFive" id="order_${property}">
+              <img src="./assets/plus.png" alt="add" id="addTopFiveImg" />
+              <div class="item-details">
+                <div>
+                  <p class="top-position">${property}<sup>${sup}</sup></p>
+                  <p class="details-title"></p>
+                  <p class="details-year"></p>
+                </div>
               </div>
-            </div>
-          </a>
-        `);
+            </a>
+          `);
+        }
       }
     }
 
-    //current user only
-    if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
-      editInfoListener(auth.currentUser.displayName, userDoc.bio);
-    }
+    userExceptions();
 
     CloseLoading();
   } catch (error) {
-    FeedbackMessage("error", "Error", error.message);
+    console.log(error);
   }
 }
 
@@ -143,8 +165,10 @@ export async function showUserInfo() {
 
 export async function showUserItems(title) {
   try {
+    LoadingMessage();
     let accessArray = [];
     const userDoc = await findUser();
+    $("#user-content #browse-grid").empty();
 
     $("#user-title").html(title);
 
@@ -179,7 +203,6 @@ export async function showUserItems(title) {
 
     accessArray.forEach(async (gameID) => {
       let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
-      LoadingMessage();
 
       try {
         await fetch(url)
@@ -189,24 +212,34 @@ export async function showUserItems(title) {
           .then((data) => {
             let year = data.released.split("-");
             $("#user-content #browse-grid").append(`
+              <a href="#detail?game=${gameID}" class="grid-item">
+                <img src="${data.background_image}" alt="image" />
+                <div class="item-details">
+                  <div>
+                    <p class="details-title">${data.name}</p>
+                    <p class="details-year">${year[0]}</p>
+                  </div>
+                </div>
+              </a>
+            `);
+          });
+      } catch (error) {
+        $("#user-content #browse-grid").append(`
           <a href="#detail?game=${gameID}" class="grid-item">
-            <img src="${data.background_image}" alt="image" />
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p class="error-text">Error Retrieving Game</p>
             <div class="item-details">
               <div>
-                <p class="details-title">${data.name}</p>
-                <p class="details-year">${year[0]}</p>
+                <p class="details-title"></p>
+                <p class="details-year"></p>
               </div>
             </div>
           </a>
         `);
-          })
-          .then(() => {
-            CloseLoading();
-          });
-      } catch (error) {
-        FeedbackMessage("error", "API Error", error.message);
       }
     });
+
+    CloseLoading();
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
   }
@@ -221,7 +254,6 @@ export async function showUserReviews() {
     $("#reviews-list").empty();
 
     userDoc.reviews.forEach((review) => {
-      //display on page
       $("#reviews-list").append(`
         <div class="review-item" id="review-${review.gameId}">
           <a href="#detail?game=${review.gameId}">${review.gameName}</a>

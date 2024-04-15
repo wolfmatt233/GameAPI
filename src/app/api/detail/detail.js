@@ -11,7 +11,7 @@ import {
   FeedbackMessage,
   LoadingMessage,
   getAllDocs,
-} from "../../model";
+} from "../../extras";
 import { checkLikeBtn } from "./reviews";
 
 //----Detail page----\\
@@ -49,17 +49,23 @@ export async function viewDetails(gameID) {
 
         //Left side bar
 
+        $("#genres").empty();
+
         //genres
         data.genres.forEach((genre, idx) => {
           idx != 0 ? $("#genres").append(` | `) : idx;
           $("#genres").append(`<span>${genre.name}</span>`);
         });
 
+        $("#tags").empty();
+
         //tags
         data.tags.forEach((tag, idx) => {
           idx != 0 ? $("#tags").append(` | `) : idx;
           $("#tags").append(`<span>${tag.name}</span>`);
         });
+
+        $("#stores").empty();
 
         //storefronts
         data.stores.forEach((store, idx) => {
@@ -98,6 +104,8 @@ export async function viewDetails(gameID) {
           $(".detail-bar .metascore h3").css("color", "#fff");
         }
 
+        $(".detail-bar .platforms").empty();
+
         data.parent_platforms.forEach((platform) => {
           platform = platform.platform.slug;
           platform == "pc" ? (platform = "windows") : platform;
@@ -107,6 +115,8 @@ export async function viewDetails(gameID) {
           );
         });
 
+        $("#devs").empty();
+
         //Right side info and gallery
         data.developers.forEach((dev, idx) => {
           $("#devs").append(`${dev.name}`);
@@ -114,6 +124,8 @@ export async function viewDetails(gameID) {
             ? $("#devs").append(", ")
             : "";
         });
+
+        $("#pubs").empty();
 
         data.publishers.forEach((pub, idx) => {
           $("#pubs").append(`${pub.name}`);
@@ -129,13 +141,14 @@ export async function viewDetails(gameID) {
           $("#banner-2").attr("src", data.background_image_additional);
         }
 
-        $("#desc").append(data.description);
+        $("#desc").html(data.description);
       })
       .then(() => {
         showReviews(gameID);
         CloseLoading();
       });
   } catch (error) {
+    location.hash = "#error?type=details-error";
     FeedbackMessage("error", "API Error", error.message);
   }
 }
@@ -218,7 +231,9 @@ export async function showReviews(gameID) {
 
     $("#reviewAvg").html(`Average Rating: ${avgScore} Stars`);
     if ($(".review-item").length == 0) {
-      $("#reviewGallery").html(`<p id="emptyText">No reviews here yet. You can be the first!</p>`);
+      $("#reviewGallery").html(
+        `<p id="emptyText">No reviews here yet. You can be the first!</p>`
+      );
     }
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);

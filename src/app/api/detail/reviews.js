@@ -1,16 +1,9 @@
 import { auth, db } from "../../credentials";
 import Swal from "sweetalert2";
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  query,
-  collection,
-  getDocs,
-} from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { showReviews } from "./detail";
 import { showUserReviews } from "../../user/display-user-info";
-import { FeedbackMessage, getAllDocs, getUserDoc } from "../../model";
+import { FeedbackMessage, getAllDocs, getUserDoc } from "../../extras";
 
 //----Reviews----\\
 

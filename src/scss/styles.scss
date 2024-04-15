@@ -1,8 +1,10 @@
 @import "./variables.scss";
+@import "./mixins.scss";
 @import "./structure.scss";
 @import "./nav-footer/nav.scss";
 @import "./nav-footer/footer.scss";
 @import "./home.scss";
-@import "./user/user.scss";
+@import "./user.scss";
 @import "./browse/browse.scss";
 @import "./browse/detail.scss";
+@import "./error.scss";

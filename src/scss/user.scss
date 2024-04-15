@@ -183,58 +183,28 @@
         margin: 20px 0;
       }
 
-      .top-five-labels {
-        display: flex;
-        align-items: center;
-        justify-content: space-evenly;
-        margin-bottom: 10px;
-
-        p {
-          width: 18%;
-          text-align: center;
-          font-size: 20px;
-          font-weight: 100;
-          border-radius: 10px;
-          padding: 5px 0;
-        }
-
-        p:nth-child(1) {
-          background-color: #e2c419e7;
-        }
-        p:nth-child(2) {
-          background-color: #98c7c3; 
-        }
-        p:nth-child(3) {
-          background-color: #e5e4e28d;
-        }
-        p:nth-child(4) {
-          background-color: #c15656;
-        }
-        p:nth-child(5) {
-          background-color: #CD7F32;
-        }
-      }
-
       .grid-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-evenly;
-        margin-bottom: 35px;
+        @include grid();
 
-        .user-grid-item {
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          text-decoration: none;
-          border-radius: 6px;
-          box-shadow: 0 2px 10px 0px $primaryColor;
-          width: 18%;
-          height: 100px;
-          position: relative;
-          cursor: pointer;
+        .grid-item {
+          @include gridItem();
 
           &:hover .item-details {
             opacity: 1;
+          }
+
+          .error-text {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 13px;
+          }
+
+          i {
+            color: #c15656;
+            position: absolute;
+            top: 37%;
+            left: 50%;
+            transform: translate(-50%, -50%);
           }
 
           img {
@@ -253,27 +223,28 @@
           }
 
           .item-details {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            position: absolute;
-            top: 100%;
-            transform: translate(0, -100%);
-            background: rgb(46, 48, 56, 0.6);
-            opacity: 0;
-            transition: opacity 0.3s ease-in;
+            @include gridItemDetails();
 
             .details-title {
-              margin-bottom: 7px;
+              font-size: 18px;
+              font-weight: 100;
+              margin-bottom: 5px;
             }
 
             .details-year {
               color: #bbb9b9;
-              font-size: 1vw;
+              font-size: 13px;
+            }
+
+            .top-position {
+              position: absolute;
+              font-size: 15px;
+              width: 100%;
+              height: 25px;
+              top: 12%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              background: rgba(58, 59, 62, 0.6);
             }
           }
         }

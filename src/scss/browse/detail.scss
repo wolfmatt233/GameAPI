@@ -47,7 +47,7 @@
         }
 
         span {
-          color: #bbb9b9;
+          color: $lightGray;
         }
 
         p {
@@ -81,10 +81,16 @@
         cursor: pointer;
         border: none;
         display: flex;
+        align-items: center;
+        justify-content: space-between;
         padding: 8px;
         border: 1px solid #fff;
+        color: $lightGray;
         border-radius: 5px;
         letter-spacing: 0.1em;
+        max-width: 186px;
+        width: 100%;
+        margin-top: 10px;
 
         i {
           margin-left: 5px;
@@ -92,6 +98,7 @@
 
         &:hover {
           background-color: #2e7f2e;
+          color: #fff;
         }
       }
 
@@ -103,6 +110,7 @@
 
       .addedBtn {
         background-color: rgb(46, 127, 46);
+        color: #fff;
 
         &:hover {
           background-color: $red;

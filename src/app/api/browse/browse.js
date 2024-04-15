@@ -5,7 +5,7 @@
 */
 
 import { apiKey } from "../../credentials";
-import { LoadingMessage, CloseLoading, FeedbackMessage } from "../../model";
+import { LoadingMessage, CloseLoading, FeedbackMessage } from "../../extras";
 import { getFilters, filterEvents } from "./filters";
 
 //----Build url for search and browse----\\
@@ -25,6 +25,7 @@ export async function browse(page, genres, stores) {
   LoadingMessage();
   getFilters(genres, stores);
   let url = buildUrl(page, "", genres, stores, "browse");
+  $("#browse-grid").empty();
 
   try {
     await fetch(url)
@@ -64,7 +65,7 @@ export async function browse(page, genres, stores) {
         filterEvents(null);
       });
   } catch (error) {
-    FeedbackMessage("error", "API Error", error.message);
+    location.hash = "#error?type=cors"
   }
 }
 
@@ -74,6 +75,7 @@ export async function searchApi(searchQuery, page, genres, stores) {
   LoadingMessage();
   getFilters(genres, stores);
   let url = buildUrl(page, searchQuery, genres, stores, "search");
+  $("#browse-grid").empty();
 
   try {
     await fetch(url)
@@ -115,6 +117,7 @@ export async function searchApi(searchQuery, page, genres, stores) {
       });
   } catch (error) {
     FeedbackMessage("error", "API Error", error.message);
+    location.hash = "#error?type=cors";
   }
 }
 

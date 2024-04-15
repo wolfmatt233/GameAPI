@@ -14,7 +14,7 @@ import {
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import Swal from "sweetalert2";
 import { auth, db } from "../credentials";
-import { FeedbackMessage } from "../model";
+import { FeedbackMessage } from "../extras";
 
 export function editInfoListener(username, bio) {
   $("#edit-info-btn").on("click", () => {
@@ -53,11 +53,30 @@ export function editInfoListener(username, bio) {
       confirmButtonText: "Confirm",
       confirmButtonColor: "#04724D",
       html: `
-            <input type="text" id="photoURL" class="swal2-input" placeholder="Photo URL" value="${photoUrl}">
-          `,
+        <input type="text" id="photoURL" class="swal2-input" placeholder="Photo URL" value="${photoUrl}">
+        `,
       preConfirm: () => {
         photoUrl = $("#photoURL").val();
-        updatePicture(photoUrl);
+
+        const isValidUrl = () => {
+          if (photoUrl == "") {
+            return 200;
+          } else {
+            let http = new XMLHttpRequest();
+
+            http.open("HEAD", photoUrl, false);
+            try {
+              http.send();
+              return http.status;
+            } catch (error) {
+              Swal.showValidationMessage(`Not a valid URL.`);
+            }
+          }
+        };
+
+        if (isValidUrl() == 200) {
+          updatePicture(photoUrl);
+        }
       },
     });
   });
@@ -78,7 +97,7 @@ async function updateInfo(uName, uBio) {
   try {
     await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       bio: uBio,
-      username: uName
+      username: uName,
     }).then(() => {
       updateProfile(auth.currentUser, {
         displayName: uName,
@@ -95,15 +114,19 @@ async function updateInfo(uName, uBio) {
 
 async function updatePicture(url) {
   try {
-    updateProfile(auth.currentUser, {
+    await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       photoURL: url,
     }).then(() => {
-      if (url == "") {
-        $("#user-img").attr("src", "./assets/user.png");
-      } else {
-        $("#user-img").attr("src", url);
-      }
-      FeedbackMessage("success", "Success", "Photo updated!");
+      updateProfile(auth.currentUser, {
+        photoURL: url,
+      }).then(() => {
+        if (url == "") {
+          $("#user-img").attr("src", "./assets/user.png");
+        } else {
+          $("#user-img").attr("src", url);
+        }
+        FeedbackMessage("success", "Success", "Photo updated!");
+      });
     });
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);

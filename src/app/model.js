@@ -4,9 +4,8 @@
   purpose: central hub for page routing and auth state recognition, other functionality will be imported from relevant files for organization
 */
 
-import { auth, db } from "./credentials";
+import { auth } from "./credentials";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import {
   loggedInButtons,
   loginModal,
@@ -18,65 +17,16 @@ import {
   showUserItems,
   handleUserBurger,
   showUserReviews,
+  findUser,
 } from "./user/display-user-info";
 import { deletePrompt, changePasswordPrompt } from "./user/user-editing";
 import { browse, searchApi } from "./api/browse/browse";
 import { viewDetails } from "./api/detail/detail";
-import Swal from "sweetalert2";
-
-const Toast = Swal.mixin({
-  toast: true,
-  color: "#fff",
-  background: "#555a68",
-  position: "bottom",
-  showConfirmButton: false,
-  timer: 5000,
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.onmouseenter = Swal.stopTimer;
-    toast.onmouseleave = Swal.resumeTimer;
-  },
-});
-
-export function FeedbackMessage(icon, title, message) {
-  Toast.fire({
-    icon: icon,
-    title: title,
-    text: message,
-  });
-}
-
-export function LoadingMessage() {
-  Swal.fire({
-    title: "",
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    background: "#555a68",
-    color: "#fff",
-    html: "Loading...",
-    timerProgressBar: true,
-    didOpen: () => {
-      Swal.showLoading();
-    },
-  });
-}
-
-export function CloseLoading() {
-  Swal.close();
-}
-
-export async function getAllDocs() {
-  return await getDocs(collection(db, "GameDB"));
-}
-
-export async function getUserDoc() {
-  return await getDoc(doc(db, "GameDB", auth.currentUser.uid));
-}
 
 //----SIGN IN/OUT UPDATES----\\
 
 onAuthStateChanged(auth, (user) => {
-  homePage()
+  homePageButton();
   if (user) {
     loggedInButtons(user);
     $("#logout-btn").on("click", () => logOut());
@@ -111,7 +61,7 @@ function navBurgerReset() {
 
 //----HOME PAGE----\\
 
-function homePage() {
+function homePageButton() {
   if (auth.currentUser != null) {
     $(".header-container button")
       .prop("onclick", null)
@@ -123,6 +73,32 @@ function homePage() {
       .html("Create an account today!")
       .css("cursor", "pointer");
     signUpModal();
+  }
+}
+
+//----ERRORS PAGE----\\
+
+function errorPage() {
+  let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+  let type = queryParams.get("type");
+
+  function showMessage(message) {
+    $("#error-message").html(message);
+  }
+
+  switch (type) {
+    case "no-user":
+      showMessage("Error: The user you targeted does not exist.");
+      break;
+    case "no-page":
+      showMessage("Error: The page you targeted does not exist.");
+      break;
+    case "cors":
+      showMessage("Error: There was an error retrieving games.");
+      break;
+    case "details-error":
+      showMessage("Error: Game details could not be retrieved.");
+      break;
   }
 }
 
@@ -148,12 +124,16 @@ export function changeRoute() {
   });
 
   function getPage(pageID, activateFunc) {
-    $.get(`pages/${pageID}.html`, (data) => {
-      $("#app").html(data);
-    }).then(() => {
-      activateFunc();
-    });
-    $(".tooltip").css("opacity", "0");
+    try {
+      $.get(`pages/${pageID}.html`, (data) => {
+        $("#app").html(data);
+      }).then(() => {
+        activateFunc();
+      });
+      $(".tooltip").css("opacity", "0");
+    } catch (error) {
+      location.hash = "#error?type=no-page";
+    }
   }
 
   switch (pageID) {
@@ -162,7 +142,7 @@ export function changeRoute() {
       signUpModal();
       break;
     case "home":
-      getPage(pageID, homePage);
+      getPage(pageID, homePageButton);
       break;
     case "user":
       getPage(pageID, () => {
@@ -179,21 +159,64 @@ export function changeRoute() {
     case "detail":
       getPage(pageID, viewDetails(gameID));
       break;
+    case "error":
+      getPage(pageID, errorPage);
+      break;
   }
 }
 
 //----USER ROUTES----\\
 
-function userListener() {
-  $("#user-info").on("click", () => routeUser("info"));
-  $("#user-favs").on("click", () => routeUser("favorites"));
-  $("#user-played").on("click", () => routeUser("played"));
-  $("#user-toplay").on("click", () => routeUser("toplay"));
-  $("#user-reviews").on("click", () => routeUser("reviews"));
+async function userListener() {
+  let queryParams = new URLSearchParams(window.location.hash.split("?")[1]);
+  let user = queryParams.get("user");
+  let userDoc = await findUser();
+
+  $("#user-info").on(
+    "click",
+    () => (location.hash = `#user?user=${user}&page=info`)
+  );
+  $("#user-favs").on(
+    "click",
+    () => (location.hash = `#user?user=${user}&page=favorites`)
+  );
+  $("#user-played").on(
+    "click",
+    () => (location.hash = `#user?user=${user}&page=played`)
+  );
+  $("#user-toplay").on(
+    "click",
+    () => (location.hash = `#user?user=${user}&page=toplay`)
+  );
+  $("#user-reviews").on(
+    "click",
+    () => (location.hash = `#user?user=${user}&page=reviews`)
+  );
+
+  if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
+    if ($("#user-delete").length == 0 && $("#user-password").length == 0) {
+      $("#sidebarButtons").append(`
+        <button id="user-delete" class="userNavBtn">Delete Account</button>
+        <button id="user-password" class="userNavBtn">Change Password</button>
+      `);
+
+      $("#user-delete").on("click", () => deletePrompt());
+      $("#user-password").on("click", () => changePasswordPrompt());
+    }
+  }
+
   $("#userBurger").on("click", () => handleUserBurger());
 }
 
-export function routeUser(page) {
+export function routeUser() {
+  let hash = window.location.hash.split("?");
+  let queryParams = new URLSearchParams(hash[1]);
+  let page = queryParams.get("page");
+
+  if (page == undefined) {
+    window.location.hash += "&page=info";
+  }
+
   function getUserPage(page, showInfo) {
     $.get(`pages/user/user-${page}.html`, (data) => {
       $("#user-content").html(data);
@@ -217,12 +240,6 @@ export function routeUser(page) {
       break;
     case "reviews":
       getUserPage("reviews", showUserReviews());
-      break;
-    case "delete":
-      deletePrompt();
-      break;
-    case "password":
-      changePasswordPrompt();
       break;
   }
 }
