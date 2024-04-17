@@ -85,6 +85,10 @@
     }
   }
 
+  #browse-grid {
+    @include grid();
+  }
+
   #browse-footer {
     margin: 20px auto 0 auto;
     padding-bottom: 20px;
@@ -117,85 +121,7 @@
   }
 }
 
-//used by user page, search page, and browse page
-#browse-grid {
-  @include grid();
-
-  #privacy-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-weight: 100;
-  }
-
-  .grid-item {
-    @include gridItem();
-
-    &:hover .item-details {
-      opacity: 1;
-    }
-
-    .error-text {
-      position: absolute;
-      width: 100%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 13px;
-      text-align: center;
-    }
-
-    i {
-      color: #c15656;
-      position: absolute;
-      top: 25%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      text-align: center;
-      font-size: 10px;
-    }
-
-    .item-details {
-      @include gridItemDetails();
-
-      .details-title {
-        font-size: 18px;
-        margin-bottom: 7px;
-        font-weight: 100;
-      }
-
-      .details-year {
-        color: #bbb9b9;
-        font-size: 13px;
-      }
-    }
-  }
-}
-
-// @media screen and (max-width: 960px) {
-//   #browse-grid {
-//     .grid-item {
-//       .item-details {
-//         .details-title {
-//           font-size: 16px;
-//         }
-
-//         .details-year {
-//           font-size: 13px;
-//         }
-//       }
-//     }
-//   }
-// }
-
-@media screen and (max-width: 587px) {
+@media screen and (max-width: 600px) {
   #browse {
     .browse-title-container {
       #browse-title {
@@ -215,5 +141,11 @@
         }
       }
     }
+  }
+}
+
+@media screen and (max-width: 730px) {
+  #browse {
+    @include gridmQuery();
   }
 }

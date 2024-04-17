@@ -40,7 +40,7 @@
   }
 
   #user-content {
-    padding: 20px 4% 20px 4%;
+    padding: 20px 3% 20px 4%;
     width: 100%;
     position: relative;
 
@@ -101,7 +101,7 @@
       display: flex;
       align-items: center;
       margin-bottom: 15px;
-      height: 120px;
+      min-height: 120px;
       position: relative;
 
       #user-img-container {
@@ -180,95 +180,12 @@
 
       h1 {
         text-align: center;
-        margin: 20px 0;
+        font-weight: 100;
       }
+    }
 
-      .grid-row {
-        @include grid();
-
-        .grid-item {
-          @include gridItem();
-
-          &:hover .item-details {
-            opacity: 1;
-          }
-
-          .error-text {
-            text-align: center;
-            margin-top: 50px;
-            font-size: 13px;
-          }
-
-          i {
-            color: #c15656;
-            position: absolute;
-            top: 37%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-          }
-
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-
-          #addTopFiveImg {
-            height: 35px;
-            width: 35px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-          }
-
-          .item-details {
-            @include gridItemDetails();
-
-            .details-title {
-              font-size: 18px;
-              font-weight: 100;
-              margin-bottom: 5px;
-            }
-
-            .details-year {
-              color: #bbb9b9;
-              font-size: 13px;
-            }
-
-            .top-position {
-              position: absolute;
-              font-size: 15px;
-              width: 100%;
-              height: 25px;
-              top: 12%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              background: rgba(58, 59, 62, 0.6);
-            }
-          }
-        }
-
-        #order_1 {
-          order: 1;
-        }
-
-        #order_2 {
-          order: 2;
-        }
-
-        #order_3 {
-          order: 3;
-        }
-
-        #order_4 {
-          order: 4;
-        }
-
-        #order_5 {
-          order: 5;
-        }
-      }
+    #browse-grid {
+      @include grid();
     }
   }
 }
@@ -335,6 +252,13 @@
 
   #user {
     #user-content {
+      #user-pic-name {
+        flex-direction: column;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-evenly;
+      }
+
       #reviews-list {
         .review-item {
           .review-item-info {
@@ -353,6 +277,14 @@
           }
         }
       }
+    }
+  }
+}
+
+@media screen and (max-width: 730px) {
+  #user {
+    #user-content {
+      @include gridmQuery();
     }
   }
 }
@@ -398,20 +330,6 @@
             width: 100%;
           }
         }
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 960px) {
-  .user-grid-item {
-    .item-details {
-      .details-title {
-        font-size: 2.6vw;
-      }
-
-      .details-year {
-        font-size: 2vw;
       }
     }
   }

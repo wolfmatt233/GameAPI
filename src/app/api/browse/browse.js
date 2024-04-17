@@ -49,10 +49,10 @@ export async function browse(page, genres, stores) {
           <a href="#detail?game=${game.id}" class="grid-item">
               <img src="${game.background_image}" alt="image" />
               <div class="item-details">
-              <div>
+                <div>
                   <p class="details-title">${game.name}</p>
                   <p class="details-year">${date}</p>
-              </div>
+                </div>
               </div>
           </a>
         `);

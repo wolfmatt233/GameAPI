@@ -104,12 +104,12 @@ export async function showUserInfo() {
               let year = data.released.split("-");
 
               if ($("#order_" + property).length == 0) {
-                $("#top-five .grid-row").append(`
+                $("#browse-grid").append(`
                   <a href="#detail?game=${gameID}" class="grid-item" id="order_${property}">
                     <img src="${data.background_image}" alt="image" />
                     <div class="item-details">
                       <div>
-                        <p class="top-position">${property}<sup>${sup}</sup></p>
+                        <p>${property}<sup>${sup}</sup></p>
                         <p class="details-title">${data.name}</p>
                         <p class="details-year">${year[0]}</p>
                       </div>
@@ -120,15 +120,13 @@ export async function showUserInfo() {
             });
         } catch (error) {
           if ($("#order_" + property).length == 0) {
-            $("#top-five .grid-row").append(`
+            $("#browse-grid").append(`
               <a href="#detail?game=${gameID}" class="grid-item" id="order_${property}">
                 <i class="fa-solid fa-triangle-exclamation"></i>
-                <p class="error-text">Error Retrieving Game</p>
                 <div class="item-details">
                   <div>
-                    <p class="top-position">${property}<sup>${sup}</sup></p>
-                    <p class="details-title"></p>
-                    <p class="details-year"></p>
+                    <p>${property}<sup>${sup}</sup></p>
+                    <p class="error-text">Error Retrieving Game</p>
                   </div>
                 </div>
               </a>
@@ -137,12 +135,12 @@ export async function showUserInfo() {
         }
       } else {
         if ($("#order_" + property).length == 0) {
-          $("#top-five .grid-row").append(`
+          $("#browse-grid").append(`
             <a class="grid-item addUserTopFive" id="order_${property}">
               <img src="./assets/plus.png" alt="add" id="addTopFiveImg" />
               <div class="item-details">
                 <div>
-                  <p class="top-position">${property}<sup>${sup}</sup></p>
+                  <p>${property}<sup>${sup}</sup></p>
                   <p class="details-title"></p>
                   <p class="details-year"></p>
                 </div>
@@ -172,19 +170,25 @@ export async function showUserItems(title) {
 
     $("#user-title").html(title);
 
-    if (auth.currentUser != null && auth.currentUser.uid !== userDoc.uid) {
+    if (
+      (auth.currentUser != null && auth.currentUser.uid !== userDoc.uid) ||
+      auth.currentUser == null
+    ) {
       const privateHTML = () =>
         $("#browse-grid").append(
           `<h2 id="privacy-text">Private <i class="fa-solid fa-eye-slash"></i></h2>`
         );
       if (title === "Favorites" && userDoc.privacy.favorites === "private") {
+        CloseLoading();
         return privateHTML();
       } else if (
         title === "Played Games" &&
         userDoc.privacy.played === "private"
       ) {
+        CloseLoading();
         return privateHTML();
       } else if (title === "To Play" && userDoc.privacy.toplay === "private") {
+        CloseLoading();
         return privateHTML();
       }
     }
@@ -211,8 +215,10 @@ export async function showUserItems(title) {
           })
           .then((data) => {
             let year = data.released.split("-");
-            $("#user-content #browse-grid").append(`
-              <a href="#detail?game=${gameID}" class="grid-item">
+
+            if ($("#game_" + gameID).length == 0) {
+              $("#user-content #browse-grid").append(`
+              <a href="#detail?game=${gameID}" class="grid-item" id="game_${gameID}">
                 <img src="${data.background_image}" alt="image" />
                 <div class="item-details">
                   <div>
@@ -222,16 +228,15 @@ export async function showUserItems(title) {
                 </div>
               </a>
             `);
+            }
           });
       } catch (error) {
         $("#user-content #browse-grid").append(`
           <a href="#detail?game=${gameID}" class="grid-item">
             <i class="fa-solid fa-triangle-exclamation"></i>
-            <p class="error-text">Error Retrieving Game</p>
             <div class="item-details">
               <div>
-                <p class="details-title"></p>
-                <p class="details-year"></p>
+                <p class="error-text">Error Retrieving Game</p>
               </div>
             </div>
           </a>

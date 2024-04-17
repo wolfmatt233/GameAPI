@@ -63,30 +63,30 @@ export function addEditPrompt(
     cancelButtonText: "Cancel",
     cancelButtonColor: "#e15554",
     html: `
-              <textarea id="reviewText" class="swal2-textarea" placeholder="Review here...">${reviewText}</textarea>
-              <div id="starScore">
-                <div class="star" id="st1">
-                  <div id="score_0.5" class="st-l"></div>
-                  <div id="score_1" class="st-r"></div>
-                </div>
-                <div class="star" id="st2">
-                  <div id="score_1.5" class="st-l"></div>
-                  <div id="score_2" class="st-r"></div>
-                </div>
-                <div class="star" id="st3">
-                  <div id="score_2.5" class="st-l"></div>
-                  <div id="score_3" class="st-r"></div>
-                </div>
-                <div class="star" id="st4">
-                  <div id="score_3.5" class="st-l"></div>
-                  <div id="score_4" class="st-r"></div>
-                </div>
-                <div class="star" id="st5">
-                  <div id="score_4.5" class="st-l"></div>
-                  <div id="score_5" class="st-r"></div>
-                </div>
-              </div>
-            `,
+      <textarea id="reviewText" class="swal2-textarea" placeholder="Review here...">${reviewText}</textarea>
+      <div id="starScore">
+        <div class="star" id="st1">
+          <div id="score_0.5" class="st-l"></div>
+          <div id="score_1" class="st-r"></div>
+        </div>
+        <div class="star" id="st2">
+          <div id="score_1.5" class="st-l"></div>
+          <div id="score_2" class="st-r"></div>
+        </div>
+        <div class="star" id="st3">
+          <div id="score_2.5" class="st-l"></div>
+          <div id="score_3" class="st-r"></div>
+        </div>
+        <div class="star" id="st4">
+          <div id="score_3.5" class="st-l"></div>
+          <div id="score_4" class="st-r"></div>
+        </div>
+        <div class="star" id="st5">
+          <div id="score_4.5" class="st-l"></div>
+          <div id="score_5" class="st-r"></div>
+        </div>
+      </div>
+    `,
     preConfirm: () => {
       let reviewText = $("#reviewText").val();
       let starScore = $(".checked").attr("id").split("_")[1];
@@ -390,13 +390,15 @@ async function addLike(reviewIndex, username, gameID) {
             likesArr.push(auth.currentUser.displayName);
             likeCount = likesArr.length;
 
+            console.log(reviewArr)
+
             reviewArr[idx] = {
               gameId: review.gameId,
               likes: likesArr,
               reviewText: review.reviewText,
               starScore: review.starScore,
-              user: review.user,
             };
+            console.log("after",reviewArr)
 
             updateLikes(
               doc.ref,
@@ -412,7 +414,7 @@ async function addLike(reviewIndex, username, gameID) {
       }
     });
   } catch (error) {
-    FeedbackMessage("error", "Error", error.message);
+    console.log(error)
   }
 }
 
@@ -444,7 +446,6 @@ async function removeLike(reviewIndex, username, gameID) {
               likes: likesArr,
               reviewText: review.reviewText,
               starScore: review.starScore,
-              user: review.user,
             };
 
             updateLikes(
@@ -479,6 +480,6 @@ async function updateLikes(
       checkLikeBtn(reviewIndex, username, gameID, check, likeCount);
     });
   } catch (error) {
-    FeedbackMessage("error", "Error", error.message);
+    console.log(error)
   }
 }

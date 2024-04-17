@@ -119,6 +119,7 @@
 
       .addedBtn-review {
         background-color: rgb(46, 127, 46);
+        color: #fff;
 
         &:hover {
           background-color: #e79933;
@@ -127,6 +128,7 @@
 
       #deleteReview {
         background-color: $red;
+        color: #fff;
       }
     }
 
