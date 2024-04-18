@@ -15,7 +15,6 @@ import {
 import { auth, db, apiKey } from "../credentials";
 import { editInfoListener } from "./user-editing";
 import { CloseLoading, FeedbackMessage, LoadingMessage } from "../extras";
-import { routeUser } from "../model";
 import { editReviewPrompt, deleteReviewPrompt } from "../api/detail/reviews";
 import Swal from "sweetalert2";
 
@@ -167,8 +166,17 @@ export async function showUserItems(title) {
     let accessArray = [];
     const userDoc = await findUser();
     $("#user-content #browse-grid").empty();
+    let titleIcon;
 
-    $("#user-title").html(title);
+    if (title == "Favorites") {
+      titleIcon = `<i class="fa-regular fa-star"></i>`;
+    } else if (title == "Played Games") {
+      titleIcon = `<i class="fa-solid fa-check"></i>`;
+    } else if (title == "To Play") {
+      titleIcon = `<i class="fa-solid fa-list"></i>`;
+    }
+
+    $("#user-title").html(`${titleIcon}${title}`);
 
     if (
       (auth.currentUser != null && auth.currentUser.uid !== userDoc.uid) ||
@@ -255,7 +263,7 @@ export async function showUserItems(title) {
 export async function showUserReviews() {
   try {
     const userDoc = await findUser();
-    $("#user-title").html("Reviews");
+    $("#user-title").html(`<i class="fa-solid fa-pen"></i>Reviews`);
     $("#reviews-list").empty();
 
     userDoc.reviews.forEach((review) => {

@@ -176,7 +176,7 @@ async function userListener() {
     "click",
     () => (location.hash = `#user?user=${user}&page=info`)
   );
-  $("#user-favs").on(
+  $("#user-favorites").on(
     "click",
     () => (location.hash = `#user?user=${user}&page=favorites`)
   );
@@ -196,8 +196,14 @@ async function userListener() {
   if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
     if ($("#user-delete").length == 0 && $("#user-password").length == 0) {
       $("#sidebarButtons").append(`
-        <button id="user-delete" class="userNavBtn">Delete Account</button>
-        <button id="user-password" class="userNavBtn">Change Password</button>
+        <button id="user-delete" class="userNavBtn">
+          Delete Account
+          <i class="fa-solid fa-trash"></i>
+        </button>
+        <button id="user-password" class="userNavBtn">
+          Change Password
+          <i class="fa-solid fa-lock"></i>
+        </button>
       `);
 
       $("#user-delete").on("click", () => deletePrompt());
@@ -212,6 +218,7 @@ export function routeUser() {
   let hash = window.location.hash.split("?");
   let queryParams = new URLSearchParams(hash[1]);
   let page = queryParams.get("page");
+  $(`#user-${page}`).css("background-color", "#40434e")
 
   if (page == undefined) {
     window.location.hash += "&page=info";

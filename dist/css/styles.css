@@ -341,6 +341,12 @@ footer {
 #user #user-content #user-title-container #user-title {
   margin-bottom: 20px;
   font-weight: 100;
+  display: flex;
+  align-items: center;
+}
+#user #user-content #user-title-container #user-title i {
+  font-size: 25px;
+  margin-right: 10px;
 }
 #user #user-content #user-title-container #toggle-privacy {
   background-color: #40434e;
@@ -497,6 +503,8 @@ footer {
 #user #user-content #browse-grid .grid-item img {
   width: 100%;
   object-fit: cover;
+  line-height: 100px;
+  text-align: center;
 }
 #user #user-content #browse-grid .grid-item i {
   font-size: 30px;
@@ -776,6 +784,8 @@ footer {
 #browse #browse-grid .grid-item img {
   width: 100%;
   object-fit: cover;
+  line-height: 100px;
+  text-align: center;
 }
 #browse #browse-grid .grid-item i {
   font-size: 30px;
@@ -876,6 +886,7 @@ footer {
 }
 #detailView .banner-container {
   position: relative;
+  height: 200px;
 }
 #detailView .banner-container img {
   height: 200px;

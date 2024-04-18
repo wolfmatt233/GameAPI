@@ -15,7 +15,7 @@ function buildUrl(page, searchQuery, genres, stores, type) {
   genres != null ? (url += `genres=${genres}&`) : "";
   stores != null ? (url += `stores=${stores}&`) : "";
   url += `key=${apiKey}&page=${page}`;
-  type == "search" ? (url += `&search=${searchQuery}`) : "";
+  type == "search" ? (url += `&search=${searchQuery}&search_precise=true`) : "";
   return url;
 }
 
@@ -46,16 +46,16 @@ export async function browse(page, genres, stores) {
           }
 
           $("#browse-grid").append(`
-          <a href="#detail?game=${game.id}" class="grid-item">
-              <img src="${game.background_image}" alt="image" />
-              <div class="item-details">
-                <div>
-                  <p class="details-title">${game.name}</p>
-                  <p class="details-year">${date}</p>
+            <a href="#detail?game=${game.id}" class="grid-item">
+                <img src="${game.background_image}" alt="image" />
+                <div class="item-details">
+                  <div>
+                    <p class="details-title">${game.name}</p>
+                    <p class="details-year">${date}</p>
+                  </div>
                 </div>
-              </div>
-          </a>
-        `);
+            </a>
+          `);
         });
 
         pageButtons(data.next, data.previous, genres, stores, "browse");
@@ -65,7 +65,7 @@ export async function browse(page, genres, stores) {
         filterEvents(null);
       });
   } catch (error) {
-    location.hash = "#error?type=cors"
+    location.hash = "#error?type=cors";
   }
 }
 
