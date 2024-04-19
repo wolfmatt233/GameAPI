@@ -66,6 +66,7 @@ export async function browse(page, genres, stores) {
       });
   } catch (error) {
     location.hash = "#error?type=cors";
+    CloseLoading();
   }
 }
 
@@ -118,6 +119,7 @@ export async function searchApi(searchQuery, page, genres, stores) {
   } catch (error) {
     FeedbackMessage("error", "API Error", error.message);
     location.hash = "#error?type=cors";
+    CloseLoading();
   }
 }
 

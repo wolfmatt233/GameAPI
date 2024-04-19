@@ -600,9 +600,9 @@ footer {
   margin-left: 10px;
 }
 
-.swal2-input {
+.swal2-input, .swal2-textarea {
   width: 60%;
-  font-size: 17px;
+  font-size: 15px;
 }
 
 @media screen and (max-width: 410px) {

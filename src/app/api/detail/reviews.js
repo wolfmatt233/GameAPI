@@ -3,7 +3,12 @@ import Swal from "sweetalert2";
 import { doc, updateDoc } from "firebase/firestore";
 import { showReviews } from "./detail";
 import { showUserReviews } from "../../user/display-user-info";
-import { FeedbackMessage, getAllDocs, getUserDoc } from "../../extras";
+import {
+  FeedbackMessage,
+  checkProfanity,
+  getAllDocs,
+  getUserDoc,
+} from "../../extras";
 
 //----Reviews----\\
 
@@ -15,49 +20,112 @@ export function checkReviewBtn(check, gameID, name) {
       .attr("class", "addedBtn-review")
       .html(`Edit Your Review <i class="fa-solid fa-check"></i>`);
     $("#addedReview").prop("onclick", null).off("click");
-    $("#addedReview").on("click", () => editReviewPrompt(gameID));
+    $("#addedReview").on("click", () => editReviewPrompt(gameID, name));
     if ($("#deleteReview").length == 0) {
       $(".detail-buttons").append(
         `<button id="deleteReview">Delete Review <i class="fa-solid fa-trash"></i></button>`
       );
     }
-    $("#deleteReview").on("click", () => deleteReviewPrompt(gameID));
+    $("#deleteReview").on("click", () => deleteReviewPrompt(gameID, name));
   } else {
     //game NOT reviewed
     $("#addedReview")
       .attr("id", "addReview")
       .attr("class", "")
       .html(`Add Review <i class="fa-solid fa-plus"></i>`);
-    $("#addedReview").prop("onclick", null).off("click");
-    $("#addReview").on("click", () => addReviewPrompt(gameID, name));
+    $("#addReview").prop("onclick", null).off("click");
+    $("#addReview").on("click", () => addPrompt(gameID, name));
     $("#deleteReview").remove();
   }
 }
 
 //----Modal/functions for add, edit, delete----\\
 
-export function addEditPrompt(
-  type,
-  title,
-  buttonText,
-  reviewObj,
-  gameID,
-  name
-) {
-  let reviewText;
+export async function editReviewPrompt(gameID, name) {
+  let reviewObj;
 
-  if (type == "add") {
-    reviewText = "";
-  } else if (type == "edit") {
-    reviewText = reviewObj.reviewText;
-    name = reviewObj.name;
+  try {
+    let userDoc = await getUserDoc();
+    let reviewArray = userDoc.data().reviews;
+
+    reviewArray.forEach((review) => {
+      if (review.gameId == gameID) {
+        reviewObj = review;
+      }
+    });
+  } catch (error) {
+    console.log(error.message);
   }
 
+  editPrompt(reviewObj, gameID, name);
+}
+
+export function addPrompt(gameID, name) {
   Swal.fire({
-    title: `${title}`,
+    title: "New Review",
     background: "#555a68",
     color: `#e9e3e3`,
-    confirmButtonText: `${buttonText}`,
+    confirmButtonText: "Add review",
+    confirmButtonColor: "#04724D",
+    showCancelButton: true,
+    cancelButtonText: "Cancel",
+    cancelButtonColor: "#e15554",
+    html: `
+      <textarea id="reviewText" class="swal2-textarea" placeholder="Review here..."></textarea>
+      <div id="starScore">
+        <div class="star" id="st1">
+          <div id="score_0.5" class="st-l"></div>
+          <div id="score_1" class="st-r"></div>
+        </div>
+        <div class="star" id="st2">
+          <div id="score_1.5" class="st-l"></div>
+          <div id="score_2" class="st-r"></div>
+        </div>
+        <div class="star" id="st3">
+          <div id="score_2.5" class="st-l"></div>
+          <div id="score_3" class="st-r"></div>
+        </div>
+        <div class="star" id="st4">
+          <div id="score_3.5" class="st-l"></div>
+          <div id="score_4" class="st-r"></div>
+        </div>
+        <div class="star" id="st5">
+          <div id="score_4.5" class="st-l"></div>
+          <div id="score_5" class="st-r"></div>
+        </div>
+      </div>
+    `,
+    preConfirm: () => {
+      let reviewText = $("#reviewText").val();
+      let starScore = $(".checked").attr("id").split("_")[1];
+
+      if (checkProfanity([reviewText]) == true) {
+        return Swal.showValidationMessage(`No profanity allowed`);
+      }
+
+      let reviewObj = {
+        reviewText: reviewText,
+        starScore: starScore.toString(),
+        likes: [],
+        gameId: gameID,
+        gameName: name,
+      };
+
+      addReview(reviewObj, gameID, name);
+    },
+  });
+
+  starSelector();
+}
+
+export function editPrompt(reviewObj, gameID, name) {
+  let reviewText = reviewObj.reviewText;
+
+  Swal.fire({
+    title: "Edit Review",
+    background: "#555a68",
+    color: `#e9e3e3`,
+    confirmButtonText: "Update review",
     confirmButtonColor: "#04724D",
     showCancelButton: true,
     cancelButtonText: "Cancel",
@@ -88,36 +156,23 @@ export function addEditPrompt(
       </div>
     `,
     preConfirm: () => {
-      let reviewText = $("#reviewText").val();
+      reviewText = $("#reviewText").val();
       let starScore = $(".checked").attr("id").split("_")[1];
-      let reviewObj = {};
 
-      if (type == "add") {
-        reviewObj = {
-          reviewText: reviewText,
-          starScore: starScore.toString(),
-          likes: [],
-          gameId: gameID,
-          gameName: name,
-        };
-
-        addReview(reviewObj, gameID);
-      } else if (type == "edit") {
-        reviewObj = {
-          reviewText: reviewText,
-          starScore: starScore.toString(),
-        };
-
-        editReview(reviewObj, gameID);
+      if (checkProfanity([reviewText]) == true) {
+        return Swal.showValidationMessage(`No profanity allowed`);
       }
+
+      reviewObj = {
+        reviewText: reviewText,
+        starScore: starScore.toString(),
+      };
+
+      editReview(reviewObj, gameID, name);
     },
   });
 
-  if (type == "edit") {
-    starSelector(parseFloat(reviewObj.starScore));
-  } else {
-    starSelector();
-  }
+  starSelector(parseFloat(reviewObj.starScore));
 }
 
 export function starSelector(starScore) {
@@ -223,7 +278,7 @@ export function starSelector(starScore) {
     );
   });
 
-  if (starScore != null) {
+  if (starScore) {
     starScore = starScore.toString();
     let halfScore = starScore.split(".")[1];
     starScore = starScore.split(".")[0];
@@ -235,31 +290,7 @@ export function starSelector(starScore) {
   }
 }
 
-export function addReviewPrompt(gameID, name) {
-  let reviewObj = {};
-  addEditPrompt("add", "New Review", "Add review", reviewObj, gameID, name);
-}
-
-export async function editReviewPrompt(gameID) {
-  let reviewObj;
-
-  try {
-    let userDoc = await getUserDoc();
-    let reviewArray = userDoc.data().reviews;
-
-    reviewArray.forEach((review) => {
-      if (review.gameId == gameID) {
-        reviewObj = review;
-      }
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
-
-  addEditPrompt("edit", "Edit Review", "Update review", reviewObj, gameID);
-}
-
-export function deleteReviewPrompt(gameID) {
+export function deleteReviewPrompt(gameID, name) {
   Swal.fire({
     title: "Delete your review?",
     background: "#555a68",
@@ -271,33 +302,33 @@ export function deleteReviewPrompt(gameID) {
     cancelButtonText: "Cancel",
     cancelButtonColor: "#04724D",
     preConfirm: () => {
-      deleteReview(gameID);
+      deleteReview(gameID, name);
     },
   });
 }
 
 //----Add, edit, delete functions----\\
 
-export async function addReview(reviewObj, gameID) {
+export async function addReview(reviewObj, gameID, name) {
   try {
     let userDoc = await getUserDoc();
     let reviewArray = userDoc.data().reviews;
 
-    reviewArray.push(reviewObj); //push new review object to old array
+    reviewArray.push(reviewObj);
 
     await updateDoc(doc(db, "GameDB", auth.currentUser.uid), {
       reviews: reviewArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Review added!");
-      checkReviewBtn(1, gameID);
+      checkReviewBtn(1, gameID, name);
       showReviews(gameID);
     });
   } catch (error) {
-    FeedbackMessage("error", "Error", error.message);
+    console.log(error.message);
   }
 }
 
-export async function editReview(updatedObj, gameID) {
+export async function editReview(updatedObj, gameID, name) {
   try {
     let userDoc = await getUserDoc();
     let reviewArray = userDoc.data().reviews;
@@ -313,8 +344,10 @@ export async function editReview(updatedObj, gameID) {
       reviews: reviewArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Review updated!");
-      showUserReviews();
-      checkReviewBtn(1, gameID);
+      if (window.location.hash.split("?")[0] == "#user") {
+        showUserReviews();
+      }
+      checkReviewBtn(1, gameID, name);
       showReviews(gameID);
     });
   } catch (error) {
@@ -322,7 +355,7 @@ export async function editReview(updatedObj, gameID) {
   }
 }
 
-export async function deleteReview(gameID) {
+export async function deleteReview(gameID, name) {
   try {
     let userDoc = await getUserDoc();
     let reviewArray = userDoc.data().reviews;
@@ -337,8 +370,10 @@ export async function deleteReview(gameID) {
       reviews: reviewArray,
     }).then(() => {
       FeedbackMessage("success", "Success", "Review deleted.");
-      showUserReviews(); //refresh user page reviews
-      checkReviewBtn(0, gameID);
+      if (window.location.hash.split("?")[0] == "#user") {
+        showUserReviews(); //refresh user page reviews
+      }
+      checkReviewBtn(0, gameID, name);
       showReviews(gameID); //refresh detail page reviews
     });
   } catch (error) {
@@ -390,7 +425,7 @@ async function addLike(reviewIndex, username, gameID) {
             likesArr.push(auth.currentUser.displayName);
             likeCount = likesArr.length;
 
-            console.log(reviewArr)
+            console.log(reviewArr);
 
             reviewArr[idx] = {
               gameId: review.gameId,
@@ -398,7 +433,7 @@ async function addLike(reviewIndex, username, gameID) {
               reviewText: review.reviewText,
               starScore: review.starScore,
             };
-            console.log("after",reviewArr)
+            console.log("after", reviewArr);
 
             updateLikes(
               doc.ref,
@@ -414,7 +449,7 @@ async function addLike(reviewIndex, username, gameID) {
       }
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
@@ -480,6 +515,6 @@ async function updateLikes(
       checkLikeBtn(reviewIndex, username, gameID, check, likeCount);
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }

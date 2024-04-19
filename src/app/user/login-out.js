@@ -20,7 +20,7 @@ import {
   getDocs,
   where,
 } from "firebase/firestore";
-import { FeedbackMessage } from "../extras";
+import { FeedbackMessage, checkProfanity } from "../extras";
 
 //----NAV BUTTONS----\\
 
@@ -81,11 +81,11 @@ export function signUpModal() {
       confirmButtonText: "Sign Up",
       confirmButtonColor: "#04724D",
       html: `
-            <input type="text" id="emailSignUp" class="swal2-input" placeholder="Email"> 
-            <input type="text" id="usernameSignUp" class="swal2-input" placeholder="Username">
-            <input type="password" id="passwordSignUp" class="swal2-input" placeholder="Password">
-            <input type="password" id="passwordSignUp2" class="swal2-input" placeholder="Confirm password">
-        `,
+        <input type="text" id="emailSignUp" class="swal2-input" placeholder="Email"> 
+        <input type="text" id="usernameSignUp" class="swal2-input" placeholder="Username">
+        <input type="password" id="passwordSignUp" class="swal2-input" placeholder="Password">
+        <input type="password" id="passwordSignUp2" class="swal2-input" placeholder="Confirm password">
+      `,
       preConfirm: async () => {
         let email = $("#emailSignUp").val();
         let username = $("#usernameSignUp").val();
@@ -111,6 +111,8 @@ export function signUpModal() {
           Swal.showValidationMessage(`Passwords must match`);
         } else if (usernameUsed === true) {
           Swal.showValidationMessage(`Username already in use`);
+        } else if (checkProfanity([email, username, password]) == true) {
+          Swal.showValidationMessage(`No profanity allowed`);
         } else {
           signUp(auth, email, username, password);
         }
@@ -133,7 +135,7 @@ function login(email, password) {
       let errorMsg = error.message
         .split("/")[1]
         .split(")")[0]
-        .replace("-", " ");
+        .replace(/-/g, " ");
       $("#login-btn").trigger("click");
       Swal.showValidationMessage(`Error: ${errorMsg}`);
     });
@@ -185,7 +187,13 @@ async function signUp(auth, email, username, password) {
       createUserDoc(user, userObj);
     })
     .catch((error) => {
-      FeedbackMessage("error", "Error", error.message);
+      let errorMsg = error.message
+        .split("/")[1]
+        .split(")")[0]
+        .replace(/-/g, " ");
+      console.log(error.message, errorMsg);
+      $(".signup-btn").trigger("click");
+      Swal.showValidationMessage(`Error: ${errorMsg}`);
     });
 }
 

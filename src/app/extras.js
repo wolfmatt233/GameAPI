@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { auth, db } from "./credentials";
+import { profanity } from "@2toad/profanity";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -49,4 +50,10 @@ export async function getAllDocs() {
 
 export async function getUserDoc() {
   return await getDoc(doc(db, "GameDB", auth.currentUser.uid));
+}
+
+export function checkProfanity(array) {
+  array.forEach((string) => {
+    return profanity.exists(string);
+  });
 }

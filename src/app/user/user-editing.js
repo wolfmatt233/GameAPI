@@ -26,7 +26,7 @@ export function editInfoListener(username, bio) {
       confirmButtonColor: "#04724D",
       html: `
         <input type="text" id="uName" class="swal2-input" placeholder="Username" value="${username}">
-        <input type="text" id="uBio" class="swal2-input" placeholder="Bio" value="${bio}" max="100">
+        <textarea type="text" id="uBio" class="swal2-textarea" placeholder="Bio">${bio}</textarea>
         `,
       preConfirm: () => {
         let uName = $("#uName").val();
