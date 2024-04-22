@@ -31,6 +31,16 @@ export function editInfoListener(username, bio) {
       preConfirm: () => {
         let uName = $("#uName").val();
         let uBio = $("#uBio").val();
+
+        uName = uName.replace(
+          /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi,
+          ""
+        );
+        uBio = uBio.replace(
+          /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi,
+          ""
+        );
+
         if (!uName || !uBio) {
           Swal.showValidationMessage(`Ensure fields are completed`);
         } else {
@@ -57,6 +67,10 @@ export function editInfoListener(username, bio) {
         `,
       preConfirm: () => {
         photoUrl = $("#photoURL").val();
+        photoUrl = photoUrl.replace(
+          /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi,
+          ""
+        );
 
         const isValidUrl = () => {
           if (photoUrl == "") {
@@ -85,9 +99,18 @@ export function editInfoListener(username, bio) {
     $(".tooltip").css("opacity", "100");
     $(".tooltip").css("visibility", "visible");
     $("#searchBar").focus();
+    if (window.screen.width <= 733) {
+      $("#nav-burger").trigger("click");
+      window.scrollTo(0, 0);
+    }
   });
 
   $(".tooltip").on("mouseover", () => {
+    $(".tooltip").css("opacity", "0");
+    $(".tooltip").css("visibility", "hidden");
+  });
+
+  $(".tooltip").on("click", () => {
     $(".tooltip").css("opacity", "0");
     $(".tooltip").css("visibility", "hidden");
   });

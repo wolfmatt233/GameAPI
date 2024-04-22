@@ -103,6 +103,11 @@ export function addPrompt(gameID, name) {
         return Swal.showValidationMessage(`No profanity allowed`);
       }
 
+      reviewText = reviewText.replace(
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi,
+        ""
+      );
+
       let reviewObj = {
         reviewText: reviewText,
         starScore: starScore.toString(),
@@ -162,6 +167,11 @@ export function editPrompt(reviewObj, gameID, name) {
       if (checkProfanity([reviewText]) == true) {
         return Swal.showValidationMessage(`No profanity allowed`);
       }
+
+      reviewText = reviewText.replace(
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi,
+        ""
+      );
 
       reviewObj = {
         reviewText: reviewText,
@@ -387,7 +397,7 @@ export function checkLikeBtn(reviewIndex, username, gameID, check, likeCount) {
   //like is added
   if (check == 1) {
     $(`#review${reviewIndex} .to-like`).attr("class", "liked");
-    $(`#review${reviewIndex} button`).html(
+    $(`#review${reviewIndex} #likeBtn`).html(
       `<i class="fa-solid fa-heart"></i> ${likeCount} Likes`
     );
     $(`#review${reviewIndex} .liked`).prop("onclick", null).off("click");
@@ -396,7 +406,7 @@ export function checkLikeBtn(reviewIndex, username, gameID, check, likeCount) {
     );
   } else {
     $(`#review${reviewIndex} .liked`).attr("class", "to-like");
-    $(`#review${reviewIndex} button`).html(
+    $(`#review${reviewIndex} #likeBtn`).html(
       `<i class="fa-solid fa-heart"></i> ${likeCount} Likes`
     );
     $(`#review${reviewIndex} .to-like`).prop("onclick", null).off("click");

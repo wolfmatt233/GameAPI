@@ -44,7 +44,11 @@ export async function viewDetails(gameID) {
           metascore = "N/A";
         }
 
-        $(".banner-container img").attr("src", `${data.background_image}`);
+        $(".banner-container").css(
+          "background-image",
+          `linear-gradient(rgba(66, 62, 62, 0.7), rgba(0, 0, 0, 0.7)),
+          url(${data.background_image})`
+        );
         $(".banner-container p").html(`${data.name}`);
 
         //Left side bar
@@ -148,7 +152,8 @@ export async function viewDetails(gameID) {
         CloseLoading();
       });
   } catch (error) {
-    location.hash = "#error?type=details-error";
+    let prevPage = location.hash.replace("#", "").replace("?", "&");
+    location.hash = `#error?type=cors&prev=${prevPage}`;
     FeedbackMessage("error", "API Error", error.message);
   }
 }
@@ -187,9 +192,14 @@ export async function showReviews(gameID) {
                 <span id="review-score"></span>
               </div>
               <p class="review-text">${review.reviewText}</p>
-              <button class="to-like"><i class="fa-solid fa-heart"></i> ${likeCount} Likes</button>
+              <button id="likeBtn" class="to-like"><i class="fa-solid fa-heart"></i> ${likeCount} Likes</button>
             </div>
           `);
+
+          if(review.reviewText.length > 300) {
+            console.log("long")
+            $(`#review${idx} .review-text`).append(`<button id="readMore${idx}">Read more</button>`)
+          }
 
             //apply stars to review
             for (let i = 1; i <= stars; i++) {

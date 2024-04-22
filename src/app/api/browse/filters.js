@@ -1,5 +1,5 @@
 import { apiKey } from "../../credentials";
-import { LoadingMessage, CloseLoading } from "../../extras";
+import { LoadingMessage, CloseLoading, FeedbackMessage } from "../../extras";
 
 //----Checkboxes open/close & filter button sends info----\\
 

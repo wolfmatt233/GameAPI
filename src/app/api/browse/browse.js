@@ -102,8 +102,8 @@ export async function searchApi(searchQuery, page, genres, stores) {
               <img src="${background}" alt="No image found" />
               <div class="item-details">
               <div>
-                  <p class="details-title">${game.name}</p>
-                  <p class="details-year">${date}</p>
+                <p class="details-title">${game.name}</p>
+                <p class="details-year">${date}</p>
               </div>
               </div>
           </a>
@@ -118,7 +118,7 @@ export async function searchApi(searchQuery, page, genres, stores) {
       });
   } catch (error) {
     FeedbackMessage("error", "API Error", error.message);
-    location.hash = "#error?type=cors";
+    location.hash = `#error?type=cors`;
     CloseLoading();
   }
 }

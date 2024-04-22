@@ -9,13 +9,13 @@
 html,
 body {
   height: 100%;
-  margin: 0 2%;
   background-color: #40434e;
   position: relative;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 5%;
 }
 #app {
-  max-width: 1500px;
-  margin: 0 auto;
   min-height: $appHeight;
   background-color: $secondaryColor;
   border-radius: 10px;

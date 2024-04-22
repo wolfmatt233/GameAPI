@@ -2,26 +2,18 @@
   min-height: $appHeight;
 
   .banner-container {
-    position: relative;
+    background-image: url();
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 0 12%;
     height: 200px;
-
-    img {
-      height: 200px;
-      width: 100%;
-      object-fit: cover;
-      background-position: top;
-      object-position: 0 12%;
-      filter: brightness(50%);
-      margin-bottom: -5px;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     p {
       font-size: 2em;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
+      text-align: center;
     }
   }
 
@@ -277,6 +269,7 @@
         .review-text {
           border-radius: 10px;
           padding: 10px;
+          word-wrap: break-word;
         }
 
         button {
@@ -317,7 +310,7 @@
   align-items: center;
   justify-content: space-evenly;
   width: 50%;
-  margin: 0 auto;
+  margin: 15px auto;
 
   .star {
     height: 40px;
@@ -402,13 +395,6 @@
         }
       }
     }
-
-    .reviews-container {
-      #reviewGallery {
-        .reviewItem {
-        }
-      }
-    }
   }
 }
 
@@ -438,6 +424,14 @@
     .star {
       height: 25px;
       width: 25px;
+    }
+  }
+
+  #reviewGallery {
+    .review-item {
+      .review-text {
+        font-size: 13px;
+      }
     }
   }
 }

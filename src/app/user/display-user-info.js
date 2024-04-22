@@ -289,7 +289,7 @@ export async function showUserReviews() {
       `);
 
       $(`#viewReview-${review.gameId}`).on("click", () => {
-        viewReviewModal(review);
+        viewReviewModal(review, userDoc.username);
       });
 
       $(`#editReview-${review.gameId}`).on("click", () => {
@@ -305,7 +305,7 @@ export async function showUserReviews() {
   }
 }
 
-function viewReviewModal(review) {
+function viewReviewModal(review, username) {
   let stars = review.starScore.split(".")[0];
   let starHalf = review.starScore.split(".")[1];
   let starElement = "";
@@ -332,7 +332,7 @@ function viewReviewModal(review) {
         <div id="viewReviewTitle">
           <span>Review of </span>
           <a href="#detail?game=${review.gameId}">${review.gameName}</a>
-          <span> by ${review.user}</span>
+          <span> by ${username}</span>
         </div>
         <p id="viewReviewText">${review.reviewText}</p>
         <div id="viewReviewBtm">

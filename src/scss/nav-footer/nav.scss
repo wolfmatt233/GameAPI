@@ -22,6 +22,8 @@ nav {
     border-radius: 4px;
     padding: 5px 10px;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
 
     i {
       align-self: center;
@@ -184,7 +186,13 @@ nav {
     height: 100px;
 
     .nav-title {
-      font-size: 15px;
+      font-size: 13px;
+
+      span {
+        span {
+          font-size: 12px;
+        }
+      }
     }
 
     .nav-search {
@@ -206,6 +214,14 @@ nav {
   nav {
     .nav-burger-container {
       visibility: visible;
+
+      .nav-search {
+        .tooltip {
+          &:after {
+            top: 100px;
+          }
+        }
+      }
     }
   }
 }
@@ -219,15 +235,16 @@ nav {
       transform: translate(-50%, -50%);
       z-index: 2;
       min-width: 100vw;
-      min-height: 107vh;
+      min-height: 100vh;
       background: $primaryColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
 
       .nav-container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         flex-direction: column;
+        margin-top: 50px;
 
         button,
         a {
@@ -245,17 +262,36 @@ nav {
       }
 
       .nav-search {
-        position: absolute;
         width: 70%;
-        top: 30%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+
+        .tooltip {
+          top: 30%;
+
+          &:after {
+            top: 100%; /* At the bottom of the tooltip */
+            border-color: #282727 transparent transparent transparent;
+          }
+        }
       }
     }
 
     #nav-burger {
       display: block;
       z-index: 3;
+    }
+  }
+}
+
+@media screen and (max-width: 370px) {
+  nav {
+    .nav-title {
+      span {
+        font-size: 14px;
+
+        span {
+          font-size: 13px;
+        }
+      }
     }
   }
 }

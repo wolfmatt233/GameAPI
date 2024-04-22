@@ -49,6 +49,8 @@ export function navBurger() {
       $(".nav-burger-container").removeClass("show-burger");
       $(".nav-burger-container").addClass("hide-burger");
       $("#nav-burger").html(`<hr><hr><hr>`);
+      $(".tooltip").css("opacity", "0");
+      $(".tooltip").css("visibility", "hidden");
     }
   });
 }
@@ -218,7 +220,7 @@ export function routeUser() {
   let hash = window.location.hash.split("?");
   let queryParams = new URLSearchParams(hash[1]);
   let page = queryParams.get("page");
-  $(`#user-${page}`).css("background-color", "#40434e")
+  $(`#user-${page}`).css("background-color", "#40434e");
 
   if (page == undefined) {
     window.location.hash += "&page=info";
