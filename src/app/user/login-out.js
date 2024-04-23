@@ -107,6 +107,8 @@ export function signUpModal() {
           Swal.showValidationMessage(
             `Username and email must contain more than 5 characters`
           );
+        } else if (username.length > 14) {
+          Swal.showValidationMessage(`Username too long`);
         } else if (password !== password2) {
           Swal.showValidationMessage(`Passwords must match`);
         } else if (usernameUsed === true) {

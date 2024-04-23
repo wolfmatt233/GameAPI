@@ -22,6 +22,7 @@ import {
 import { deletePrompt, changePasswordPrompt } from "./user/user-editing";
 import { browse, searchApi } from "./api/browse/browse";
 import { viewDetails } from "./api/detail/detail";
+import { CloseLoading } from "./extras";
 
 //----SIGN IN/OUT UPDATES----\\
 
@@ -86,6 +87,7 @@ function errorPage() {
 
   function showMessage(message) {
     $("#error-message").html(message);
+    CloseLoading();
   }
 
   switch (type) {

@@ -386,9 +386,10 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-size: 14px;
 }
 #user #user-content #reviews-list .review-item a {
-  font-size: 18px;
+  font-size: 2vmin;
   text-decoration: none;
   text-overflow: ellipsis;
 }
@@ -397,6 +398,7 @@ footer {
   align-items: center;
   justify-content: space-evenly;
   width: 60%;
+  font-size: 1.7vmin;
 }
 #user #user-content #reviews-list .review-item .review-item-info .edit-review-btn {
   cursor: pointer;
@@ -681,7 +683,7 @@ footer {
     align-items: baseline;
   }
   #user #user-content #reviews-list .review-item a {
-    font-size: 16px;
+    font-size: 13px;
     margin-bottom: 5px;
   }
   #user #user-content #reviews-list .review-item .review-item-info {

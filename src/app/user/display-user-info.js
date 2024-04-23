@@ -45,13 +45,13 @@ export async function showUserInfo() {
     LoadingMessage();
     const userDoc = await findUser();
 
-    function userExceptions() {
-      if (!userDoc && auth.currentUser != null) {
-        location.hash = `user?user=${auth.currentUser.displayName}`;
-      } else if (!userDoc && auth.currentUser == null) {
-        location.hash = `error?type=no-user`;
-      }
+    if (!userDoc && auth.currentUser != null) {
+      location.hash = `user?user=${auth.currentUser.displayName}`;
+    } else if (!userDoc && auth.currentUser == null) {
+      location.hash = `error?type=no-user`;
+    }
 
+    function userExceptions() {
       if (auth.currentUser != null && auth.currentUser.uid === userDoc.uid) {
         $("#user-img-container").append(
           `<div id="user-img-hover">Edit<i class="fa-solid fa-pen"></i></div>`
@@ -167,6 +167,12 @@ export async function showUserItems(title) {
     const userDoc = await findUser();
     $("#user-content #browse-grid").empty();
     let titleIcon;
+
+    if (!userDoc && auth.currentUser != null) {
+      location.hash = `user?user=${auth.currentUser.displayName}`;
+    } else if (!userDoc && auth.currentUser == null) {
+      location.hash = `error?type=no-user`;
+    }
 
     if (title == "Favorites") {
       titleIcon = `<i class="fa-regular fa-star"></i>`;

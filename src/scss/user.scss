@@ -83,9 +83,10 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        font-size: 14px;
 
         a {
-          font-size: 18px;
+          font-size: 2vmin;
           text-decoration: none;
           text-overflow: ellipsis;
         }
@@ -95,6 +96,7 @@
           align-items: center;
           justify-content: space-evenly;
           width: 60%;
+          font-size: 1.7vmin;
 
           .edit-review-btn {
             cursor: pointer;
@@ -329,7 +331,7 @@
           align-items: baseline;
 
           a {
-            font-size: 16px;
+            font-size: 13px;
             margin-bottom: 5px;
           }
 
