@@ -114,6 +114,7 @@ nav .nav-burger-container .nav-search a i {
   background-color: #555a68;
 }
 nav .nav-burger-container .nav-search .tooltip {
+  word-wrap: nowrap;
   opacity: 0;
   background-color: #282727;
   color: #fff;
@@ -204,9 +205,6 @@ nav #nav-burger hr {
   nav .nav-burger-container {
     visibility: visible;
   }
-  nav .nav-burger-container .nav-search .tooltip:after {
-    top: 100px;
-  }
 }
 @media screen and (max-width: 733px) {
   nav .nav-burger-container {
@@ -244,10 +242,10 @@ nav #nav-burger hr {
     width: 70%;
   }
   nav .nav-burger-container .nav-search .tooltip {
-    top: 30%;
+    top: 20%;
   }
   nav .nav-burger-container .nav-search .tooltip:after {
-    top: 100%; /* At the bottom of the tooltip */
+    top: 100%;
     border-color: #282727 transparent transparent transparent;
   }
   nav #nav-burger {
@@ -1151,6 +1149,19 @@ footer {
   border-radius: 10px;
   padding: 10px;
   word-wrap: break-word;
+  position: relative;
+}
+#detailView .reviews-container #reviewGallery .review-item .review-text .fade {
+  position: absolute;
+  bottom: 0px;
+  display: block;
+  width: 100%;
+  height: 25px;
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(49, 48, 48, 0.9019607843));
+}
+#detailView .reviews-container #reviewGallery .review-item .long-review {
+  height: 100px;
+  overflow: hidden;
 }
 #detailView .reviews-container #reviewGallery .review-item button {
   background: transparent;

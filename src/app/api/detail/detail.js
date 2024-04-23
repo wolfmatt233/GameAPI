@@ -196,10 +196,19 @@ export async function showReviews(gameID) {
             </div>
           `);
 
-          if(review.reviewText.length > 300) {
-            console.log("long")
-            $(`#review${idx} .review-text`).append(`<button id="readMore${idx}">Read more</button>`)
-          }
+            if (review.reviewText.length > 300) {
+              $(`#review${idx} .review-text`).addClass("long-review");
+              $(`#review${idx} .review-text`).append(
+                `<div class="fade"></div>`
+              );
+              $(`#review${idx}`).append(
+                `<button id="readMore${idx}">Read more</button>`
+              );
+              $(`#readMore${idx}`).on("click", () => {
+                console.log(idx)
+                showFullReview(idx);
+              });
+            }
 
             //apply stars to review
             for (let i = 1; i <= stars; i++) {
@@ -248,4 +257,13 @@ export async function showReviews(gameID) {
   } catch (error) {
     FeedbackMessage("error", "Error", error.message);
   }
+}
+
+function showFullReview(idx) {
+  console.log(idx);
+  idx = idx - 1;
+  console.log(idx);
+  $(`#review${idx} .review-text`).removeClass("long-review")
+  $(`#review${idx} .review-text .fade`).remove();
+  $(`#review${idx} #readMore${idx}`).remove();
 }

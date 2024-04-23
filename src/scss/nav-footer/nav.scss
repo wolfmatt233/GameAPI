@@ -98,6 +98,7 @@ nav {
 
       // Tooltip from W3Schools
       .tooltip {
+        word-wrap: nowrap;
         opacity: 0;
         background-color: #282727;
         color: #fff;
@@ -214,14 +215,6 @@ nav {
   nav {
     .nav-burger-container {
       visibility: visible;
-
-      .nav-search {
-        .tooltip {
-          &:after {
-            top: 100px;
-          }
-        }
-      }
     }
   }
 }
@@ -265,10 +258,10 @@ nav {
         width: 70%;
 
         .tooltip {
-          top: 30%;
+          top: 20%;
 
           &:after {
-            top: 100%; /* At the bottom of the tooltip */
+            top: 100%;
             border-color: #282727 transparent transparent transparent;
           }
         }
