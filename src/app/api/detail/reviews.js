@@ -136,6 +136,7 @@ export function editPrompt(reviewObj, gameID, name) {
     cancelButtonText: "Cancel",
     cancelButtonColor: "#e15554",
     html: `
+      <h3 id="editReviewTitle">Review for ${reviewObj.gameName}</h3>
       <textarea id="reviewText" class="swal2-textarea" placeholder="Review here...">${reviewText}</textarea>
       <div id="starScore">
         <div class="star" id="st1">

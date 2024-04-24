@@ -30,7 +30,6 @@ body {
 
 nav {
   height: 100px;
-  max-width: 1500px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -71,17 +70,17 @@ nav .nav-title:hover {
   border-color: transparent;
 }
 nav .show-burger {
-  visibility: visible;
+  opacity: 1;
 }
 nav .hide-burger {
-  visibility: hidden;
+  opacity: 0;
 }
 nav .nav-burger-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 70%;
-  transition: opacity 1s;
+  transition: opacity 0.5s;
 }
 nav .nav-burger-container .nav-search {
   display: flex;
@@ -201,12 +200,12 @@ nav #nav-burger hr {
     font-size: 13px;
   }
 }
-@media screen and (min-width: 734px) {
+@media screen and (min-width: 830px) {
   nav .nav-burger-container {
-    visibility: visible;
+    opacity: 1;
   }
 }
-@media screen and (max-width: 733px) {
+@media screen and (max-width: 830px) {
   nav .nav-burger-container {
     position: absolute;
     top: 50%;
@@ -389,15 +388,19 @@ footer {
   font-size: 14px;
 }
 #user #user-content #reviews-list .review-item a {
-  font-size: 2vmin;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  flex-wrap: nowrap;
   text-decoration: none;
-  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 20%;
 }
 #user #user-content #reviews-list .review-item .review-item-info {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  width: 60%;
+  justify-content: space-between;
+  width: 70%;
   font-size: 1.7vmin;
 }
 #user #user-content #reviews-list .review-item .review-item-info .edit-review-btn {
@@ -633,6 +636,16 @@ footer {
   margin-left: 10px;
 }
 
+#editReviewTitle {
+  max-width: 450px;
+  font-weight: 100;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
 .swal2-input,
 .swal2-textarea {
   width: 60%;
@@ -657,7 +670,7 @@ footer {
     padding: 7px;
   }
 }
-@media screen and (max-width: 733px) {
+@media screen and (max-width: 930px) {
   #user {
     flex-direction: column;
   }
@@ -670,6 +683,11 @@ footer {
   }
   #user #sidebar #userBurger i {
     transform: rotate(-90deg);
+  }
+  #user #user-content #user-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   #user #user-content #user-pic-name #user-info-container #user-img-container #user-img-hover {
     opacity: 1;
@@ -685,6 +703,7 @@ footer {
   #user #user-content #reviews-list .review-item a {
     font-size: 13px;
     margin-bottom: 5px;
+    width: 100%;
   }
   #user #user-content #reviews-list .review-item .review-item-info {
     display: flex;

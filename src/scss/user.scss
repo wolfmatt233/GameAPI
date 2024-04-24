@@ -86,16 +86,20 @@
         font-size: 14px;
 
         a {
-          font-size: 2vmin;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          flex-wrap: nowrap;
           text-decoration: none;
-          text-overflow: ellipsis;
+          overflow: hidden;
+          width: 20%;
         }
 
         .review-item-info {
           display: flex;
           align-items: center;
-          justify-content: space-evenly;
-          width: 60%;
+          justify-content: space-between;
+          width: 70%;
           font-size: 1.7vmin;
 
           .edit-review-btn {
@@ -257,6 +261,16 @@
   }
 }
 
+#editReviewTitle {
+  max-width: 450px;
+  font-weight: 100;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
 .swal2-input,
 .swal2-textarea {
   width: 60%;
@@ -292,7 +306,7 @@
   }
 }
 
-@media screen and (max-width: 733px) {
+@media screen and (max-width: 930px) {
   #user {
     flex-direction: column;
 
@@ -310,6 +324,12 @@
     }
 
     #user-content {
+      #user-title-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
       #user-pic-name {
         #user-info-container {
           #user-img-container {
@@ -333,6 +353,7 @@
           a {
             font-size: 13px;
             margin-bottom: 5px;
+            width: 100%;
           }
 
           .review-item-info {

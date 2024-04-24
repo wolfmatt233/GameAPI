@@ -1,6 +1,5 @@
 nav {
   height: 100px;
-  max-width: 1500px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -48,11 +47,11 @@ nav {
   }
 
   .show-burger {
-    visibility: visible;
+    opacity: 1;
   }
 
   .hide-burger {
-    visibility: hidden;
+    opacity: 0;
   }
 
   .nav-burger-container {
@@ -60,7 +59,7 @@ nav {
     align-items: center;
     justify-content: space-between;
     width: 70%;
-    transition: opacity 1s;
+    transition: opacity 0.5s;
 
     .nav-search {
       display: flex;
@@ -211,15 +210,18 @@ nav {
   }
 }
 
-@media screen and (min-width: 734px) {
+//830px and up -> show nav bar
+@media screen and (min-width: 830px) {
   nav {
     .nav-burger-container {
-      visibility: visible;
+      opacity: 1;
+      // visibility: visible;
     }
   }
 }
 
-@media screen and (max-width: 733px) {
+//830px and below -> nav burger
+@media screen and (max-width: 830px) {
   nav {
     .nav-burger-container {
       position: absolute;

@@ -219,6 +219,7 @@ async function userListener() {
 }
 
 export function routeUser() {
+  CloseLoading();
   let hash = window.location.hash.split("?");
   let queryParams = new URLSearchParams(hash[1]);
   let page = queryParams.get("page");
