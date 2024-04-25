@@ -8,12 +8,12 @@
 }
 html,
 body {
-  height: 100%;
+  height: 100vh;
   background-color: #40434e;
   position: relative;
-  max-width: 1300px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 5%;
+  padding: 0 10px;
 }
 #app {
   min-height: $appHeight;

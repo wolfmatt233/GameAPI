@@ -119,11 +119,12 @@ export function changeRoute() {
   let page = queryParams.get("page");
   let genres = queryParams.get("genres");
   let stores = queryParams.get("stores");
+  let searchQuery = queryParams.get("q");
 
-  let searchQuery = $("#searchBar").val();
+  $("#searchBar").prop("keypress", null).off("keypress");
   $("#searchBar").on("keypress", (e) => {
     if (e.key == "Enter") {
-      location.hash = `#search?page=1`;
+      location.hash = `#search?q=${$("#searchBar").val()}&page=1`;
     }
   });
 

@@ -188,12 +188,12 @@ export function editPrompt(reviewObj, gameID, name) {
 
 export function starSelector(starScore) {
   // 0.5 stars
-  $("#st1 .st-r").on("click", () => {
+  $("#st1 .st-l").on("click", () => {
     $(".st-l").attr("class", "st-l");
     $(".st-r").attr("class", "st-r");
     $("#st1 .st-l").addClass("checked");
     $(".star > *").css("background-color", "#fff");
-    $("#st1 .st-l").css("background-color", "#2e7f2e");
+    $("#st1 .st-l").css("background-color", "#FFD700");
   });
 
   // 1 star
@@ -202,7 +202,7 @@ export function starSelector(starScore) {
     $(".st-r").attr("class", "st-r");
     $("#st1 .st-r").addClass("checked");
     $(".star > *").css("background-color", "#fff");
-    $("#st1 > *").css("background-color", "#2e7f2e");
+    $("#st1 > *").css("background-color", "#FFD700");
   });
 
   // 1.5 stars
@@ -211,7 +211,7 @@ export function starSelector(starScore) {
     $(".st-r").attr("class", "st-r");
     $("#st2 .st-l").addClass("checked");
     $(".star > *").css("background-color", "#fff");
-    $("#st1 > *, #st2 .st-l").css("background-color", "#2e7f2e");
+    $("#st1 > *, #st2 .st-l").css("background-color", "#FFD700");
   });
 
   // 2 stars
@@ -220,7 +220,7 @@ export function starSelector(starScore) {
     $(".st-r").attr("class", "st-r");
     $("#st2 .st-r").addClass("checked");
     $(".star > *").css("background-color", "#fff");
-    $("#st1 > *, #st2 > *").css("background-color", "#2e7f2e");
+    $("#st1 > *, #st2 > *").css("background-color", "#FFD700");
   });
 
   // 2.5 stars
@@ -229,7 +229,7 @@ export function starSelector(starScore) {
     $(".st-r").attr("class", "st-r");
     $("#st3 .st-l").addClass("checked");
     $(".star > *").css("background-color", "#fff");
-    $("#st1 > *, #st2 > *, #st3 .st-l").css("background-color", "#2e7f2e");
+    $("#st1 > *, #st2 > *, #st3 .st-l").css("background-color", "#FFD700");
   });
 
   // 3 stars
@@ -238,7 +238,7 @@ export function starSelector(starScore) {
     $(".st-r").attr("class", "st-r");
     $("#st3 .st-r").addClass("checked");
     $(".star > *").css("background-color", "#fff");
-    $("#st1 > *, #st2 > *, #st3 > *").css("background-color", "#2e7f2e");
+    $("#st1 > *, #st2 > *, #st3 > *").css("background-color", "#FFD700");
   });
 
   // 3.5 stars
@@ -249,7 +249,7 @@ export function starSelector(starScore) {
     $(".star > *").css("background-color", "#fff");
     $("#st1 > *, #st2 > *, #st3 > *, #st4 .st-l").css(
       "background-color",
-      "#2e7f2e"
+      "#FFD700"
     );
   });
 
@@ -261,7 +261,7 @@ export function starSelector(starScore) {
     $(".star > *").css("background-color", "#fff");
     $("#st1 > *, #st2 > *, #st3 > *, #st4 > *").css(
       "background-color",
-      "#2e7f2e"
+      "#FFD700"
     );
   });
 
@@ -273,7 +273,7 @@ export function starSelector(starScore) {
     $(".star > *").css("background-color", "#fff");
     $("#st1 > *, #st2 > *, #st3 > *, #st4 > *, #st5 .st-l").css(
       "background-color",
-      "#2e7f2e"
+      "#FFD700"
     );
   });
 
@@ -285,7 +285,7 @@ export function starSelector(starScore) {
     $(".star > *").css("background-color", "#fff");
     $("#st1 > *, #st2 > *, #st3 > *, #st4 > *, #st5 > *").css(
       "background-color",
-      "#2e7f2e"
+      "#FFD700"
     );
   });
 
@@ -436,15 +436,12 @@ async function addLike(reviewIndex, username, gameID) {
             likesArr.push(auth.currentUser.displayName);
             likeCount = likesArr.length;
 
-            console.log(reviewArr);
-
             reviewArr[idx] = {
               gameId: review.gameId,
               likes: likesArr,
               reviewText: review.reviewText,
               starScore: review.starScore,
             };
-            console.log("after", reviewArr);
 
             updateLikes(
               doc.ref,

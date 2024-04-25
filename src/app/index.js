@@ -12,7 +12,9 @@ function initURLListener() {
 }
 
 $(document).ready(function () {
-  $("#searchBtn").on("click", changeRoute);
+  $("#searchBtn").on("click", () => {
+    $("#searchBtn").attr("href", `#search?q=${$("#searchBar").val()}&page=1`);
+  });
   initURLListener();
   navBurger();
 });

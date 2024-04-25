@@ -180,8 +180,8 @@ function applyFilters(searchQuery) {
   });
 
   if (searchQuery) {
-    location.hash = `#search?page=1${genres}${stores}`;
+    location.hash = `#search?q=${$("#searchBar").val()}&page=1${genres}${stores}`;
   } else if (searchQuery === null) {
-    location.hash = `#browse?page=1${genres}${stores}`;
+    location.hash = `#browse?q=${$("#searchBar").val()}&page=1${genres}${stores}`;
   }
 }
