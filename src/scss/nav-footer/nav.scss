@@ -107,13 +107,14 @@ nav {
       .tooltip {
         word-wrap: nowrap;
         opacity: 0;
+        z-index: 5x;
         background-color: #282727;
         color: #fff;
         text-align: center;
         padding: 7px;
         border-radius: 6px;
         position: absolute;
-        top: 75px;
+        top: 45px;
         left: 50%;
         transform: translate(-50%, 0%);
         box-shadow: 0 2px 10px 0px #2f3139;

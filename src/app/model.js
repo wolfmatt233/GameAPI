@@ -98,10 +98,10 @@ function errorPage() {
       showMessage("Error: The page you targeted does not exist.");
       break;
     case "cors":
-      showMessage("Error: There was an error retrieving games.");
+      showMessage("API Error: There was an error retrieving games.");
       break;
     case "details-error":
-      showMessage("Error: Game details could not be retrieved.");
+      showMessage("API Error: Game details could not be retrieved.");
       break;
   }
 }

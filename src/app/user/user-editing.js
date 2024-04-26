@@ -101,7 +101,7 @@ export function editInfoListener(username, bio) {
     $(".tooltip").css("opacity", "100");
     $(".tooltip").css("visibility", "visible");
     $("#searchBar").focus();
-    if (window.screen.width <= 733) {
+    if (window.screen.width <= 830) {
       $("#nav-burger").trigger("click");
       window.scrollTo(0, 0);
     }

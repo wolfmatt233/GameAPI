@@ -40,7 +40,7 @@
   }
 
   #user-content {
-    padding: 20px 3% 20px 4%;
+    padding: 20px 2%;
     width: 100%;
     position: relative;
 
@@ -202,6 +202,12 @@
       h1 {
         text-align: center;
         font-weight: 100;
+      }
+
+      #browse-grid {
+        @include grid();
+        display: flex;
+        flex-wrap: wrap;
       }
     }
 
