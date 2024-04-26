@@ -125,7 +125,7 @@ export async function searchApi(searchQuery, page, genres, stores) {
       });
   } catch (error) {
     FeedbackMessage("error", "API Error", error.message);
-    location.hash = `#error?type=cors`;
+    // location.hash = `#error?type=cors`;
     CloseLoading();
   }
 }
@@ -157,7 +157,7 @@ function pageButtons(next, prev, genres, stores, sender, searchQuery) {
     //check if page 2: api gives page 1 without a page query parameter
     if (prevPage === null) {
       if (sender === "search") {
-        $("#previous").attr("href", `#search?page=1${genres}${stores}`);
+        $("#previous").attr("href", `#search?q=${searchQuery}&page=1${genres}${stores}`);
       } else if (sender === "browse") {
         $("#previous").attr(
           "href",
@@ -168,7 +168,7 @@ function pageButtons(next, prev, genres, stores, sender, searchQuery) {
       if (sender === "search") {
         $("#previous").attr(
           "href",
-          `#search?page=${prevPage}${genres}${stores}`
+          `#search?q=${searchQuery}&page=${prevPage}${genres}${stores}`
         );
       } else if (sender === "browse") {
         $("#previous").attr(
