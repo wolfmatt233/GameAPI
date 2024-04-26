@@ -17,6 +17,7 @@ import { auth, db } from "../credentials";
 import { FeedbackMessage } from "../extras";
 
 export function editInfoListener(username, bio) {
+  $("#edit-info-btn").on("click", null).off("click");
   $("#edit-info-btn").on("click", () => {
     Swal.fire({
       title: "Edit Your Profile",
@@ -52,6 +53,7 @@ export function editInfoListener(username, bio) {
     });
   });
 
+  $("#user-img-container").on("click", null).off("click");
   $("#user-img-container").on("click", () => {
     let photoUrl = auth.currentUser.photoURL;
     if (photoUrl == null) {
@@ -97,6 +99,7 @@ export function editInfoListener(username, bio) {
     });
   });
 
+  $(".addU  serTopFive").on("click", null).off("click");
   $(".addUserTopFive").on("click", () => {
     $(".tooltip").css("opacity", "100");
     $(".tooltip").css("visibility", "visible");
@@ -107,11 +110,13 @@ export function editInfoListener(username, bio) {
     }
   });
 
+  $(".tooltip").on("mouseover", null).off("mouseover");
   $(".tooltip").on("mouseover", () => {
     $(".tooltip").css("opacity", "0");
     $(".tooltip").css("visibility", "hidden");
   });
 
+  $(".tooltip").on("click", null).off("click");
   $(".tooltip").on("click", () => {
     $(".tooltip").css("opacity", "0");
     $(".tooltip").css("visibility", "hidden");
@@ -127,6 +132,7 @@ async function updateInfo(uName, uBio) {
       updateProfile(auth.currentUser, {
         displayName: uName,
       }).then(() => {
+        editInfoListener(auth.currentUser.displayName, uBio);
         location.hash = `#user?user=${uName}&page=info`;
         $("#nav-user span, #user-info-name").html(`${uName}`);
         $("#user-info-bio").html(`${uBio}`);
