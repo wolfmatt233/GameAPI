@@ -129,6 +129,7 @@ async function updateInfo(uName, uBio) {
       }).then(() => {
         location.hash = `#user?user=${uName}&page=info`;
         $("#nav-user span, #user-info-name").html(`${uName}`);
+        $("#user-info-bio").html(`${uBio}`);
         FeedbackMessage("success", "Success", "Info updated!");
       });
     });

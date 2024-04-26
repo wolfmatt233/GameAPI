@@ -65,7 +65,7 @@ export async function browse(page, genres, stores) {
         filterEvents(null);
       });
   } catch (error) {
-    location.hash = "#error?type=cors";
+    // location.hash = "#error?type=cors";
     CloseLoading();
   }
 }
