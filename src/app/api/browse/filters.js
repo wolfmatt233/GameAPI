@@ -74,17 +74,17 @@ export async function getFilters(genres, stores) {
           }
 
           $("#genres-filter .checkbox-items").append(`
-          <div class="filter-checkbox">
-            <input type="radio" 
-              id="${apiGenre.slug}" 
-              class="checkbox-click" 
-              ${checked} 
-              name="genre" 
-              value="${apiGenre.slug}"
-            />
-            <label for="${apiGenre.slug}">${apiGenre.name}</label><br />
-          </div>
-        `);
+            <div class="filter-checkbox">
+              <input type="radio" 
+                id="${apiGenre.slug}" 
+                class="checkbox-click" 
+                ${checked} 
+                name="genre" 
+                value="${apiGenre.slug}"
+              />
+              <label for="${apiGenre.slug}">${apiGenre.name}</label><br />
+            </div>
+          `);
         });
       });
   } catch (error) {

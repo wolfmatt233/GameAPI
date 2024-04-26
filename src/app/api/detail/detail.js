@@ -26,6 +26,7 @@ export async function viewDetails(gameID) {
         return response.json();
       })
       .then((data) => {
+        console.log(data)
         $(".banner-container").css(
           "background-image",
           `linear-gradient(rgba(66, 62, 62, 0.7), rgba(0, 0, 0, 0.7)),
@@ -42,7 +43,7 @@ export async function viewDetails(gameID) {
       });
   } catch (error) {
     CloseLoading();
-    location.hash = `#error?type=cors`;
+    // location.hash = `#error?type=cors`;
     console.log(error.message);
   }
 }
