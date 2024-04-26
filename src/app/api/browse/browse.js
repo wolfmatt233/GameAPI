@@ -110,7 +110,7 @@ export async function searchApi(searchQuery, page, genres, stores) {
         `);
         });
 
-        pageButtons(data.next, data.previous, genres, stores, "search");
+        pageButtons(data.next, data.previous, genres, stores, "search", searchQuery);
       })
       .then(() => {
         CloseLoading();
@@ -125,7 +125,7 @@ export async function searchApi(searchQuery, page, genres, stores) {
 
 //----Pagination-----\\
 
-function pageButtons(next, prev, genres, stores, sender) {
+function pageButtons(next, prev, genres, stores, sender, searchQuery) {
   genres != null ? (genres = `&genres=${genres}`) : (genres = "");
   stores != null ? (stores = `&stores=${stores}`) : (stores = "");
 
@@ -133,9 +133,9 @@ function pageButtons(next, prev, genres, stores, sender) {
     let nextPage = new URLSearchParams(next).get("page");
 
     if (sender === "search") {
-      $("#next").attr("href", `#search?page=${nextPage}${genres}${stores}`);
+      $("#next").attr("href", `#search?q=${searchQuery}&page=${nextPage}${genres}${stores}`);
     } else if (sender === "browse") {
-      $("#next").attr("href", `#browse?page=${nextPage}${genres}${stores}`);
+      $("#next").attr("href", `#browse?q=${searchQuery}&page=${nextPage}${genres}${stores}`);
     }
   } else if (next == null) {
     $("#next").css("display", "none");
