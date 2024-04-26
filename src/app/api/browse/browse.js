@@ -135,7 +135,7 @@ function pageButtons(next, prev, genres, stores, sender, searchQuery) {
     if (sender === "search") {
       $("#next").attr("href", `#search?q=${searchQuery}&page=${nextPage}${genres}${stores}`);
     } else if (sender === "browse") {
-      $("#next").attr("href", `#browse?q=${searchQuery}&page=${nextPage}${genres}${stores}`);
+      $("#next").attr("href", `#browse?page=${nextPage}${genres}${stores}`);
     }
   } else if (next == null) {
     $("#next").css("display", "none");
