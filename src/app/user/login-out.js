@@ -199,7 +199,6 @@ async function signUp(auth, email, username, password) {
         .split("/")[1]
         .split(")")[0]
         .replace(/-/g, " ");
-      console.log(error.message, errorMsg);
       $(".signup-btn").trigger("click");
       Swal.showValidationMessage(`Error: ${errorMsg}`);
     });

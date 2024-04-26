@@ -127,7 +127,7 @@ async function updateInfo(uName, uBio) {
       updateProfile(auth.currentUser, {
         displayName: uName,
       }).then(() => {
-        location.hash = `#user?user=${uName}&page=info`
+        location.hash = `#user?user=${uName}&page=info`;
         $("#nav-user span, #user-info-name").html(`${uName}`);
         FeedbackMessage("success", "Success", "Info updated!");
       });
@@ -179,9 +179,9 @@ export function deletePrompt() {
         cancelButtonText: "Cancel",
         cancelButtonColor: "#04724D",
         html: `
-                <input type="text" id="emailLogin" class="swal2-input" placeholder="Email">
-                <input type="password" id="passwordLogin" class="swal2-input" placeholder="Password">
-              `,
+          <input type="text" id="emailLogin" class="swal2-input" placeholder="Email">
+          <input type="password" id="passwordLogin" class="swal2-input" placeholder="Password">
+        `,
         preConfirm: () => {
           let user = auth.currentUser;
           let email = $("#emailLogin").val();
@@ -201,13 +201,21 @@ export function deletePrompt() {
                       FeedbackMessage("success", "Success", "Account deleted.");
                     })
                     .catch((error) => {
-                      FeedbackMessage("error", "Error", error.message);
+                      let errorMsg = error.message
+                        .split("/")[1]
+                        .split(")")[0]
+                        .replace(/-/g, " ");
+                      Swal.showValidationMessage(`Error: ${errorMsg}`);
                     });
                   location.hash = "home";
                 });
               })
               .catch((error) => {
-                FeedbackMessage("error", "Error", error.message);
+                let errorMsg = error.message
+                  .split("/")[1]
+                  .split(")")[0]
+                  .replace(/-/g, " ");
+                Swal.showValidationMessage(`Error: ${errorMsg}`);
               });
           }
         },
@@ -264,7 +272,11 @@ export function changePasswordPrompt() {
                     FeedbackMessage("success", "Success", "Password updated!");
                   })
                   .catch((error) => {
-                    FeedbackMessage("error", "Error", error.message);
+                    let errorMsg = error.message
+                      .split("/")[1]
+                      .split(")")[0]
+                      .replace(/-/g, " ");
+                    Swal.showValidationMessage(`Error: ${errorMsg}`);
                   });
               });
             }
