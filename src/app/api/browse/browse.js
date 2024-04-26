@@ -110,7 +110,14 @@ export async function searchApi(searchQuery, page, genres, stores) {
         `);
         });
 
-        pageButtons(data.next, data.previous, genres, stores, "search", searchQuery);
+        pageButtons(
+          data.next,
+          data.previous,
+          genres,
+          stores,
+          "search",
+          searchQuery
+        );
       })
       .then(() => {
         CloseLoading();
@@ -133,7 +140,10 @@ function pageButtons(next, prev, genres, stores, sender, searchQuery) {
     let nextPage = new URLSearchParams(next).get("page");
 
     if (sender === "search") {
-      $("#next").attr("href", `#search?q=${searchQuery}&page=${nextPage}${genres}${stores}`);
+      $("#next").attr(
+        "href",
+        `#search?q=${searchQuery}&page=${nextPage}${genres}${stores}`
+      );
     } else if (sender === "browse") {
       $("#next").attr("href", `#browse?page=${nextPage}${genres}${stores}`);
     }
@@ -149,7 +159,10 @@ function pageButtons(next, prev, genres, stores, sender, searchQuery) {
       if (sender === "search") {
         $("#previous").attr("href", `#search?page=1${genres}${stores}`);
       } else if (sender === "browse") {
-        $("#previous").attr("href", `#browse?page=1${genres}${stores}`);
+        $("#previous").attr(
+          "href",
+          `#browse?page=${nextPage}&page=1${genres}${stores}`
+        );
       }
     } else {
       if (sender === "search") {
