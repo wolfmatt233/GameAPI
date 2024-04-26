@@ -169,7 +169,13 @@ async function signUp(auth, email, username, password) {
         favorites: [],
         played: [],
         reviews: [],
-        topfive: [],
+        topfive: {
+          1: "",
+          2: "",
+          3: "",
+          4: "",
+          5: "",
+        },
         toplay: [],
         privacy: {
           favorites: "public",
@@ -202,6 +208,7 @@ async function signUp(auth, email, username, password) {
 async function createUserDoc(user, userObj) {
   try {
     await setDoc(doc(db, "GameDB", user.uid), userObj).then(() => {
+      $(".header-container button").html(`Welcome ${userObj.username}!`);
       FeedbackMessage("success", "Success", "Account created!");
     });
   } catch (error) {
