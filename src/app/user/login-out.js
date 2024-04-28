@@ -103,10 +103,6 @@ export function signUpModal() {
 
         if (!username || !password || !email) {
           Swal.showValidationMessage(`Ensure fields are completed`);
-        } else if (username.length <= 5 || email.length <= 5) {
-          Swal.showValidationMessage(
-            `Username and email must contain more than 5 characters`
-          );
         } else if (username.length > 14) {
           Swal.showValidationMessage(`Username too long`);
         } else if (password !== password2) {
