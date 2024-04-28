@@ -47,14 +47,6 @@ export async function viewDetails(gameID) {
 }
 
 function leftBar(data, gameID) {
-  let rating;
-
-  if (data.esrb_rating === null) {
-    rating = "No  rating";
-  } else {
-    rating = data.esrb_rating.slug;
-  }
-
   $("#genres").empty();
 
   //genres
@@ -81,13 +73,13 @@ function leftBar(data, gameID) {
     );
   });
 
-  //rating image
-  if (rating == "No ESRB rating") {
-    $(".detail-left img").attr("alt", rating);
-    $(".detail-left img").css("width", "100%");
-  } else {
-    $(".detail-left img").attr("src", `./assets/esrb_${rating}.png`);
-  }
+  $("#platforms").empty();
+
+  //platforms
+  data.platforms.forEach((platform, idx) => {
+    idx != 0 ? $("#platforms").append(` | `) : idx;
+    $("#platforms").append(`<span>${platform.platform.name}</span>`);
+  });
 
   //if logged in, display user buttons
   if (auth.currentUser != null) {
@@ -98,7 +90,6 @@ function leftBar(data, gameID) {
 function rightContent(data) {
   $("#pubs").empty();
   $("#devs").empty();
-  $(".detail-bar .platforms").empty();
 
   let date = new Date(data.released);
   var dobArr = date.toDateString().split(" ");
@@ -127,14 +118,10 @@ function rightContent(data) {
   }
 
   //display platforms on top bar
-  data.parent_platforms.forEach((platform) => {
-    platform = platform.platform.slug;
-    platform == "pc" ? (platform = "windows") : platform;
-    platform == "mac" ? (platform = "apple") : platform;
-    $(".detail-bar .platforms").append(
-      `<i class="fa-brands fa-${platform}"></i>`
-    );
-  });
+  $(".detail-right .detail-bar #ratingImg").attr(
+    "src",
+    `./assets/esrb_${data.esrb_rating.slug}.png`
+  );
 
   //display devs and publishers in page
   data.developers.forEach((dev) => {

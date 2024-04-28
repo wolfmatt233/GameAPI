@@ -1074,13 +1074,15 @@ footer {
 }
 #detailView .detail-content .detail-left .tags #tags,
 #detailView .detail-content .detail-left .tags #stores,
-#detailView .detail-content .detail-left .tags #genres,
+#detailView .detail-content .detail-left .tags #genres, #detailView .detail-content .detail-left .tags #platforms,
 #detailView .detail-content .detail-left button #tags,
 #detailView .detail-content .detail-left button #stores,
 #detailView .detail-content .detail-left button #genres,
+#detailView .detail-content .detail-left button #platforms,
 #detailView .detail-content .detail-left img #tags,
 #detailView .detail-content .detail-left img #stores,
-#detailView .detail-content .detail-left img #genres {
+#detailView .detail-content .detail-left img #genres,
+#detailView .detail-content .detail-left img #platforms {
   padding: 0 10px;
 }
 #detailView .detail-content .detail-left .tags span,
@@ -1105,11 +1107,6 @@ footer {
 }
 #detailView .detail-content .detail-left #stores a {
   color: #247ba0;
-}
-#detailView .detail-content .detail-left img {
-  width: 50px;
-  display: flex;
-  margin-top: 15px;
 }
 #detailView .detail-content .detail-left button {
   background-color: transparent;
@@ -1162,7 +1159,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  padding-top: 7px;
+  padding: 7px 30px 0px 30px;
 }
 #detailView .detail-content .detail-right .detail-bar .metascore {
   display: flex;
@@ -1181,8 +1178,9 @@ footer {
 #detailView .detail-content .detail-right .detail-bar h4 {
   font-weight: 100;
 }
-#detailView .detail-content .detail-right .detail-bar i {
-  margin-left: 10px;
+#detailView .detail-content .detail-right .detail-bar #ratingImg {
+  height: 50px;
+  display: flex;
 }
 #detailView .detail-content .detail-right .detail-article {
   padding: 30px;
