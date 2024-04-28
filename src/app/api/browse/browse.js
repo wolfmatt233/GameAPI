@@ -5,7 +5,7 @@
 */
 
 import { apiKey } from "../../credentials";
-import { LoadingMessage, CloseLoading, FeedbackMessage } from "../../extras";
+import { CloseLoading, FeedbackMessage } from "../../extras";
 import { getFilters, filterEvents } from "./filters";
 
 //----Build url for search and browse----\\
@@ -22,8 +22,8 @@ function buildUrl(page, searchQuery, genres, stores, type) {
 //----Browse games----\\
 
 export async function browse(page, genres, stores) {
-  LoadingMessage();
-  getFilters(genres, stores);
+  await getFilters(genres, stores);
+
   let url = buildUrl(page, "", genres, stores, "browse");
   $("#browse-grid").empty();
 
@@ -65,16 +65,17 @@ export async function browse(page, genres, stores) {
         filterEvents(null);
       });
   } catch (error) {
-    // location.hash = "#error?type=cors";
-    CloseLoading();
+    const errorTimeout = setTimeout(() => {
+      browse(page, genres, stores);
+    }, 3000);
   }
 }
 
 //----Search games----\\
 
 export async function searchApi(searchQuery, page, genres, stores) {
-  LoadingMessage();
-  getFilters(genres, stores);
+  await getFilters(genres, stores);
+
   let url = buildUrl(page, searchQuery, genres, stores, "search");
   $("#browse-grid").empty();
 
@@ -120,13 +121,13 @@ export async function searchApi(searchQuery, page, genres, stores) {
         );
       })
       .then(() => {
-        CloseLoading();
         filterEvents(searchQuery);
+        CloseLoading();
       });
   } catch (error) {
-    FeedbackMessage("error", "API Error", error.message);
-    // location.hash = `#error?type=cors`;
-    CloseLoading();
+    const errorTimeout = setTimeout(() => {
+      searchApi(searchQuery, page, genres, stores);
+    }, 3000);
   }
 }
 
@@ -157,12 +158,12 @@ function pageButtons(next, prev, genres, stores, sender, searchQuery) {
     //check if page 2: api gives page 1 without a page query parameter
     if (prevPage === null) {
       if (sender === "search") {
-        $("#previous").attr("href", `#search?q=${searchQuery}&page=1${genres}${stores}`);
-      } else if (sender === "browse") {
         $("#previous").attr(
           "href",
-          `#browse?page=${nextPage}&page=1${genres}${stores}`
+          `#search?q=${searchQuery}&page=1${genres}${stores}`
         );
+      } else if (sender === "browse") {
+        $("#previous").attr("href", `#browse?page=1${genres}${stores}`);
       }
     } else {
       if (sender === "search") {

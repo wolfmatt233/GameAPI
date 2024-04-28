@@ -32,7 +32,10 @@ export function LoadingMessage() {
     allowEscapeKey: false,
     background: "#555a68",
     color: "#fff",
-    html: "Loading...",
+    html: `
+      <h3 id="loadingTitle">Loading...</h3>
+      <p>Taking too long? <a href="#home">Go Home!</a></p>
+    `,
     timerProgressBar: true,
     didOpen: () => {
       Swal.showLoading();

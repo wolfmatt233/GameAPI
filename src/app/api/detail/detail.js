@@ -17,7 +17,6 @@ import { checkLikeBtn } from "./reviews";
 //----Detail page----\\
 
 export async function viewDetails(gameID) {
-  LoadingMessage();
   let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
 
   try {
@@ -26,7 +25,6 @@ export async function viewDetails(gameID) {
         return response.json();
       })
       .then((data) => {
-        console.log(data)
         $(".banner-container").css(
           "background-image",
           `linear-gradient(rgba(66, 62, 62, 0.7), rgba(0, 0, 0, 0.7)),
@@ -37,14 +35,14 @@ export async function viewDetails(gameID) {
         leftBar(data, gameID);
         rightContent(data, gameID);
       })
-      .then(() => {
-        showReviews(gameID);
+      .then(async () => {
+        await showReviews(gameID);
         CloseLoading();
       });
   } catch (error) {
-    CloseLoading();
-    // location.hash = `#error?type=cors`;
-    console.log(error.message);
+    const errorTimeout = setTimeout(() => {
+      viewDetails(gameID);
+    }, 3000);
   }
 }
 
@@ -259,8 +257,9 @@ export async function showReviews(gameID) {
       );
     }
   } catch (error) {
-    CloseLoading();
-    FeedbackMessage("error", "Error", error.message);
+    const errorTimeout = setTimeout(() => {
+      showReviews(gameID);
+    }, 3000);
   }
 }
 

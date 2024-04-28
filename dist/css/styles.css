@@ -28,6 +28,11 @@ body {
   color: #fff;
 }
 
+#loadingTitle {
+  font-weight: 100;
+  margin-bottom: 10px;
+}
+
 nav {
   height: 100px;
   margin: 0 auto;

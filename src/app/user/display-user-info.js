@@ -42,7 +42,6 @@ export async function findUser() {
 
 export async function showUserInfo() {
   try {
-    LoadingMessage();
     const userDoc = await findUser();
 
     if (!userDoc && auth.currentUser != null) {
@@ -74,6 +73,39 @@ export async function showUserInfo() {
       return sup;
     }
 
+    async function getTop5Game(gameID, property, sup) {
+      let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
+
+      try {
+        await fetch(url)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            let year = data.released.split("-");
+
+            if ($("#order_" + property).length == 0) {
+              $("#browse-grid").append(`
+                  <a href="#detail?game=${gameID}" class="grid-item" id="order_${property}">
+                    <img src="${data.background_image}" alt="image" />
+                    <div class="item-details">
+                      <div>
+                        <p>${property}<sup>${sup}</sup></p>
+                        <p class="details-title">${data.name}</p>
+                        <p class="details-year">${year[0]}</p>
+                      </div>
+                    </div>
+                  </a>
+                `);
+            }
+          });
+      } catch (error) {
+        const errorTimeout = setTimeout(() => {
+          getTop5Game(gameID, property, sup);
+        }, 3000);
+      }
+    }
+
     // Picture, name, bio
     if (userDoc.photoURL) {
       $("#user-img").attr("src", userDoc.photoURL);
@@ -91,47 +123,9 @@ export async function showUserInfo() {
     for (const property in topFive) {
       let gameID = userDoc.topfive[property];
       let sup = getSuper(property);
+
       if (gameID !== "") {
-        let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
-
-        try {
-          await fetch(url)
-            .then((response) => {
-              return response.json();
-            })
-            .then((data) => {
-              let year = data.released.split("-");
-
-              if ($("#order_" + property).length == 0) {
-                $("#browse-grid").append(`
-                  <a href="#detail?game=${gameID}" class="grid-item" id="order_${property}">
-                    <img src="${data.background_image}" alt="image" />
-                    <div class="item-details">
-                      <div>
-                        <p>${property}<sup>${sup}</sup></p>
-                        <p class="details-title">${data.name}</p>
-                        <p class="details-year">${year[0]}</p>
-                      </div>
-                    </div>
-                  </a>
-                `);
-              }
-            });
-        } catch (error) {
-          if ($("#order_" + property).length == 0) {
-            $("#browse-grid").append(`
-              <a href="#detail?game=${gameID}" class="grid-item" id="order_${property}">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <div class="item-details">
-                  <div>
-                    <p>${property}<sup>${sup}</sup></p>
-                    <p class="error-text">Error Retrieving Game</p>
-                  </div>
-                </div>
-              </a>
-            `);
-          }
-        }
+        getTop5Game(gameID, property, sup);
       } else {
         if ($("#order_" + property).length == 0) {
           $("#browse-grid").append(`
@@ -151,10 +145,11 @@ export async function showUserInfo() {
     }
 
     userExceptions();
-
     CloseLoading();
   } catch (error) {
-    console.log(error);
+    const errorTimeout = setTimeout(() => {
+      showUserInfo();
+    }, 3000);
   }
 }
 
@@ -162,7 +157,6 @@ export async function showUserInfo() {
 
 export async function showUserItems(title) {
   try {
-    LoadingMessage();
     let accessArray = [];
     const userDoc = await findUser();
     $("#user-content #browse-grid").empty();
@@ -219,7 +213,7 @@ export async function showUserItems(title) {
       accessArray = userDoc.played;
     }
 
-    accessArray.forEach(async (gameID) => {
+    async function getGame(gameID) {
       let url = `https://api.rawg.io/api/games/${gameID}?key=${apiKey}`;
 
       try {
@@ -245,22 +239,21 @@ export async function showUserItems(title) {
             }
           });
       } catch (error) {
-        $("#user-content #browse-grid").append(`
-          <a href="#detail?game=${gameID}" class="grid-item">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            <div class="item-details">
-              <div>
-                <p class="error-text">Error Retrieving Game</p>
-              </div>
-            </div>
-          </a>
-        `);
+        const errorTimeout = setTimeout(() => {
+          getGame(gameID);
+        }, 3000);
       }
+    }
+
+    accessArray.forEach(async (gameID) => {
+      getGame(gameID);
     });
 
     CloseLoading();
   } catch (error) {
-    FeedbackMessage("error", "Error", error.message);
+    const errorTimeout = setTimeout(() => {
+      showUserItems(title);
+    }, 3000);
   }
 }
 
@@ -307,7 +300,9 @@ export async function showUserReviews() {
       });
     });
   } catch (error) {
-    console.log(error.message);
+    const errorTimeout = setTimeout(() => {
+      showUserReviews();
+    }, 3000);
   }
 }
 

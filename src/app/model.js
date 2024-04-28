@@ -22,7 +22,7 @@ import {
 import { deletePrompt, changePasswordPrompt } from "./user/user-editing";
 import { browse, searchApi } from "./api/browse/browse";
 import { viewDetails } from "./api/detail/detail";
-import { CloseLoading } from "./extras";
+import { CloseLoading, LoadingMessage } from "./extras";
 
 //----SIGN IN/OUT UPDATES----\\
 
@@ -77,6 +77,7 @@ function homePageButton() {
       .css("cursor", "pointer");
     signUpModal();
   }
+  CloseLoading();
 }
 
 //----ERRORS PAGE----\\
@@ -129,14 +130,18 @@ export function changeRoute() {
   });
 
   function getPage(pageID, activateFunc) {
+    LoadingMessage();
     try {
       $.get(`pages/${pageID}.html`, (data) => {
         $("#app").html(data);
-      }).then(() => {
-        activateFunc();
+      }).then(async () => {
+        await activateFunc().then(() => {
+          CloseLoading();
+        });
       });
       $(".tooltip").css("opacity", "0");
     } catch (error) {
+      CloseLoading();
       location.hash = "#error?type=no-page";
     }
   }

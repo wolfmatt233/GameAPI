@@ -1,5 +1,5 @@
 import { apiKey } from "../../credentials";
-import { LoadingMessage, CloseLoading, FeedbackMessage } from "../../extras";
+import { FeedbackMessage, LoadingMessage } from "../../extras";
 
 //----Checkboxes open/close & filter button sends info----\\
 
@@ -49,10 +49,13 @@ export function filterEvents(searchQuery) {
 //----Get filters for dropdown lists----\\
 
 export async function getFilters(genres, stores) {
-  // Get genre filters from api
+  await getGenres(genres, stores);
+  await getStores(genres, stores);
+}
+
+async function getGenres(genres) {
   let genresUrl = `https://api.rawg.io/api/genres?key=${apiKey}`;
   genres != null ? (genres = genres.split(",")) : genres;
-  LoadingMessage();
 
   try {
     await fetch(genresUrl)
@@ -88,11 +91,13 @@ export async function getFilters(genres, stores) {
         });
       });
   } catch (error) {
-    FeedbackMessage("error", "API Error", error.message);
+    const errorTimeout = setTimeout(() => {
+      getGenres(genres);
+    }, 3000);
   }
+}
 
-  // Get store filters from api
-
+async function getStores(stores) {
   let storesUrl = `https://api.rawg.io/api/stores?key=${apiKey}`;
   stores != null ? (stores = stores.split(",")) : stores;
 
@@ -124,12 +129,11 @@ export async function getFilters(genres, stores) {
             </div>
           `);
         });
-      })
-      .then(() => {
-        CloseLoading();
       });
   } catch (error) {
-    FeedbackMessage("error", "API Error", error.message);
+    const errorTimeout = setTimeout(() => {
+      getStores(stores);
+    }, 3000);
   }
 }
 
@@ -180,12 +184,8 @@ function applyFilters(searchQuery) {
   });
 
   if (searchQuery) {
-    location.hash = `#search?q=${$(
-      "#searchBar"
-    ).val()}&page=1${genres}${stores}`;
+    location.hash = `#search?q=${searchQuery}&page=1${genres}${stores}`;
   } else if (searchQuery === null) {
-    location.hash = `#browse?q=${$(
-      "#searchBar"
-    ).val()}&page=1${genres}${stores}`;
+    location.hash = `#browse?page=1${genres}${stores}`;
   }
 }
