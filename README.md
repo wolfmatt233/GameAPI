@@ -1,7 +1,9 @@
 # Capstone Project: Video Game API Web Application
 
 Author: Matthew Wolf, IUPUI, Spring 2024
+
 [Try it here](https://wolfmatt233.github.io/GameAPI/dist/)
+
 [YouTube Demo](https://www.youtube.com/watch?v=bgKfh9jECkQ)
 
 ## Description
